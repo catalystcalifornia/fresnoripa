@@ -58,11 +58,11 @@ force_list<-c("ads_removed_vehicle_phycontact","ads_firearm_point","ads_firearm_
 # calculate actions taken by person -- total actions and types of actions for each person in the stop
 actions<- fresno_ripa%>%rowwise()%>% select(doj_record_id,person_number,contains("ads"))%>%
   mutate(removed_from_vehicle=sum(c(ads_removed_vehicle_order,ads_removed_vehicle_phycontact), na.rm = TRUE),
-         actions_count=sum(c_across(contains("ads")), na.rm = TRUE)-sum(c(ads_search_pers_consen,ads_search_prop_consen),na.rm=TRUE),
+         actions_count=sum(c_across(contains("ads")), na.rm = TRUE)-sum(c(ads_search_pers_consen,ads_search_prop_consen,ads_no_actions),na.rm=TRUE), # subtract extra columns about consent and no action taken flag
          handcuffed=ads_handcuffed,
          detained=sum(c(ads_patcar_detent,ads_curb_detent),na.rm=TRUE),
          use_of_force=sum(c_across(contains(force_list)), na.rm = TRUE),
-         action_taken=ifelse(ads_no_actions==1,0,1),
+         action_taken=ifelse(ads_no_actions==1,0,1), # recode no action taken to be true for action taken
          )%>%
   select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,contains("ads"))%>%
   ungroup()
@@ -78,6 +78,19 @@ rel_stops_action <- rel_stops_action %>% rename(stop_id=doj_record_id)%>%
 
 #### create relational tables for searches ----
 # used for outlier analysis
+
+searches<- fresno_ripa%>%
+  # rowwise()%>% 
+  select(doj_record_id,person_number,ads_search_person,ads_search_property,ads_prop_seize,ads_search_pers_consen,ads_search_prop_consen,contains("bfs"),contains("ced"),contains("tps"))%>%
+  mutate(searches_count=sum(c(ads_search_person,ads_search_property), na.rm = TRUE),
+         contraband_count=sum(c_across(contains("ced")), na.rm = TRUE)-sum(c(ced_none_contraband),na.rm=TRUE),
+         contraband_found==ifelse(ced_none_contraband==1,0,1), # recode no contraband found to be true if contraband found                                                          
+         search_person=ads_search_person,
+         search_property=ads_search_property,
+         consent_search_person=ads_search_pers_consen,
+         consent_search_property=ads_search_prop_consen)%>%
+  # select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,contains("ads"))%>%
+  ungroup()
 
 property_seized=sum(c_across(contains("tps")), na.rm = TRUE),
 
