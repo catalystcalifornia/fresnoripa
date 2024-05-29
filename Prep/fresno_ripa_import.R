@@ -79,23 +79,35 @@ rel_stops_action <- rel_stops_action %>% rename(stop_id=doj_record_id)%>%
 #### create relational tables for searches ----
 # used for outlier analysis
 
+# calculate searches conducted by person -- total searches and whether contraband was found for each person in the stop
 searches<- fresno_ripa%>%
-  # rowwise()%>% 
+  rowwise()%>%
   select(doj_record_id,person_number,ads_search_person,ads_search_property,ads_prop_seize,ads_search_pers_consen,ads_search_prop_consen,contains("bfs"),contains("ced"),contains("tps"))%>%
   mutate(searches_count=sum(c(ads_search_person,ads_search_property), na.rm = TRUE),
          contraband_count=sum(c_across(contains("ced")), na.rm = TRUE)-sum(c(ced_none_contraband),na.rm=TRUE),
-         contraband_found==ifelse(ced_none_contraband==1,0,1), # recode no contraband found to be true if contraband found                                                          
+         contraband_found=ifelse(ced_none_contraband==1,0,1), # recode no contraband found to be true if contraband found
          search_person=ads_search_person,
          search_property=ads_search_property,
          consent_search_person=ads_search_pers_consen,
-         consent_search_property=ads_search_prop_consen)%>%
-  # select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,contains("ads"))%>%
+         consent_search_property=ads_search_prop_consen)
+
+# reduce columns
+searches<-searches%>%
+  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person, search_property,consent_search_person,consent_search_property)%>%
   ungroup()
 
-property_seized=sum(c_across(contains("tps")), na.rm = TRUE),
+# summarise searches by unique stop
+rel_stops_searches<-searches%>%select(-person_number)%>%
+  group_by(doj_record_id)%>%
+  summarise_all(sum,na.rm=TRUE)
 
+# summarise with 0/1 variables by unique stop, keep searches total
+rel_stops_searches <- rel_stops_searches %>% rename(stop_id=doj_record_id)%>%
+  mutate(search=ifelse(searches_count>=1,1,0),
+         contraband_found=ifelse(contraband_found>=1,1,0))%>%
+  select(stop_id,search,contraband_found,everything())
 
-# subset person records
+#### subset person records ----
 person_records<-fresno_ripa%>%
   select(doj_record_id, person_number,13:143)%>%
   select(-call_for_service)
