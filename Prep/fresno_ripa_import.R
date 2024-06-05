@@ -37,34 +37,49 @@ rel_stops<-fresno_ripa%>%
 #### create relational tables for actions taken ----
 # used for outlier analysis
 
-# use of force codes
-# use of force includes
-# Baton or other impact weapon used,
-# Canine bit or held person,
-# Chemical spray used,
-# Electronic control device used,
-# Firearm pointed at person,
-# Firearm discharged or used,
-# Person removed from vehicle by physical contact,
+# use of force codes includes:
+# Baton or other impact weapon used,  "ads_baton"
+# Canine bit or held person, "ads_canine_bite"
+# Chemical spray used, "ads_chem_spray"
+# Electronic control device used, "ads_elect_device"
+# Firearm pointed at person, "ads_firearm_point"
+# Firearm discharged or used, "ads_firearm_discharge"
+# Person removed from vehicle by physical contact, "ads_removed_vehicle_phycontact"
 # Physical or Vehicle contact,
-# Impact projectile discharged or used';
+# Impact projectile discharged or used'; "ads_impact_discharge"
 
 # create list of use of force columns
-force_list<-c("ads_removed_vehicle_phycontact","ads_firearm_point","ads_firearm_discharge","ads_elect_device","ads_impact_discharge","ads_canine_bite","ads_baton","ads_chem_spray","ads_other_contact")
+force_list<-c("ads_removed_vehicle_phycontact",
+              "ads_firearm_point",
+              "ads_firearm_discharge",
+              "ads_elect_device",
+              "ads_impact_discharge",
+              "ads_canine_bite",
+              "ads_baton",
+              "ads_chem_spray",
+              "ads_other_contact")
+
+# other actions to track
+removed_from_vehicle_list <- c("ads_removed_vehicle_order","ads_removed_vehicle_phycontact")
+handcuffed_list <- c("ads_handcuffed")
+detained_list <- c("ads_patcar_detent","ads_curb_detent")
+actions_list <- colnames(fresno_ripa)[grep("^ads_", colnames(fresno_ripa), fixed = FALSE)]
+excluded_actions_list <- c("ads_search_pers_consen","ads_search_prop_consen","ads_no_actions")
+included_actions_list <-  setdiff(actions_list, excluded_actions_list)
 
 # calculate actions taken by person -- total actions and types of actions for each person in the stop
 actions<- fresno_ripa%>%
   rowwise()%>% 
-  select(doj_record_id,person_number,contains("ads"))%>% # select relevant columns
+  select(doj_record_id,person_number, all_of(actions_list))%>% # select relevant columns
   # summarise relevant indicators by row or person
-  mutate(removed_from_vehicle=sum(c(ads_removed_vehicle_order,ads_removed_vehicle_phycontact), na.rm = TRUE), # removed from vehicle by force or order
-         actions_count=sum(c_across(contains("ads")), na.rm = TRUE)-sum(c(ads_search_pers_consen,ads_search_prop_consen,ads_no_actions),na.rm=TRUE), # total actions taken and subtract extra columns about consent and no action taken flag
-         handcuffed=ads_handcuffed,
-         detained=sum(c(ads_patcar_detent,ads_curb_detent),na.rm=TRUE), # detained
-         use_of_force=sum(c_across(contains(force_list)), na.rm = TRUE), # force used
+  mutate(removed_from_vehicle=sum(c_across(removed_from_vehicle_list), na.rm = TRUE), # removed from vehicle by force or order
+         actions_count=sum(c_across(all_of(included_actions_list)), na.rm = TRUE), # total actions taken excluding actions about consent and no action taken flag
+         handcuffed=sum(c_across(handcuffed_list), na.rm = TRUE),
+         detained=sum(c_across(detained_list),na.rm=TRUE), # detained
+         use_of_force=sum(c_across(force_list), na.rm = TRUE), # force used
          action_taken=ifelse(ads_no_actions==1,0,1), # recode no action taken to be true for action taken
          )%>%
-  select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,contains("ads"))%>% # subset columns
+  select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,everything())%>% # reorders columns
   ungroup()
 
 # summarise actions taken by unique stop
