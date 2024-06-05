@@ -83,13 +83,13 @@ actions<- fresno_ripa%>%
   ungroup()
 
 # summarise actions taken by unique stop
-rel_stops_action<-actions%>%select(-person_number,-contains("ads"))%>% # reduce column
+rel_stops_action<-actions%>%select(-person_number,-all_of(actions_list))%>% # reduce column
   group_by(doj_record_id)%>%
   summarise_all(sum) # total counts of all actions selected by stop
 
 # summarise with 0/1 variables by unique stop, keep total actions taken
 rel_stops_action <- rel_stops_action %>% rename(stop_id=doj_record_id)%>%
-  mutate(across(.cols = c(2,4:7), .fns = function(x) ifelse(x >= 1, 1, 0))) # 1 means true that action was taken for at least one person in the stop
+  mutate(across(!stop_id & !actions_count, .fns = function(x) ifelse(x >= 1, 1, 0))) # 1 means true that action was taken for at least one person in the stop
 
 #### create relational tables for searches ----
 # used for outlier analysis
