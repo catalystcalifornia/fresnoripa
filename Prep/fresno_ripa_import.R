@@ -93,15 +93,25 @@ rel_stops_action <- rel_stops_action %>% rename(stop_id=doj_record_id)%>%
 
 #### create relational tables for searches ----
 # used for outlier analysis
+search_list<-c("ads_search_person","ads_search_property")
+consent_list<-c("ads_search_pers_consen","ads_search_prop_consen")
+ced_list<-colnames(fresno_ripa)[grep("^ced_", colnames(fresno_ripa), fixed = FALSE)]
+contraband_list<-setdiff(ced_list, c("ced_none_contraband"))
+# bfs_list<-colnames(fresno_ripa)[grep("^bfs_", colnames(fresno_ripa), fixed = FALSE)]
+# tps_list<-colnames(fresno_ripa)[grep("^tps_", colnames(fresno_ripa), fixed = FALSE)]
+
 
 # calculate searches conducted by person -- total searches and whether contraband was found for each person in the stop
 searches<- fresno_ripa%>%
   rowwise()%>%
   # subset columns
-  select(doj_record_id,person_number,ads_search_person,ads_search_property,ads_prop_seize,ads_search_pers_consen,ads_search_prop_consen,contains("bfs"),contains("ced"),contains("tps"))%>%
+  select(doj_record_id,person_number,all_of(searches_list),all_of(consent_list),all_of(ced_list)
+         # ,
+         # ads_prop_seize,all_of(bfs_list),all_of(tps_list)
+         )%>%
   # summarise relevant indicators by row or person
-  mutate(searches_count=sum(c(ads_search_person,ads_search_property), na.rm = TRUE), # total searches done on person
-         contraband_count=sum(c_across(contains("ced")), na.rm = TRUE)-sum(c(ced_none_contraband),na.rm=TRUE), # total contraband found subtracting flag for no contraband
+  mutate(searches_count=sum(c_across(all_of(search_list)), na.rm = TRUE), # total searches done on person
+         contraband_count=sum(c_across(all_of(contraband_list)), na.rm = TRUE), # total contraband found subtracting flag for no contraband
          contraband_found=ifelse(ced_none_contraband==1,0,1), # recode no contraband found to be true if contraband found
          search_person=ads_search_person, # flag if person was searched
          search_property=ads_search_property, # flag if property was searched
@@ -110,7 +120,7 @@ searches<- fresno_ripa%>%
 
 # reduce columns
 searches<-searches%>%
-  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person, search_property,consent_search_person,consent_search_property)%>%
+  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person,search_property,consent_search_person,consent_search_property)%>%
   ungroup()
 
 # summarise total searches by unique stop
