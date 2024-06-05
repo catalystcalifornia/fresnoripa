@@ -13,13 +13,10 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 fres <- connect_to_db("eci_fresno_ripa")
 rda <- connect_to_db("rda_shared_data")
 
-# pull in tables from postgres
-cadoj<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022")
+# pull in Fresno data from postgres
+fresno_ripa<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022 WHERE agency_name = 'FRESNO PD'")
 
 # Prep Fresno data tables ----
-# filter for Fresno PD data
-fresno_ripa<-cadoj%>%filter(agency_name=="FRESNO PD")
-
 # count unique stop ids first
 number_of_stops<-length(unique(fresno_ripa$doj_record_id))
 
