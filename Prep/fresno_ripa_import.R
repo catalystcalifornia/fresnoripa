@@ -135,10 +135,12 @@ rel_stops_searches <- rel_stops_searches %>% rename(stop_id=doj_record_id)%>%
   select(stop_id,search,contraband_found,everything())
 
 #### subset person records ----
+stop_columns_list <- c("agency_ori","agency_name","time_of_stop","date_of_stop",
+                       "stop_duration","closest_city","school_code","school_name",
+                       "stop_student", "k12_school_grounds","call_for_service","county")
 # records that vary by person in the stop for all analysis other than time spent
 person_records<-fresno_ripa%>%
-  select(doj_record_id, person_number,13:143)%>%
-  select(-call_for_service,-county)%>%
+  select(-all_of(stop_columns_list))%>%
   rename(stop_id=doj_record_id)
 
 
