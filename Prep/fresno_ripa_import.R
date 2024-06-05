@@ -105,7 +105,7 @@ contraband_list<-setdiff(ced_list, c("ced_none_contraband"))
 searches<- fresno_ripa%>%
   rowwise()%>%
   # subset columns
-  select(doj_record_id,person_number,all_of(searches_list),all_of(consent_list),all_of(ced_list)
+  select(doj_record_id,person_number,all_of(search_list),all_of(consent_list),all_of(ced_list)
          # ,
          # ads_prop_seize,all_of(bfs_list),all_of(tps_list)
          )%>%
