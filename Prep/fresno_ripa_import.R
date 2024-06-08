@@ -13,13 +13,10 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 fres <- connect_to_db("eci_fresno_ripa")
 rda <- connect_to_db("rda_shared_data")
 
-# pull in tables from postgres
-cadoj<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022")
+# pull in Fresno data from postgres
+fresno_ripa<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022 WHERE agency_name = 'FRESNO PD'")
 
 # Prep Fresno data tables ----
-# filter for Fresno PD data
-fresno_ripa<-cadoj%>%filter(agency_name=="FRESNO PD")
-
 # count unique stop ids first
 number_of_stops<-length(unique(fresno_ripa$doj_record_id))
 
@@ -40,56 +37,81 @@ rel_stops<-fresno_ripa%>%
 #### create relational tables for actions taken ----
 # used for outlier analysis
 
-# use of force codes
-# use of force includes
-# Baton or other impact weapon used,
-# Canine bit or held person,
-# Chemical spray used,
-# Electronic control device used,
-# Firearm pointed at person,
-# Firearm discharged or used,
-# Person removed from vehicle by physical contact,
+# use of force codes includes:
+# Baton or other impact weapon used,  "ads_baton"
+# Canine bit or held person, "ads_canine_bite"
+# Chemical spray used, "ads_chem_spray"
+# Electronic control device used, "ads_elect_device"
+# Firearm pointed at person, "ads_firearm_point"
+# Firearm discharged or used, "ads_firearm_discharge"
+# Person removed from vehicle by physical contact, "ads_removed_vehicle_phycontact"
 # Physical or Vehicle contact,
-# Impact projectile discharged or used';
+# Impact projectile discharged or used'; "ads_impact_discharge"
 
 # create list of use of force columns
-force_list<-c("ads_removed_vehicle_phycontact","ads_firearm_point","ads_firearm_discharge","ads_elect_device","ads_impact_discharge","ads_canine_bite","ads_baton","ads_chem_spray","ads_other_contact")
+force_list<-c("ads_removed_vehicle_phycontact",
+              "ads_firearm_point",
+              "ads_firearm_discharge",
+              "ads_elect_device",
+              "ads_impact_discharge",
+              "ads_canine_bite",
+              "ads_baton",
+              "ads_chem_spray",
+              "ads_other_contact")
+
+# other actions to track
+removed_from_vehicle_list <- c("ads_removed_vehicle_order","ads_removed_vehicle_phycontact")
+handcuffed_list <- c("ads_handcuffed")
+detained_list <- c("ads_patcar_detent","ads_curb_detent")
+actions_list <- colnames(fresno_ripa)[grep("^ads_", colnames(fresno_ripa), fixed = FALSE)]
+excluded_actions_list <- c("ads_search_pers_consen","ads_search_prop_consen","ads_no_actions")
+included_actions_list <-  setdiff(actions_list, excluded_actions_list)
 
 # calculate actions taken by person -- total actions and types of actions for each person in the stop
 actions<- fresno_ripa%>%
   rowwise()%>% 
-  select(doj_record_id,person_number,contains("ads"))%>% # select relevant columns
+  select(doj_record_id,person_number, all_of(actions_list))%>% # select relevant columns
   # summarise relevant indicators by row or person
-  mutate(removed_from_vehicle=sum(c(ads_removed_vehicle_order,ads_removed_vehicle_phycontact), na.rm = TRUE), # removed from vehicle by force or order
-         actions_count=sum(c_across(contains("ads")), na.rm = TRUE)-sum(c(ads_search_pers_consen,ads_search_prop_consen,ads_no_actions),na.rm=TRUE), # total actions taken and subtract extra columns about consent and no action taken flag
-         handcuffed=ads_handcuffed,
-         detained=sum(c(ads_patcar_detent,ads_curb_detent),na.rm=TRUE), # detained
-         use_of_force=sum(c_across(contains(force_list)), na.rm = TRUE), # force used
+  mutate(removed_from_vehicle=sum(c_across(removed_from_vehicle_list), na.rm = TRUE), # removed from vehicle by force or order
+         actions_count=sum(c_across(all_of(included_actions_list)), na.rm = TRUE), # total actions taken excluding actions about consent and no action taken flag
+         handcuffed=sum(c_across(handcuffed_list), na.rm = TRUE),
+         detained=sum(c_across(detained_list),na.rm=TRUE), # detained
+         use_of_force=sum(c_across(force_list), na.rm = TRUE), # force used
          action_taken=ifelse(ads_no_actions==1,0,1), # recode no action taken to be true for action taken
          )%>%
-  select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,contains("ads"))%>% # subset columns
+  select(doj_record_id,person_number,action_taken,actions_count,removed_from_vehicle,handcuffed,detained,use_of_force,everything())%>% # reorders columns
   ungroup()
 
 # summarise actions taken by unique stop
-rel_stops_action<-actions%>%select(-person_number,-contains("ads"))%>% # reduce column
+rel_stops_action<-actions%>%select(-person_number,-all_of(actions_list))%>% # reduce column
   group_by(doj_record_id)%>%
   summarise_all(sum) # total counts of all actions selected by stop
 
 # summarise with 0/1 variables by unique stop, keep total actions taken
 rel_stops_action <- rel_stops_action %>% rename(stop_id=doj_record_id)%>%
-  mutate(across(.cols = c(2,4:7), .fns = function(x) ifelse(x >= 1, 1, 0))) # 1 means true that action was taken for at least one person in the stop
+  mutate(across(!stop_id & !actions_count, .fns = function(x) ifelse(x >= 1, 1, 0))) # 1 means true that action was taken for at least one person in the stop
 
 #### create relational tables for searches ----
 # used for outlier analysis
+search_list<-c("ads_search_person","ads_search_property")
+consent_list<-c("ads_search_pers_consen","ads_search_prop_consen")
+ced_list<-colnames(fresno_ripa)[grep("^ced_", colnames(fresno_ripa), fixed = FALSE)]
+contraband_list<-setdiff(ced_list, c("ced_none_contraband"))
+# bfs_list<-colnames(fresno_ripa)[grep("^bfs_", colnames(fresno_ripa), fixed = FALSE)]
+# tps_list<-colnames(fresno_ripa)[grep("^tps_", colnames(fresno_ripa), fixed = FALSE)]
+
 
 # calculate searches conducted by person -- total searches and whether contraband was found for each person in the stop
 searches<- fresno_ripa%>%
   rowwise()%>%
   # subset columns
-  select(doj_record_id,person_number,ads_search_person,ads_search_property,ads_prop_seize,ads_search_pers_consen,ads_search_prop_consen,contains("bfs"),contains("ced"),contains("tps"))%>%
+  select(doj_record_id,person_number,all_of(search_list),all_of(consent_list),all_of(ced_list)
+         # ,
+         # ads_prop_seize,all_of(bfs_list),all_of(tps_list)
+         )%>%
   # summarise relevant indicators by row or person
-  mutate(searches_count=sum(c(ads_search_person,ads_search_property), na.rm = TRUE), # total searches done on person
-         contraband_count=sum(c_across(contains("ced")), na.rm = TRUE)-sum(c(ced_none_contraband),na.rm=TRUE), # total contraband found subtracting flag for no contraband
+  mutate(searches_count=sum(c_across(all_of(search_list)), na.rm = TRUE), # total searches done on person
+         contraband_count=sum(c_across(all_of(contraband_list)), na.rm = TRUE), # total contraband found subtracting flag for no contraband
          contraband_found=ifelse(ced_none_contraband==1,0,1), # recode no contraband found to be true if contraband found
          search_person=ads_search_person, # flag if person was searched
          search_property=ads_search_property, # flag if property was searched
@@ -98,7 +120,7 @@ searches<- fresno_ripa%>%
 
 # reduce columns
 searches<-searches%>%
-  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person, search_property,consent_search_person,consent_search_property)%>%
+  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person,search_property,consent_search_person,consent_search_property)%>%
   ungroup()
 
 # summarise total searches by unique stop
@@ -113,10 +135,12 @@ rel_stops_searches <- rel_stops_searches %>% rename(stop_id=doj_record_id)%>%
   select(stop_id,search,contraband_found,everything())
 
 #### subset person records ----
+stop_columns_list <- c("agency_ori","agency_name","time_of_stop","date_of_stop",
+                       "stop_duration","closest_city","school_code","school_name",
+                       "stop_student", "k12_school_grounds","call_for_service","county")
 # records that vary by person in the stop for all analysis other than time spent
 person_records<-fresno_ripa%>%
-  select(doj_record_id, person_number,13:143)%>%
-  select(-call_for_service,-county)%>%
+  select(-all_of(stop_columns_list))%>%
   rename(stop_id=doj_record_id)
 
 
@@ -171,7 +195,7 @@ table_comment <- paste0(indicator, source)
 #   "Stop on K12 school grounds. 0 No 1 Yes",
 #   "Perceived Race or Ethnicity of Person stopped. Individuals perceived as more than one race/ethnicity  are counted as Multiracial for this variable. 1 Asian 2 Black/African American 3 Hispanic/Latino 4 Middle Eastern/South Asian 5 Native American 6 Pacific Islander 7 White 8 Multiracial",
 #   "Perceived race or ethnicity of person stopped Asian. 0 No 1 Yes",
-#   "Perceived race or ethnicity of person stoppep Black or African American. 0 No 1 Yes",
+#   "Perceived race or ethnicity of person stopped Black or African American. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Hispanic or Latino. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Middle Eastern or South Asian. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Native. 0 No 1 Yes",
@@ -187,7 +211,7 @@ table_comment <- paste0(indicator, source)
 #   "Perceived gender of person stopped gender non-conforming and one other gender group. 0 No 1 Yes",
 #   "Person stopped perceived to be LGBT. 0 No 1 Yes",
 #   "Perceived age of person stopped. Numeric",
-#   "Perceived age of person stopped categorized into groups. 1 1 to 9 2 10 to 14 3 15 to 17 4 18 to24 5 25 to 34 6 35 to 44 7 45 to 54 8 55 to 64 9 65 and older",
+#   "Perceived age of person stopped categorized into groups. 1 (1 to 9), 2 (10 to 14), 3 (15 to 17), 4 (18 to 24), 5 (25 to 34), 6 (35 to 44), 7 (45 to 54), 8 (55 to 64), 9 (65 and older)",
 #   "Person stopped has limited or no English fluency. 0 No 1 Yes",
 #   "Perceived or known disability of person stopped. Individuals perceived as having one or more disabilities columns. 0 No Disability 1 Deafness 2 Speech Impairment 3 Blind 4 Mental Health Condition 5 Development 6 Hyperactivity 7 Other 8 Multiple Disability",
 #   "Perceived or known disability of person stopped deafness or difficulty hearing. 0 No 1 Yes",
@@ -365,7 +389,7 @@ column_names <- colnames(person_records) # get column names
 #   "A system-generated number that is assigned to each individual who is involved in the stop or encounter. Numeric",
 #   "Perceived Race or Ethnicity of Person stopped. Individuals perceived as more than one race/ethnicity  are counted as Multiracial for this variable. 1 Asian 2 Black/African American 3 Hispanic/Latino 4 Middle Eastern/South Asian 5 Native American 6 Pacific Islander 7 White 8 Multiracial",
 #   "Perceived race or ethnicity of person stopped Asian. 0 No 1 Yes",
-#   "Perceived race or ethnicity of person stoppep Black or African American. 0 No 1 Yes",
+#   "Perceived race or ethnicity of person stopped Black or African American. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Hispanic or Latino. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Middle Eastern or South Asian. 0 No 1 Yes",
 #   "Perceived race or ethnicity of person stopped Native. 0 No 1 Yes",
@@ -381,7 +405,7 @@ column_names <- colnames(person_records) # get column names
 #   "Perceived gender of person stopped gender non-conforming and one other gender group. 0 No 1 Yes",
 #   "Person stopped perceived to be LGBT. 0 No 1 Yes",
 #   "Perceived age of person stopped. Numeric",
-#   "Perceived age of person stopped categorized into groups. 1 1 to 9 2 10 to 14 3 15 to 17 4 18 to24 5 25 to 34 6 35 to 44 7 45 to 54 8 55 to 64 9 65 and older",
+#   "Perceived age of person stopped categorized into groups. 1 (1 to 9), 2 (10 to 14), 3 (15 to 17), 4 (18 to 24), 5 (25 to 34), 6 (35 to 44), 7 (45 to 54), 8 (55 to 64), 9 (65 and older)",
 #   "Person stopped has limited or no English fluency. 0 No 1 Yes",
 #   "Perceived or known disability of person stopped. Individuals perceived as having one or more disabilities columns. 0 No Disability 1 Deafness 2 Speech Impairment 3 Blind 4 Mental Health Condition 5 Development 6 Hyperactivity 7 Other 8 Multiple Disability",
 #   "Perceived or known disability of person stopped deafness or difficulty hearing. 0 No 1 Yes",
