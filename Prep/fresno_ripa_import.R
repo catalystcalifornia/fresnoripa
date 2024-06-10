@@ -6,6 +6,8 @@
 # Set up environment ----
 library(RPostgreSQL)
 library(dplyr)
+library(lubridate)
+library(hms)
 
 # Connect to RDA databases
 source("W:\\RDA Team\\R\\credentials_source.R")
@@ -15,6 +17,15 @@ rda <- connect_to_db("rda_shared_data")
 
 # pull in Fresno data from postgres
 fresno_ripa<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022 WHERE agency_name = 'FRESNO PD'")
+
+## clean up time-zone
+fresno_ripa <- fresno_ripa %>% mutate(date_reformatted=as.POSIXct(date_of_stop,tz="UTC"),
+                               time_of_stop_reformatted=as_hms(time_of_stop))
+# test result
+View(data.frame(fresno_ripa$doj_record_id,fresno_ripa$date_of_stop,fresno_ripa$date_reformatted,fresno_ripa$time_of_stop,fresno_ripa$time_of_stop_reformatted))
+
+# replace
+fresno_ripa<-fresno_ripa%>%mutate(date_of_stop=date_reformatted, time_of_stop=time_of_stop_reformatted)%>%select(-date_reformatted,-time_of_stop_reformatted)
 
 # Prep Fresno data tables ----
 # count unique stop ids first
@@ -63,9 +74,9 @@ force_list<-c("ads_removed_vehicle_phycontact",
 removed_from_vehicle_list <- c("ads_removed_vehicle_order","ads_removed_vehicle_phycontact")
 handcuffed_list <- c("ads_handcuffed")
 detained_list <- c("ads_patcar_detent","ads_curb_detent")
-actions_list <- colnames(fresno_ripa)[grep("^ads_", colnames(fresno_ripa), fixed = FALSE)]
+actions_list <- colnames(fresno_ripa)[grep("^ads_", colnames(fresno_ripa), fixed = FALSE)] # all actions taken columns
 excluded_actions_list <- c("ads_search_pers_consen","ads_search_prop_consen","ads_no_actions")
-included_actions_list <-  setdiff(actions_list, excluded_actions_list)
+included_actions_list <-  setdiff(actions_list, excluded_actions_list) # just actions that are actually taken vs. consent or no action
 
 # calculate actions taken by person -- total actions and types of actions for each person in the stop
 actions<- fresno_ripa%>%
@@ -97,8 +108,6 @@ search_list<-c("ads_search_person","ads_search_property")
 consent_list<-c("ads_search_pers_consen","ads_search_prop_consen")
 ced_list<-colnames(fresno_ripa)[grep("^ced_", colnames(fresno_ripa), fixed = FALSE)]
 contraband_list<-setdiff(ced_list, c("ced_none_contraband"))
-# bfs_list<-colnames(fresno_ripa)[grep("^bfs_", colnames(fresno_ripa), fixed = FALSE)]
-# tps_list<-colnames(fresno_ripa)[grep("^tps_", colnames(fresno_ripa), fixed = FALSE)]
 
 
 # calculate searches conducted by person -- total searches and whether contraband was found for each person in the stop
@@ -106,8 +115,6 @@ searches<- fresno_ripa%>%
   rowwise()%>%
   # subset columns
   select(doj_record_id,person_number,all_of(search_list),all_of(consent_list),all_of(ced_list)
-         # ,
-         # ads_prop_seize,all_of(bfs_list),all_of(tps_list)
          )%>%
   # summarise relevant indicators by row or person
   mutate(searches_count=sum(c_across(all_of(search_list)), na.rm = TRUE), # total searches done on person
@@ -132,7 +139,11 @@ rel_stops_searches<-searches%>%select(-person_number)%>%
 rel_stops_searches <- rel_stops_searches %>% rename(stop_id=doj_record_id)%>%
   mutate(search=ifelse(searches_count>=1,1,0), # 1 means true
          contraband_found=ifelse(contraband_found>=1,1,0))%>% # 1 means true
-  select(stop_id,search,contraband_found,everything())
+  select(stop_id,search,contraband_found,everything())%>%
+  rename(search_person_count=search_person,
+         search_property_count=search_property,
+         consent_search_person_count=consent_search_person,
+         consent_search_property_count=consent_search_property)
 
 #### subset person records ----
 stop_columns_list <- c("agency_ori","agency_name","time_of_stop","date_of_stop",
@@ -180,7 +191,7 @@ table_comment <- paste0(indicator, source)
 # 
 # column_names <- colnames(fresno_ripa) # get column names
 # 
-# column_comments <- c( 
+# column_comments <- c(
 #   "A unique system-generated incident identification number. Alpha-numeric",
 #   "A system-generated number that is assigned to each individual who is involved in the stop or encounter. Numeric",
 #   "The number for the reporting Agency. Nine digit alpha-numeric",
@@ -342,12 +353,12 @@ table_comment <- paste0(indicator, source)
 # # write table
 # dbWriteTable(fres, c(schema, table_name),rel_stops,
 #              overwrite = FALSE, row.names = FALSE)
-# 
+
 # #comment on table and columns
 # 
 # column_names <- colnames(rel_stops) # get column names
 # 
-# column_comments <- c( 
+# column_comments <- c(
 #   "A unique system-generated incident identification number. Alpha-numeric. previously doj_record_id",
 #   "The number for the reporting Agency. Nine digit alpha-numeric",
 #   "Agency name. Alpha-numeric",
@@ -378,11 +389,11 @@ table_comment <- paste0(indicator, source)
 
 # write table
 # dbWriteTable(fres, c(schema, table_name),person_records,
-#        overwrite =FALSE, row.names = FALSE)
+#        overwrite =TRUE, row.names = FALSE)
 
 # comment on table and columns
 
-column_names <- colnames(person_records) # get column names
+# column_names <- colnames(person_records) # get column names
 # 
 # column_comments <- c(
 #   "A unique system-generated incident identification number. Alpha-numeric previously doj_record_id",
@@ -519,7 +530,7 @@ column_names <- colnames(person_records) # get column names
 # )
 # 
 # add_table_comments(fres, schema, table_name, indicator, source, column_names, column_comments)
-
+# 
 #### Relational actions taken stops ----
 table_name <- "rel_stops_actions"
 schema <- 'data'
