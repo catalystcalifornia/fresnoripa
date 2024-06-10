@@ -11,41 +11,29 @@ library(chron)
 
 source("W:\\RDA Team\\R\\credentials_source.R")
 
-con <- connect_to_db("rjs_pillars")
+con <- connect_to_db("eci_fresno_ripa")
 
-# pull in rel_race table
+# pull in persons table
 
-race<-dbGetQuery(con, "SELECT * FROM rel_races")
+person<-dbGetQuery(con, "SELECT * FROM rel_persons")
+
+# select only racial group columns
+
+race<-person%>%
+  select(stop_id, person_number, rae_full, rae_hispanic_latino, rae_middle_eastern_south_asian, rae_multiracial, rae_native_american,
+         rae_pacific_islander, rae_white)
 
 #### Explore Multiple Perceived Races ####
 
-# add a column that counts the number of perceived races
+table(race$rae_full) # 1403 people are coded as having 7 perceived races, 18 people are coded as having 8 perceived races.
+
+# But when you actually look at races indicated even if rae_full > 1 the person will have have 1 race marked.
+
+# Can calculate our own total races counted by summing the race 1/0 columns
 
 race<-race%>%
-  group_by(stop_id, person_id)%>%
-  tally()%>%
-  arrange(-n)%>%
-  left_join(race%>%select(stop_id, person_id, race))
-
-# These are stops where the same person is perceived as more than one race and therefore has additional rows in the rel_races df
-
-multiple<-race %>% 
-  filter(n>1)
-
-table(multiple$n) # we can see the majority of people with multiple races have 2. From this I think we could categorize n=5|6 as 
-# 'Multiracial' and NULL out N=7. The trend of these reminds me of the LB RIPA numbers
-
-# Continue to explore where n ==3|4
-
-multiple_3<-multiple%>%
-  filter(n %in% (3))
-
-table(multiple_3$race)
-
-multiple_4<-multiple%>%
-  filter(n %in% (4))
-
-table(multiple_4$race)
+  mutate(race_re=ifelse(rae_full=="7", "NULL",
+                        ifelse(rae_full == "8", "NULL", "race")))
 
 #### RECODE where number of races = 1 ####
 
