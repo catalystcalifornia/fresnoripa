@@ -389,7 +389,7 @@ table_comment <- paste0(indicator, source)
 
 # write table
 # dbWriteTable(fres, c(schema, table_name),person_records,
-#        overwrite =TRUE, row.names = FALSE)
+#        overwrite = FALSE, row.names = FALSE)
 
 # comment on table and columns
 
