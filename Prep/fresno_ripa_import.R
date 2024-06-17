@@ -19,7 +19,7 @@ rda <- connect_to_db("rda_shared_data")
 fresno_ripa<-dbGetQuery(rda, "SELECT * FROM crime_and_justice.cadoj_ripa_2022 WHERE agency_name = 'FRESNO PD'")
 
 ## clean up time-zone
-fresno_ripa <- fresno_ripa %>% mutate(date_reformatted=as.POSIXct(date_of_stop,tz="UTC"),
+fresno_ripa <- fresno_ripa %>% mutate(date_reformatted=as.character(as.POSIXct(date_of_stop,tz="UTC",format="%Y-%m-%d")),
                                time_of_stop_reformatted=as_hms(time_of_stop))
 # test result
 View(data.frame(fresno_ripa$doj_record_id,fresno_ripa$date_of_stop,fresno_ripa$date_reformatted,fresno_ripa$time_of_stop,fresno_ripa$time_of_stop_reformatted))
