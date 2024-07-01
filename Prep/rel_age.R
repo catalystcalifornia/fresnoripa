@@ -1,0 +1,75 @@
+#### Set up ####
+
+library(RPostgreSQL)
+library(dplyr)
+library(tidyr)
+library(stringr)
+# install.packages("chron")
+library(chron)
+
+#connect to postgres
+
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+con <- connect_to_db("eci_fresno_ripa")
+
+# pull in persons table
+
+person<-dbGetQuery(con, "SELECT * FROM rel_persons")
+
+# select only age group columns
+
+age<-person%>%
+  select(stop_id, person_number, age, age_group)
+
+# recode age brackets
+
+age<-age%>%
+  mutate(age_group_re=ifelse(age<=17, "17 and under",
+                             ifelse(age>=18 & age <=24, "18-24",
+                                    ifelse(age>=25 & age <= 34, "25-34",
+                                           ifelse(age>=35 & age <=44, "35-44",
+                                                  ifelse(age>=45 & age <=54, "45-54",
+                                                         ifelse(age>=55 & age <=64,"55-64",
+                                                                "65 and older")))))))%>%
+  select(-age_group)
+
+  
+
+#### Finalize and push to postgres ####
+
+# set column types
+charvect = rep('varchar', ncol(age)) #create vector that is "numeric" for the number of columns in df
+
+# add df colnames to the character vector
+
+names(charvect) <- colnames(age)
+
+##### Export Data #####
+
+dbWriteTable(con,  "rel_age", age, 
+             overwrite = TRUE, row.names = FALSE,
+             field.types = charvect)
+
+
+# write comment to table, and column metadata
+
+table_comment <- paste0("COMMENT ON TABLE rel_age  IS 'Recoded age brackets from 
+2022 SD RIPA data.
+R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\rel_age.R
+Create age brackets based off age column that align with census age brackets';
+
+COMMENT ON COLUMN rel_age.stop_id IS 'Stop ID';
+COMMENT ON COLUMN rel_age.person_number IS 'Person ID';
+COMMENT ON COLUMN rel_age.age IS 'Perceived age of person stopped as indicated by officer';
+COMMENT ON COLUMN rel_age.age_group_re IS 'Age bracket';")
+
+# send table comment + column metadata
+dbSendQuery(conn = con, table_comment)
+
+# add indices
+
+dbSendQuery(con, paste0("create index rel_age_stop_id on data.rel_age (stop_id);
+create index rel_age_person_number on data.rel_age (person_number);"))
+
+
