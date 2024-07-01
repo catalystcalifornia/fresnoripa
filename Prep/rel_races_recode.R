@@ -65,7 +65,7 @@ race<-race%>%
 
 
 
-# Add nhpi and sswana flags. If any of the multiple races perceived is sswana/nhpi, add a flag. Even if that includes a latinx category with it. 
+# Add nhpi and sswana flags for multiracial groups: If any of the multiple races perceived is sswana/nhpi, add a flag. Even if that includes a latinx category with it. 
 
 race<-race%>%
   mutate(sswana_flag=ifelse(rae_multiracial==1 & rae_middle_eastern_south_asian==1, 1, sswana_flag),
@@ -85,7 +85,7 @@ race<-race%>%
 race<-race%>%
   select(1,2,12:19)
 
-#### COMBINE both race tables and push to postgres ####
+#### Finalize tables and push to postgres ####
 
 # set column types
 charvect = rep('varchar', ncol(race)) 
@@ -94,8 +94,6 @@ charvect <- replace(charvect, c(3,5,7,9), c("numeric"))
 # add df colnames to the character vector
 
 names(charvect) <- colnames(race)
-
-##### Export Data #####
 
 dbWriteTable(con,  "rel_races_recode", race, 
              overwrite = TRUE, row.names = FALSE,
