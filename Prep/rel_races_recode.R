@@ -35,6 +35,11 @@ race<-race%>%
   mutate(race_re=ifelse(rae_full=="7", "NULL",
                         ifelse(rae_full == "8", "NULL", "race")))
 
+
+
+
+
+#############PAST SCRIPT SD PILLARS #####################################
 #### RECODE where number of races = 1 ####
 
 
