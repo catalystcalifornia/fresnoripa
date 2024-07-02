@@ -23,7 +23,7 @@ con_shared<-connect_to_db("rda_shared_data")
 
 # Read in tables from postgres
 
-df<- dbGetQuery(con_shared, "SELECT * FROM demographics.acs_5yr_multigeo_2021_race_long")
+df<- dbGetQuery(con_shared, "SELECT * FROM demographics.acs_5yr_multigeo_2022_race_long")
 
 # calculate estimates for Fresno city ####
 
