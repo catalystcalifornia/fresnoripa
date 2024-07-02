@@ -25,16 +25,24 @@ age<-person%>%
 # recode age brackets
 
 age<-age%>%
-  mutate(age_group_re=ifelse(age<=17, "17 and under",
-                             ifelse(age>=18 & age <=24, "18-24",
+  mutate(age_group_re=ifelse(age<=19, "19 and under",
+                             ifelse(age>=20 & age <=24, "20-24",
                                     ifelse(age>=25 & age <= 34, "25-34",
                                            ifelse(age>=35 & age <=44, "35-44",
                                                   ifelse(age>=45 & age <=54, "45-54",
-                                                         ifelse(age>=55 & age <=64,"55-64",
-                                                                "65 and older")))))))%>%
+                                                         ifelse(age>=55 & age <=59,"55-59",
+                                                                ifelse(age>=60 & age <=64,"60-64",
+                                                                "65 and older"))))))))%>%
   select(-age_group)
 
+# set order of the age_group_re column
+
+x <- c("19 and under", "20-24", "25-34","35-44","45-54","55-59","60-64","65 and older","Total")
   
+
+age<-age%>%
+  mutate(age_group_re =  factor(age_group_re, levels = x))%>%
+  arrange(age_group_re)
 
 #### Finalize and push to postgres ####
 
