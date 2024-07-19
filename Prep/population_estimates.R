@@ -23,7 +23,7 @@ con_shared<-connect_to_db("rda_shared_data")
 
 # Read in tables from postgres
 
-df<- dbGetQuery(con_shared, "SELECT * FROM demographics.acs_5yr_multigeo_2021_race_long")
+df<- dbGetQuery(con_shared, "SELECT * FROM demographics.acs_5yr_multigeo_2022_race_long")
 
 # calculate estimates for Fresno city ####
 
@@ -58,9 +58,7 @@ dbWriteTable(con,  "population_race_fresno_city", city,
 )
 
 # add indices
-dbSendQuery(con, paste0("create index population_race_fresno_city on population_race_fresno_city (race);"))
-
-# add table comment
+dbSendQuery(con, paste0("create index population_race_fresno_city_race on population_race_fresno_city (race);"))# add table comment
 dbSendQuery(con, paste0("comment on table population_race_fresno_city is 
                         'Population estimates and percentages for Fresno city by race for non-Hispanic categories, Latinx, and all-AIAN, all-NHPI, and all-SSWANA(coded as MESA) based on DP05 and B04006(ancestry) for mena and B02018 for south asian. Prefix nh indicates that it is a non-Hispanic/Latinx category.
                          See W:\\Project\\ECI\\Fresno RIPA\\R\\Data and Geo Prep\\population_estimates.R for more info';"))
