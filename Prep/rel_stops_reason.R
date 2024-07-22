@@ -126,7 +126,7 @@ table_comment <- paste0("COMMENT ON TABLE rel_persons_reason  IS 'Recoded reason
 Persons are only cited one reason for stop. original data codes the reason from 1-7, this table replaces the code with the descriptive category and includes related reason for stop (RFS) columns.
 See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
 
-COMMENT ON COLUMN data.rel_persons_reason.doj_record_id IS 'A unique system-generated incident identification number. Alpha-numeric';
+COMMENT ON COLUMN data.rel_persons_reason.stop_id IS 'A unique system-generated incident identification number. Alpha-numeric';
 COMMENT ON COLUMN data.rel_persons_reason.person_number IS 'A system-generated number that is assigned to each individual who is involved in the stop or encounter. Numeric';
 COMMENT ON COLUMN data.rel_persons_reason.reason IS 'The descriptive reason for stop of person';
 COMMENT ON COLUMN data.rel_persons_reason.rfs_traffic_violation_type IS 'Type of traffic violation. 1 Moving 2 Equipment 3 Nonmoving Blank';
