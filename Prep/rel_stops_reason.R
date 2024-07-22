@@ -56,22 +56,25 @@ sum(stop_reasons_freq$Freq)
 ##### Step 1: get a table that shows all the stop_ids and reasons of stop by stop #####
 
 ##### Step 1: group by stop to see which ones have more than 1 row, in other words more than 1 stop reason #####
-step1 <- reasons %>%
+step1a <- reasons %>%
   select(-person_number)%>%
   group_by(stop_id)%>%
-  mutate(stop_reason_list=paste(reason, collapse = ", "))%>%
   summarise(stop_reason_count=n(),
-            stop_reason_list=min(stop_reason_list))%>%
-  mutate(multiplereasonstop = ifelse(stop_reason_count > 1, "Multiple reasons", "Single reason"))
+            stop_reason_list=list(reason))
+  
+
+step1b <- step1a %>%
+  group_by(stop_id) %>%
+  mutate(unique_stop_reason_count=length(unique(stop_reason_list[[1]])),
+         multiplereasonstop = ifelse(unique_stop_reason_count > 1, "Multiple reasons", "Single reason"))
 
 
 ##### Step 2: Recode stop reason to simplified version while retaining original reasons #####
 ## if more than 1 reason, then let's count as Two or More reasons, for all others we keep the original stop reason
-step2<-step1%>%
-  mutate(stop_reason_simple=ifelse(multiplereasonstop=="Multiple reasons", "Two or More reasons", stop_reason_list))%>%
-  select(stop_id, stop_reason_simple, stop_reason_list, stop_reason_count)
+step2<-step1b%>%
+  mutate(stop_reason_simple=ifelse(multiplereasonstop=="Multiple reasons", "Two or More reasons", stop_reason_list[[1]][1]))%>%
+  select(stop_id, stop_reason_simple, stop_reason_list, stop_reason_count, unique_stop_reason_count)
 
-# NOTE: the code for rel_stops_reason and rel_stops_result do not consider if the reasons/results are different (i.e., a stop with multiple persons stopped for the same reason, will list "Two or more reasons")
 
 ##### Double check it worked #####
 final_check<-step2%>%
@@ -106,7 +109,8 @@ See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
 COMMENT ON COLUMN rel_stops_reason.stop_id IS 'Unique stop id';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people for either the same or different reasons';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_list IS 'Complete list of reasons for the stop. For stops involving only 1 reason, only 1 reason will be listed, matching stop_reason_simple';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of unique stop reasons in the stop';
+COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of stop reasons in the stop (essentially number of people stopped)';
+COMMENT ON COLUMN rel_stops_reason.unique_stop_reason_count IS 'Number of unique stop reasons in the stop';
                         ")
 
 # send table comment + column metadata
