@@ -76,38 +76,58 @@ stops_unique<-results%>%
 
 stops_unique
 
-##### Step 1: get a table that shows all the stop_ids and results of stop by stop #####
+##### Get a table that shows all the stop_ids and results of stop by person #####
 
-##### Step 1: group by stop to see which ones have more than 1 row, in other words more than 1 stop result #####
-step1 <- results %>%
-  select(-person_number)%>%
-  group_by(stop_id)%>%
-  mutate(stop_result_list=paste(result, collapse = ", "))%>%
+##### Step 1: group by stop and person to see which ones have more than 1 row, in other words more than 1 stop result per person #####
+persons_step1a <- results %>%
+  group_by(stop_id, person_number)%>%
   summarise(stop_result_count=n(),
-            stop_result_list=min(stop_result_list))%>%
-  mutate(multipleresultstop = ifelse(stop_result_count > 1, "Multiple results", "Single result"))
+            stop_result_list=list(result))
+
+persons_step1b <- persons_step1a %>%
+  group_by(stop_id, person_number) %>%
+  mutate(unique_stop_result_count=length(unique(stop_result_list[[1]])),
+         multipleresultstop = ifelse(unique_stop_result_count > 1, "Multiple results", "Single result"))
 
 
 ##### Step 2: Recode stop result to simplified version while retaining original results #####
 ## if more than 1 result, then let's count as Two or More Results, for all others we keep the original stop result
-step2<-step1%>%
-  mutate(stop_result_simple=ifelse(multipleresultstop=="Multiple results", "Two or More Results", stop_result_list))%>%
-  select(stop_id, stop_result_simple, stop_result_list, stop_result_count)
+persons_step2<-persons_step1b%>%
+  mutate(stop_result_simple=ifelse(multipleresultstop=="Multiple results", "Two or more results", stop_result_list[[1]][1]))%>%
+  select(stop_id, person_number, stop_result_simple, stop_result_list, unique_stop_result_count)
 
-##### Double check it worked #####
-final_check<-step2%>%
-  group_by(stop_id,stop_result_simple)%>%
-  summarise(count=n())
 
-stops_unique_check<-final_check%>%
-  distinct(stop_id)%>%
-  nrow()
+##### Get a table that shows all the stop_ids and results of stop by stop #####
+
+##### Step 1: group by stop to see which ones have more than 1 row, in other words more than 1 stop result #####
+stops_step1a <- persons_step2 %>%
+  ungroup() %>%
+  select(-person_number)%>%
+  group_by(stop_id)%>%
+  summarise(stop_result_count=n(), # number of people in stop
+            stop_result_list=list(stop_result_simple))
+
+stops_step1b <- stops_step1a %>%
+  group_by(stop_id) %>%
+  mutate(multipleresultflag = ifelse(stop_result_count >1 &"Two or more results" %in% stop_result_list[[1]], TRUE, FALSE),
+         unique_stop_result_count=length(unique(stop_result_list[[1]])))
+
+
+##### Step 2: Recode stop result to simplified version while retaining original results #####
+## if more than 1 result, then let's count as Two or More Results, for all others we keep the original stop result
+stops_step2<-stops_step1b%>%
+  mutate(stop_result_check=case_when(
+    multipleresultflag==TRUE ~ "Two or more results",
+    multipleresultflag==FALSE & unique_stop_result_count>1 ~ "Two or more results",
+    .default = "Single result"),
+    stop_result_simple=ifelse(stop_result_check=="Two or more results", "Two or more results", stop_result_list[[1]][1])) %>%
+  select(stop_id, stop_result_simple, stop_result_list)
 
 
 #### Push recoded table to postgres ####
 
 # clean up table
-rel_stops_result<-step2
+rel_stops_result<-stops_step2
 
 dbWriteTable(conn,  "rel_stops_result", rel_stops_result, 
              overwrite = FALSE, row.names = FALSE)
@@ -121,12 +141,33 @@ Note result corresponds to result categories included in RIPA data. A person may
 See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_result.R';
 
 COMMENT ON COLUMN data.rel_stops_result.stop_id IS 'Unique stop id';
-
 COMMENT ON COLUMN data.rel_stops_result.stop_result_simple IS 'Simplified result of the stop. Two or More Results indicates the stop resulted in more than 1 result';
-
 COMMENT ON COLUMN data.rel_stops_result.stop_result_list IS 'Complete list of results of the stop. For stops that involved only 1 result, only 1 result will be listed, matching stop_result_simple';
+")
 
-COMMENT ON COLUMN data.rel_stops_result.stop_result_count IS 'Number of result categories recorded in the stop';
+
+# send table comment + column metadata
+dbSendQuery(conn = conn, table_comment)
+
+# clean up table
+rel_persons_result<-persons_step2
+
+dbWriteTable(conn,  "rel_persons_result", rel_persons_result, 
+             overwrite = FALSE, row.names = FALSE)
+
+# write comment to table, and column metadata
+
+table_comment <- paste0("COMMENT ON TABLE data.rel_persons_result IS 'Simplified result of the stop by unique person in stop. 
+Persons with two or more results are recoded to Two or More Results and persons with one result are recoded to the result category, matching stop_result_simple
+Use this table when calculating time spent on stops by stop result.
+Note result corresponds to result categories included in RIPA data. A person may have 2 general results, e.g. citation for infraction and warning, but may receive multiple charges under 1 result, e.g. 3 infractions.
+See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_result.R';
+
+COMMENT ON COLUMN data.rel_persons_result.stop_id IS 'A unique system-generated incident identification number. Alpha-numeric';
+COMMENT ON COLUMN data.rel_persons_result.person_number IS 'A system-generated number that is assigned to each individual who is involved in the stop or encounter. Numeric';
+COMMENT ON COLUMN data.rel_persons_result.stop_result_simple IS 'Simplified result of the stop. Two or More Results indicates the person stopped experienced more than 1 result';
+COMMENT ON COLUMN data.rel_persons_result.stop_result_list IS 'Complete list of results of the person stopped. For persons who received 1 result, only 1 result will be listed, matching stop_result_simple';
+COMMENT ON COLUMN data.rel_persons_result.unique_stop_result_count IS 'Number of unique stop results for person stopped';
 ")
 
 
