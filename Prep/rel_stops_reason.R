@@ -89,7 +89,8 @@ stops_unique_check<-final_check%>%
 #### Push recoded tables to postgres ####
 
 # clean up table
-rel_stops_reason<-step2
+rel_stops_reason<-step2 %>%
+  mutate(stop_reason_list=paste(stop_reason_list, sep = ", ", collapse=NULL))
 
 rel_persons_reason <- reasons %>%
   select(stop_id, person_number, reason, everything()) %>%
