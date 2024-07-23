@@ -127,7 +127,8 @@ stops_step2<-stops_step1b%>%
 #### Push recoded table to postgres ####
 
 # clean up table
-rel_stops_result<-stops_step2
+rel_stops_result<-stops_step2 %>%
+  mutate(stop_result_list=paste(stop_result_list, sep = ", ", collapse=NULL))
 
 dbWriteTable(conn,  "rel_stops_result", rel_stops_result, 
              overwrite = FALSE, row.names = FALSE)
@@ -150,7 +151,8 @@ COMMENT ON COLUMN data.rel_stops_result.stop_result_list IS 'Complete list of re
 dbSendQuery(conn = conn, table_comment)
 
 # clean up table
-rel_persons_result<-persons_step2
+rel_persons_result<-persons_step2 %>%
+  mutate(stop_result_list=paste(stop_result_list, sep = ", ", collapse=NULL))
 
 dbWriteTable(conn,  "rel_persons_result", rel_persons_result, 
              overwrite = FALSE, row.names = FALSE)
