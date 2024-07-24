@@ -30,7 +30,7 @@ reasons <- persons %>%
     .default = NA
   ))
 
-# Explore the data
+#### Explore the data ####
 # only one stop reason is provided per person
 reasons_per_person<-reasons%>%
   group_by(stop_id, person_number) %>%
@@ -45,7 +45,6 @@ reasons_per_stop<-reasons%>%
   ungroup() %>% 
   left_join(persons)
 
-
 # table of stop reasons
 # note: there are no instances of 7: Possible conduct under Education Code 8 Determine whether student violated school policy 
 stop_reasons_freq<-table(reasons$reason)%>%
@@ -57,22 +56,25 @@ sum(stop_reasons_freq$Freq)
 ##### Step 1: get a table that shows all the stop_ids and reasons of stop by stop #####
 
 ##### Step 1: group by stop to see which ones have more than 1 row, in other words more than 1 stop reason #####
-step1 <- reasons %>%
+step1a <- reasons %>%
   select(-person_number)%>%
   group_by(stop_id)%>%
-  mutate(stop_reason_list=paste(reason, collapse = ", "))%>%
   summarise(stop_reason_count=n(),
-            stop_reason_list=min(stop_reason_list))%>%
-  mutate(multiplereasonstop = ifelse(stop_reason_count > 1, "Multiple reasons", "Single reason"))
+            stop_reason_list=list(reason))
+  
+
+step1b <- step1a %>%
+  group_by(stop_id) %>%
+  mutate(unique_stop_reason_count=length(unique(stop_reason_list[[1]])),
+         multiplereasonstop = ifelse(unique_stop_reason_count > 1, "Multiple reasons", "Single reason"))
 
 
 ##### Step 2: Recode stop reason to simplified version while retaining original reasons #####
 ## if more than 1 reason, then let's count as Two or More reasons, for all others we keep the original stop reason
-step2<-step1%>%
-  mutate(stop_reason_simple=ifelse(multiplereasonstop=="Multiple reasons", "Two or More reasons", stop_reason_list))%>%
-  select(stop_id, stop_reason_simple, stop_reason_list, stop_reason_count)
+step2<-step1b%>%
+  mutate(stop_reason_simple=ifelse(multiplereasonstop=="Multiple reasons", "Two or More reasons", stop_reason_list[[1]][1]))%>%
+  select(stop_id, stop_reason_simple, stop_reason_list, stop_reason_count, unique_stop_reason_count)
 
-# NOTE: the code for rel_stops_reason and rel_stops_result do not consider if the reasons/results are different (i.e., a stop with multiple persons stopped for the same reason, will list "Two or more reasons")
 
 ##### Double check it worked #####
 final_check<-step2%>%
@@ -84,10 +86,16 @@ stops_unique_check<-final_check%>%
   nrow()
 
 
-#### Push recoded table to postgres ####
+#### Push recoded tables to postgres ####
 
 # clean up table
-rel_stops_reason<-step2
+rel_stops_reason<-step2 %>%
+  mutate(stop_reason_list=paste(stop_reason_list, sep = ", ", collapse=NULL))
+
+rel_persons_reason <- reasons %>%
+  select(stop_id, person_number, reason, everything()) %>%
+  select(-c(reason_for_stop))
+
 
 dbWriteTable(conn,  "rel_stops_reason", rel_stops_reason, 
              overwrite = FALSE, row.names = FALSE)
@@ -102,7 +110,40 @@ See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
 COMMENT ON COLUMN rel_stops_reason.stop_id IS 'Unique stop id';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people for either the same or different reasons';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_list IS 'Complete list of reasons for the stop. For stops involving only 1 reason, only 1 reason will be listed, matching stop_reason_simple';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of unique stop reasons in the stop';
+COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of stop reasons in the stop (essentially number of people stopped)';
+COMMENT ON COLUMN rel_stops_reason.unique_stop_reason_count IS 'Number of unique stop reasons in the stop';
+                        ")
+
+# send table comment + column metadata
+dbSendQuery(conn = conn, table_comment)
+
+
+dbWriteTable(conn,  "rel_persons_reason", rel_persons_reason, 
+             overwrite = FALSE, row.names = FALSE)
+
+# write comment to table, and column metadata
+
+table_comment <- paste0("COMMENT ON TABLE rel_persons_reason  IS 'Recoded reason for person stopped. 
+Persons are only cited one reason for stop. original data codes the reason from 1-7, this table replaces the code with the descriptive category and includes related reason for stop (RFS) columns.
+See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
+
+COMMENT ON COLUMN data.rel_persons_reason.stop_id IS 'A unique system-generated incident identification number. Alpha-numeric';
+COMMENT ON COLUMN data.rel_persons_reason.person_number IS 'A system-generated number that is assigned to each individual who is involved in the stop or encounter. Numeric';
+COMMENT ON COLUMN data.rel_persons_reason.reason IS 'The descriptive reason for stop of person';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_traffic_violation_type IS 'Type of traffic violation. 1 Moving 2 Equipment 3 Nonmoving Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_traffic_violation_code IS 'Code section related to traffic violation. CJIS offense table code Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_code IS 'If known, code for suspected reason for stop violation. CJIS offense table code Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_off_witness IS 'Reasonable suspicion officer witnessed commission of a crime. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_match_suspect IS 'Reasonable suspicion matched suspect description. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_witness_id IS 'Reasonable suspicion witness or victim identification of suspect at the scene. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_carry_sus_object IS 'Reasonable suspicion carrying suspicious object. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_actions_indicative IS 'Reasonable suspicion actions indicative of casing a victim or location. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_suspect_look IS 'Reasonable suspicion suspected of acting as a lookout. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_drug_trans IS 'Reasonable suspicion actions indicative of a drug transaction. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_violent_crime IS 'Reasonable suspicion actions indicative of engaging a violent crime. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_rs_reason_susp IS 'Reasonable suspicion other reasonable suspicion of a crime. 0 No 1 Yes Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_ec_discipline_code IS 'Section Code. 1 48900 2 48900.2 3 48900.3 4 48900.4 5 48900.7 Blank';
+COMMENT ON COLUMN data.rel_persons_reason.rfs_ec_discipline IS 'When EC 48900 is selected, specify the subdivision. 1 48900a1 2 48900a2 3 48900b 4 48900 c 5 48900 d 6 48900 e 7 48900 f 8 48900 g';
                         ")
 
 # send table comment + column metadata
