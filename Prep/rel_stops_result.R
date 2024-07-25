@@ -100,34 +100,29 @@ persons_step2<-persons_step1b%>%
 ##### Get a table that shows all the stop_ids and results of stop by stop #####
 
 ##### Step 1: group by stop to see which ones have more than 1 row, in other words more than 1 stop result #####
-stops_step1a <- persons_step2 %>%
-  ungroup() %>%
-  select(-person_number)%>%
-  group_by(stop_id)%>%
-  summarise(stop_result_count=n(), # number of people in stop
-            stop_result_list=list(stop_result_simple))
+stops_step1a <- results %>%
+  group_by(stop_id,result)%>%
+  summarise(stop_result_count=n()) # number of people stopped for result
 
 stops_step1b <- stops_step1a %>%
   group_by(stop_id) %>%
-  mutate(multipleresultflag = ifelse(stop_result_count >1 &"Two or more results" %in% stop_result_list[[1]], TRUE, FALSE),
-         unique_stop_result_count=length(unique(stop_result_list[[1]])))
-
+  summarise(unique_stop_result_count=n(), # number of unique stop results in stop
+            stop_result_list=list(result)) # list
 
 ##### Step 2: Recode stop result to simplified version while retaining original results #####
 ## if more than 1 result, then let's count as Two or More Results, for all others we keep the original stop result
-stops_step2<-stops_step1b%>%
-  mutate(stop_result_check=case_when(
-    multipleresultflag==TRUE ~ "Two or more results",
-    multipleresultflag==FALSE & unique_stop_result_count>1 ~ "Two or more results",
-    .default = "Single result"),
-    stop_result_simple=ifelse(stop_result_check=="Two or more results", "Two or more results", stop_result_list[[1]][1])) %>%
-  select(stop_id, stop_result_simple, stop_result_list)
+stops_step2 <- stops_step1b %>%
+    group_by(stop_id) %>%
+    mutate(multipleresultstop = ifelse(unique_stop_result_count > 1, "Two or more results", "Single result"))%>%
+  mutate(stop_result_simple=ifelse(multipleresultstop=="Multiple results", "Two or more results", stop_result_list[[1]][1]))
+  
 
 
 #### Push recoded table to postgres ####
 
 # clean up table
 rel_stops_result<-stops_step2 %>%
+  select(stop_id, stop_result_simple, stop_result_list, unique_stop_result_count)%>%
   mutate(stop_result_list=paste(stop_result_list, sep = ", ", collapse=NULL))
 
 dbWriteTable(conn,  "rel_stops_result", rel_stops_result, 
@@ -161,7 +156,6 @@ dbWriteTable(conn,  "rel_persons_result", rel_persons_result,
 
 table_comment <- paste0("COMMENT ON TABLE data.rel_persons_result IS 'Simplified result of the stop by unique person in stop. 
 Persons with two or more results are recoded to Two or More Results and persons with one result are recoded to the result category, matching stop_result_simple
-Use this table when calculating time spent on stops by stop result.
 Note result corresponds to result categories included in RIPA data. A person may have 2 general results, e.g. citation for infraction and warning, but may receive multiple charges under 1 result, e.g. 3 infractions.
 See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_result.R';
 
