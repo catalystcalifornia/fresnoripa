@@ -47,21 +47,6 @@ update_acs(yr=yr, acs_tables=rc_acs_indicators,filepath)
 # Read in table from postgres and select columns and geography of interest. Rename columns for clarity
 
 df<- dbGetQuery(con_shared, "SELECT geoid, name, 
-        s0101_c01_001e AS total,  s0101_c01_001m AS total_moe,
-         s0101_c01_022e AS age0_17, s0101_c01_022m AS age0_17_moe,
-         s0101_c01_023e AS age18_14, s0101_c01_023m AS age18_14_moe,
-         s0101_c01_007e AS age25_29, s0101_c01_007m AS age25_29_moe,
-         s0101_c01_008e AS age30_34 ,s0101_c01_008m AS  age20_24_moe,
-         s0101_c01_009e AS age35_39, s0101_c01_009m AS age25_29_moe,
-         s0101_c01_010e AS age40_44, s0101_c01_010m AS age40_44_moe,
-         s0101_c01_011e AS age45_49, s0101_c01_011m AS age45_49_moe,
-         s0101_c01_012e AS age50_54, s0101_c01_012m AS age50_54_moe,
-         s0101_c01_013e AS age55_59, s0101_c01_013m AS age55_59_moe,
-         s0101_c01_014e AS age60_64, s0101_c01_014m AS age60_64_moe, 
-         s0101_c01_030e AS age65over, s0101_c01_030m AS age65over_moe
-                FROM demographics.acs_5yr_s0101_multigeo_2022 WHERE geoid = '0627000'")
-
-df<- dbGetQuery(con_shared, "SELECT geoid, name, 
         s0101_c01_001e,  s0101_c01_001m,
          s0101_c01_022e, s0101_c01_022m,
          s0101_c01_023e, s0101_c01_023m,
@@ -75,6 +60,8 @@ df<- dbGetQuery(con_shared, "SELECT geoid, name,
          s0101_c01_014e, s0101_c01_014m, 
          s0101_c01_030e, s0101_c01_030m
                 FROM demographics.acs_5yr_s0101_multigeo_2022")
+
+# Filter for Fresno city
 
 df<-df%>%
   filter(geoid == '0627000')
