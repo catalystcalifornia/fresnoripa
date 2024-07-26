@@ -21,7 +21,8 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 con <- connect_to_db("eci_fresno_ripa")
 con_shared<-connect_to_db("rda_shared_data")
 
-## Update Table S0101 in postgres to use for this analysis: DO NOT RE-RUN just QA the table in postgres: rda_shared_data.acs_5yr_s0101_multigeo_2022 ------------------------
+## Update Table S0101 in postgres to use for this analysis: 
+#####DO NOT RE-RUN just QA the table in postgres: rda_shared_data.acs_5yr_s0101_multigeo_2022 ------------------------
 
 # Source ACS update function because we need to add the most recent S0101 table to demographics.rda_shared_data
 source("W:\\RDA Team\\R\\Github\\RDA Functions\\acs_rda_shared_tables_adds0101.R") ##JZ change filepath when HK updates main function script
