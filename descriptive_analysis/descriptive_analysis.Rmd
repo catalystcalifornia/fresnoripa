@@ -1,0 +1,237 @@
+---
+title: "Fresno RIPA Data Project"
+subtitle: "Descriptive Analysis"
+author: "Catalyst California"
+output:
+  html_document:
+    css: "W:\\RDA Team\\R\\cc_brandguide.css"
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+
+
+list.of.packages <- c("usethis", "highcharter", "tidyverse", "sf", "leaflet", "sp", "htmltools", "magrittr", "flextable", "htmlwidgets")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+#### Load libraries ####
+library(usethis)
+library(highcharter)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(sp)
+library(htmltools) # for html escape
+library(magrittr)
+library(flextable)
+library(htmlwidgets)
+library(sf)
+library(leaflet)
+library(sp)
+library(htmltools) # for html escape
+library(scales)
+
+#add function that better fits the tables to the page    
+    FitFlextableToPage <- function(ft, pgwidth = 6.5){
+
+  ft_out <- ft %>% autofit()
+
+  ft_out <- width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable_dim(ft_out)$widths))
+  return(ft_out)
+    }
+
+#### Add database connection ####
+
+source("W:\\RDA Team\\R\\credentials_source.R")
+con <- connect_to_db("eci_fresno_ripa")
+
+#### Read in tables you need from postgres ####
+
+# You can use the RDA Data Dictionary to look up column meta data for any of these tables. The dictionary is structured the same as pgadmin: https://www.healthycity.org/rda-dev/pgdatadictionary/ 
+
+stops<-dbGetQuery(con, "SELECT * FROM rel_stops")
+results<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
+person<-dbGetQuery(con, "SELECT * FROM rel_persons")
+person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
+age<-dbGetQuery(con, "SELECT * FROM rel_age")
+race<-dbGetQuery(con, "SELECT * FROM rel_race_recode")
+
+
+
+
+```
+
+Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basis tallies on each of the following:
+
+# Stops overview 
+
+## Number and Rate of Officer-Initiated Stops vs. Calls for Service
+
+```{r}
+# Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
+
+
+```
+
+## Total number of people stopped 
+
+```{r}
+
+# Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
+
+
+
+```
+
+# Demographics 
+
+## Race
+
+Officer-initiated stops by perceived race of persons stopped
+
+```{r}
+
+# Calculate the count and rate of officer-initiated stops by perceived race of person stopped. Use the 'rel_races_recode' table & 'rel_stops'
+
+
+
+```
+
+
+## Age 
+
+Officer-initiated stops by perceived age of persons stopped
+
+```{r}
+
+# Calculate the count and rate of officer-initiated stops by age-brackets of person stopped. Use the 'rel_age' table & 'rel_stops'
+
+
+```
+
+
+## Gender 
+
+Officer-initiated stops by perceived gender of persons stopped
+
+```{r}
+
+# Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
+
+```
+
+## Race by age and gender
+
+Rate and count of perceived gender and age of people stopped within each perceived racial group
+
+```{r}
+
+# Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
+
+
+```
+
+
+# Stop Reasons
+
+## Total counts and rates
+
+```{r}
+
+# Total count and rates of officer-initiated stops by stop reason. Officer-initiated stops is the denominator. 
+
+
+
+```
+
+
+## Traffic stops by type
+
+```{r}
+
+# Total count and rates of traffic stops by each traffic stop type: 1 Moving; 2 Equipment; 3 Nonmoving; Blank. 
+
+#Denominator is out of all officer-initiated traffic stops. 
+
+
+
+```
+
+
+## Citations within equipment/non-moving traffic stops
+
+```{r}
+
+# This can be a table looking at the top 50 citations within non-moving/equipment traffic stop types. Denominator is non-moving/equipment traffic stops
+
+# Use table 'rel_persons_reason' and the column 'rfs_traffic_violation_code.' You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"  
+
+
+
+```
+
+## Traffic stops that result in a citation for driving without a license
+
+```{r}
+
+# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
+
+
+```
+
+# Stop Results
+
+## Over-all stops by stop result out of all officer-initiated stops
+
+## Traffic Citations as Stop Result
+
+### Total count/rate of each citation out of all officer-initiated stops
+
+
+## Use of Force
+
+### Total count/rate out of all officer-initiated stops
+
+### Total count/rate by stop reason
+
+### By race
+
+## Field Interview (FI) Card
+
+### Total count/rate out of all officer-initiated stops
+
+### Total count/rate by stop reason 
+
+### By race
+
+
+## Referral to US Department of Homeland Security ICE
+
+### Total count/rate out of all officer-initiated stops
+
+### Total count/rate by stop reason
+
+### By race
+
+## Stops with a search that resulted in no contraband [RDA: lower prioritiy]
+
+### Total count/rate out of all officer-initiated stops
+
+# Time spent
+
+## Time spent by stop reason
+
+## Time spent by stop result
+
+
+
+
+
