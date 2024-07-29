@@ -118,9 +118,8 @@ Use this table when calculating time spent on stops based on stop reason.
 See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
 
 COMMENT ON COLUMN rel_stops_reason.stop_id IS 'Unique stop id';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people stopped for different reasons'';
+COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people stopped for different reasons';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_list IS 'Complete list of reasons for the stop. One reason may be listed more than once if multiple people in the stop were stopped for the same reason';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of stop reasons in the stop (essentially number of people stopped)';
 COMMENT ON COLUMN rel_stops_reason.unique_stop_reason_count IS 'Number of unique stop reasons in the stop';
                         ")
 

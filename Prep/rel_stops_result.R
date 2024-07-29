@@ -114,7 +114,7 @@ stops_step1b <- stops_step1a %>%
 stops_step2 <- stops_step1b %>%
     group_by(stop_id) %>%
     mutate(multipleresultstop = ifelse(unique_stop_result_count > 1, "Two or more results", "Single result"))%>%
-  mutate(stop_result_simple=ifelse(multipleresultstop=="Multiple results", "Two or more results", stop_result_list[[1]][1]))
+  mutate(stop_result_simple=ifelse(multipleresultstop=="Two or more results", "Two or more results", stop_result_list[[1]][1]))
   
 
 
