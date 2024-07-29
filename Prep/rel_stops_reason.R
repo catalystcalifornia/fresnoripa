@@ -1,5 +1,5 @@
 #### Overview ####
-# Output de-duplicated tables of stop reason by unique stop #
+# Output de-duplicated tables of stop reason by person stopped and unique stop #
 
 #### Set up workspace ####
 
@@ -17,24 +17,33 @@ persons<-dbGetQuery(conn," SELECT * FROM rel_persons") %>%
   select(stop_id, person_number, reason_for_stop, starts_with("rfs_")) %>% # , -ends_with("_code")
   mutate_all(as.character)
 
-#### Recode stop reason at person level (7 categories) ####
+#### Recode stop reason at person level (8 categories) ####
 reasons <- persons %>%
   mutate(reason = case_when(
-    reason_for_stop == "1" ~ "Traffic Violation",
+    reason_for_stop == "1" ~ "Traffic violation",
     reason_for_stop == "2" ~ "Reasonable suspicion",
     reason_for_stop == "3" ~ "Parole/probation/PRCS/ mandatory supervision",
     reason_for_stop == "4" ~ "Knowledge of outstanding arrest/wanted person",
     reason_for_stop == "5" ~ "Investigation to determine whether person was truant",
-    reason_for_stop == "6" ~ "Consensual encounter reasoning in search",
-    reason_for_stop == "7" ~ "Possible conduct under Education Code 8 Determine whether student violated school policy",
+    reason_for_stop == "6" ~ "Consensual encounter resulting in search",
+    reason_for_stop == "7" ~ "Possible conduct under Education Code", 
+    reason_for_stop =="8" ~ "Determine whether student violated school policy",
     .default = NA
-  ))
+  )) %>%
+  mutate(traffic_violation_type = case_when(
+    rfs_traffic_violation_type == "1" ~ "Moving",
+    rfs_traffic_violation_type == "2" ~ "Equipment",
+    rfs_traffic_violation_type == "3" ~ "Non-moving",
+    .default = NA))
 
 #### Explore the data ####
 # only one stop reason is provided per person
 reasons_per_person<-reasons%>%
   group_by(stop_id, person_number) %>%
   summarize(reason_count=n())
+
+# no missing traffic violations
+check_traffic<-reasons%>%filter(reason=="Traffic violation" & is.na(traffic_violation_type))
 
 # the most reasons provided per stop is the same as the number of people in a stop, each person can have different stop reasons (e.g., stop_id = U100522026C92252B7E5)
 # even if persons in the same stop have the same stop reason, other reason-related information can differ (e.g., stop_id: U100522003F666D1FBB7, both persons are stopped for traffic violation, but traffic violation type is different)
@@ -90,7 +99,8 @@ stops_unique_check<-final_check%>%
 
 # clean up table
 rel_stops_reason<-step2 %>%
-  mutate(stop_reason_list=paste(stop_reason_list, sep = ", ", collapse=NULL))
+  mutate(stop_reason_list=paste(stop_reason_list, sep = ", ", collapse=NULL))%>%
+  select(-c(stop_reason_count))
 
 rel_persons_reason <- reasons %>%
   select(stop_id, person_number, reason, everything()) %>%
@@ -108,8 +118,8 @@ Use this table when calculating time spent on stops based on stop reason.
 See W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_stops_reason.R';
 
 COMMENT ON COLUMN rel_stops_reason.stop_id IS 'Unique stop id';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people for either the same or different reasons';
-COMMENT ON COLUMN rel_stops_reason.stop_reason_list IS 'Complete list of reasons for the stop. For stops involving only 1 reason, only 1 reason will be listed, matching stop_reason_simple';
+COMMENT ON COLUMN rel_stops_reason.stop_reason_simple IS 'Simplified reason for the stop calculated based on all persons involved. Two or More Reasons indicates stop included multiple people stopped for different reasons'';
+COMMENT ON COLUMN rel_stops_reason.stop_reason_list IS 'Complete list of reasons for the stop. One reason may be listed more than once if multiple people in the stop were stopped for the same reason';
 COMMENT ON COLUMN rel_stops_reason.stop_reason_count IS 'Number of stop reasons in the stop (essentially number of people stopped)';
 COMMENT ON COLUMN rel_stops_reason.unique_stop_reason_count IS 'Number of unique stop reasons in the stop';
                         ")
