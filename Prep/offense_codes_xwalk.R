@@ -47,31 +47,37 @@ add_table_comments <- function(con, schema, table_name, indicator, source, colum
 table_name <- "cadoj_ripa_offense_codes_2023"
 schema <- 'data'
 
-indicator <- "Universe of all fresno pd stops from 2022 - original data filtered from crime_and_justice.cadoj_ripa_2022."
-source <- "CADOJ RIPA 2022
-See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_fresno_ripa_import.docx
-Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Prep/fresno_ripa_import.R
-Data dictionary: source: https://data-openjustice.doj.ca.gov/sites/default/files/dataset/2024-01/RIPA%20Dataset%20Read%20Me%202022.pdf"
+indicator <- "Table of CJIS Offense Codes from RIPA data with statute equivalents. For help in identifying VC statutes of interest. Use offense_code column to match to charge codes in RIPA data "
+source <- "Source: https://oag.ca.gov/law/code-tables
+See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_offense_codes_import.docx
+Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Prep/offense_codes_xwalk.R"
 table_comment <- paste0(indicator, source)
 
-# # write table
-# dbWriteTable(fres, c(schema, table_name),fresno_ripa,
-#        overwrite = FALSE, row.names = FALSE)
-# 
-# #comment on table and columns
-# 
-# column_names <- colnames(fresno_ripa) # get column names
+# write table
+dbWriteTable(con, c(schema, table_name),df,
+       overwrite = FALSE, row.names = FALSE)
+
+# comment on table and columns
+
+column_names <- colnames(df) # get column names
 
 column_comments <- c(
-  "A unique system-generated incident identification number. Alpha-numeric. previously doj_record_id",
-  "0/1 flag for whether any search was done during the stop - person or property",
-  "0/1 flag for whether any contraband or evidencewas found during the stop",
-  "Total searches of person or property done during the stop",
-  "Total contraband or evidence found",
-  "Total searches of person done during the stop",
-  "Total searches of property done during the stop",
-  "Total times consent of search of person was received during the stop",
-  "Total times consent of search of property was received during the stop"
+   "Offense Code",
+  "Offense statute and offense type of statute CD combined",
+  "Offense Statute",
+ "Offense Type of Statute CD, e.g., VC for vehicle charge",
+ "Statute Literal 25 description of offense",
+  "Offense Type of Charge, e.g., Misdemeanor (M), Infraction (I), Felony (F)",
+  "Changes",
+ "Offense Validation CD",
+  "Offense Txn Type CD",
+  "Offense Default Type of Charge",
+  "Offense Literal Identifier CD",
+  "Offense Degree",
+  "BCS Hierarchy CD",
+  "Offense Enacted",
+  "Offense Repealed",
+  "ALPS Cognizant CD"
 )
 
-add_table_comments(fres, schema, table_name, indicator, source, column_names, column_comments)
+add_table_comments(con, schema, table_name, indicator, source, column_names, column_comments)
