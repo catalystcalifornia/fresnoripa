@@ -102,7 +102,7 @@ schema <- 'data'
 indicator <- "Long table format of all offense codes officer charged against people stopped. Include CJIS offense codes for any warnings or citations given or for in-field cite and release. One person may have multiple rows if they were given different citations or offenses.
 For the most part offenses provided under citation are the same as offenses provided under in-field cite and release with some differences 
 Only people that received at least one warning, citation, or in-field cite and release are included "
-source <- "See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_rel_citations.docx
+source <- "See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_rel_offense_codes_import.docx
 Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Prep/rel_citations.R"
 table_comment <- paste0(indicator, source)
 
