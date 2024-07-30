@@ -1,3 +1,7 @@
+###Data Prep: Recode race/ethnicity categories from RIPA data t conform with RDA race category standards.
+###Create AIAN/NHPI/SSWANA flag that defines AIAN/NHPI/SSWANA as alone or in combination with any other race
+
+
 #### Set up ####
 
 library(RPostgreSQL)
@@ -30,8 +34,7 @@ race<-person%>%
 race<-race%>%
   mutate(race_count_re=rowSums(.[4:11]))
 
-table(race$race_count_re) # Max count is 3, and only 18 people have 3 races indicated. 
-# Everyone else only has 1 race indicated. And everyone who has 3 races indicated has a multiracial=1 value 
+table(race$race_count_re) # Max count is 3 perceived races
 
 # Exploring the records where multiracial=1
 
@@ -95,9 +98,9 @@ charvect <- replace(charvect, c(3,5,7,9), c("numeric"))
 
 names(charvect) <- colnames(race)
 
-dbWriteTable(con,  "rel_races_recode", race, 
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "rel_races_recode", race,
+#              overwrite = TRUE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # write comment to table, and column metadata
@@ -105,6 +108,7 @@ dbWriteTable(con,  "rel_races_recode", race,
 table_comment <- paste0("COMMENT ON TABLE rel_races_recode  IS 'Recoded racial categories from 
 2022 Fresno RIPA data.
 R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\rel_races_recode.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_rel_races_recode.docx
 NHPI, sswana and AIAN are alone or in combination with Latinx or another race. all nh_race fields are exclusive of Latinx other than the Latinx category.';
 
 COMMENT ON COLUMN rel_races_recode.stop_id IS 'Stop ID';
@@ -123,8 +127,8 @@ dbSendQuery(conn = con, table_comment)
 
 # add indices
 
-dbSendQuery(con, paste0("create index rel_races_recode_stop_id on data.rel_races_recode (stop_id);
-create index rel_races_recode_person_number on data.rel_races_recode (person_number);
-                        create index rel_races_recode_nh_race on data.rel_races_recode (nh_race);"))
+# dbSendQuery(con, paste0("create index rel_races_recode_stop_id on data.rel_races_recode (stop_id);
+# create index rel_races_recode_person_number on data.rel_races_recode (person_number);
+#                         create index rel_races_recode_nh_race on data.rel_races_recode (nh_race);"))
 
 
