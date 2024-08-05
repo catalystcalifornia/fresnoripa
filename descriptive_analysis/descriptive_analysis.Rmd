@@ -22,6 +22,8 @@ list.of.packages <- c("usethis", "highcharter", "tidyverse", "sf", "leaflet", "s
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
+
+
 #### Load libraries ####
 library(usethis)
 library(highcharter)
@@ -38,9 +40,11 @@ library(leaflet)
 library(sp)
 library(htmltools) # for html escape
 library(scales)
+library(dplyr)
+library(ggplot2)
 
 #add function that better fits the tables to the page    
-    FitFlextableToPage <- function(ft, pgwidth = 6.5){
+FitFlextableToPage <- function(ft, pgwidth = 6.5){
 
   ft_out <- ft %>% autofit()
 
@@ -62,7 +66,8 @@ results<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
-race<-dbGetQuery(con, "SELECT * FROM rel_race_recode")
+race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table name on postgres is rel_races_recode
+
 
 
 
@@ -78,8 +83,70 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
 
+###CALCULATE TOTAL OFFICER INITIATED STOPS##
+count_ois <- stops %>%  
+  filter(call_for_service == 0) %>% #filters for Officer-Initiated Stops
+    select(stop_id) %>% 
+       mutate('Total Officer Initiated Stops' = n()) %>%  
+         slice(1) %>% 
+           select(-stop_id) 
+
+###CALCULATE CALLS FOR SERVICE TOTAL###
+count_cfs <- stops %>%
+  filter(call_for_service == 1) %>% 
+    select(stop_id) %>% 
+      mutate('Total Calls for Service' =n()) %>% 
+       slice(1) %>% 
+           select(-stop_id) 
+
+##CREATE DF TO CREATE VISUAL##
+counts_df <- bind_cols(count_ois, count_cfs)
+ft <- flextable(counts_df)
+
+
+##VISUAL FOR COUNTS##
+
+
+
+
+* In 2022, there were 5,317 police stops made by Fresno PD. Of those stops, 5028 were officer-initiated stops and 289 were calls for service. 
+
+### CALCULATE THE RATE OF OFFICER INITIATED STOPS AND CALLS FOR SERVICE###
+
+rate_ois <- stops %>%
+  group_by(Stop_Type = call_for_service == 0) %>%
+    summarise (percent = 100 * n()/ nrow(stops)) %>%
+      mutate(percent =round(percent, digits =1),
+        Stop_Type = ifelse(Stop_Type, "Officer Initiated Stop", "Calls for Service")) %>%
+  rename(Type = Stop_Type)
+
+
+
+
+###BAR CHART to VISUALIZE RATE OF CALLS FOR SERVICE VS OFFICER INITIATED STOP###
+rate_ois <- data.frame( #create df to create a visual later
+  Type = c("Officer-Initiated Stop", "Calls for Service"),
+  percent = c(94.6, 5.4))
+
+ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
+  geom_bar(stat = "identity") + #to create barplot
+  geom_text(aes(label = paste0(round(percent,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 5,
+          color = "white")+ 
+  labs(title = "Rate of Stop Types (%)", #labels to visual
+       x = "Type of Stop",
+       y = "Percentage (%)") +
+  scale_fill_manual(values = c("Officer-Initiated Stop"="navy",
+      "Calls for Service" = "navy" ))+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5))
+
 
 ```
+* In the year 2022, 94.6% of Fresno Police Department stops were officer initiated stops while only 5.4% of stops were calls for service.
 
 ## Total number of people stopped 
 
@@ -87,6 +154,13 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 # Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
 
+tot_ois <- left_join(stops, person, by ="stop_id")%>%
+  select(call_for_service)%>%
+  filter(call_for_service ==0)%>%  
+    summarise(count=n())%>%
+     ungroup()%>%
+       mutate(total=sum(count))%>%
+        rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
 
 
 ```
@@ -101,6 +175,57 @@ Officer-initiated stops by perceived race of persons stopped
 
 # Calculate the count and rate of officer-initiated stops by perceived race of person stopped. Use the 'rel_races_recode' table & 'rel_stops'
 
+##CALCULATES COUNT AND RATE FOR OIS BY RACE##
+race_ois<- left_join(stops, race, by ="stop_id")%>%
+  filter(call_for_service ==0)%>%
+  select(nh_race)%>% 
+  mutate(Total=n())%>%
+  group_by(nh_race)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>%
+  slice(1)%>%
+  rename('Race' ='nh_race')%>%
+  arrange(-Percent)
+
+##VISUALIZATION FOR RATE OF OIS BY RACE ##
+
+ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
+  geom_bar(stat = "identity") + #to create barplot
+  geom_text(aes(label = paste0(Percent, "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  labs(title = "Officer-Initiated Stops by Race",
+       x = "Race",
+       y = "Percentage (%)") +
+  scale_fill_manual(values = c("navy", "navy", "navy", "navy", "navy", "navy", "navy"))+
+  theme_bw()+
+  theme(plot.title = element_text(hjust =0.5),
+ #sets y-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      axis.text.y = element_text(angle =0, hjust=1), #Makes y-axis text readable
+      axis.text.x = element_text(angle =0, hjust=0.5))+ #Makes x-axis text readable
+  coord_flip() ##flips coordinates for readability
+
+##VISUALIZATION FOR COUNT OF OIS BY RACE ##
+
+ggplot(race_ois, aes(x = reorder(Race, Count), y = Count, fill = Race))+
+  geom_bar(stat = "identity") + #to create barplot
+  geom_text(aes(label = Count), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size =5,
+          color = "white")+ 
+  labs(title = "Officer-Initiated Stops by Race",
+       x = "Race",
+       y = "Count") +
+  scale_fill_manual(values = c("navy", "navy", "navy", "navy", "navy", "navy", "navy"))+
+  theme_bw()+
+  theme(plot.title = element_text(hjust =0.5),
+ #sets y-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      axis.text.y = element_text(angle =0, hjust=1), #Makes y-axis text readable
+      axis.text.x = element_text(angle =0, hjust=0.5))+
+                   #Makes x-axis text readable
+  coord_flip() ##flips coordinates 
 
 
 ```
@@ -113,6 +238,34 @@ Officer-initiated stops by perceived age of persons stopped
 ```{r}
 
 # Calculate the count and rate of officer-initiated stops by age-brackets of person stopped. Use the 'rel_age' table & 'rel_stops'
+age_ois<- left_join(age, stops, by ="stop_id")%>%
+  filter(call_for_service ==0)%>%
+  select(age_group_re)%>% 
+  mutate(Total=n())%>%
+  group_by(age_group_re)%>%
+  mutate(Count=n(), 
+         Percent = round(Count/Total*100, 1))%>%
+  slice(1)%>%
+  rename('Age' ='age_group_re')%>%
+  arrange(-Percent)
+
+##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
+
+  ggplot(age_ois, aes(x = Age, y=Percent))+
+      geom_bar( stat = "identity", fill="#362178") + 
+  geom_text(aes( label = paste0(round(Percent, digits=1),"%" ),
+                 y= Percent),vjust = 1.4, size =4,color = "white",
+             fontface = "bold")+
+      xlab("")+
+  ylab("Percent of Officer-Initiated Stops (%)")+
+    scale_x_discrete(labels = wrap_format(10))+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=15),
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=12, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
 
 
 ```
@@ -125,6 +278,18 @@ Officer-initiated stops by perceived gender of persons stopped
 ```{r}
 
 # Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
+gender_ois <-left_join(persons, stops, by = "stop_id")%>%
+  mutate(
+    has_perceived_gender = rowSums(select(., g_male, g_female, g_transgender_man, g_transgender_woman, g_gender_nonconforming, g_lgbt)%>%
+                                     filter(has_perceived_gender)%>%
+                                     summarise(
+  g_male_count = sum(g_male),
+  g_female_count = sum(g_female),
+  g_transgender_woman_count =sum(g_transgender_woman),
+  g_transgender_man = sum(g_transgender_man),
+  g_gender_nonconforming = sum(g_gender_nonconforming),
+ g_lgbt = sum(g_lgbt))
+ 
 
 ```
 
