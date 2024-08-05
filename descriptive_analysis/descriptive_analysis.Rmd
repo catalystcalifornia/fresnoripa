@@ -124,7 +124,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
   geom_bar(stat = "identity") + #to create barplot
   geom_text(aes(label = paste0(round(percent,1), "%")), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 4,
+          size = 3,
           color = "white")+ 
   labs(title = "Rate of Stop Types (%)", #labels to visual
        x = "Type of Stop",
@@ -139,6 +139,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
 
 ```
 * In the year 2022, 94.6% of Fresno Police Department stops were officer initiated stops while only 5.4% of stops were calls for service.
+
 
 ## Total number of people stopped 
 
@@ -180,35 +181,15 @@ race_ois<- left_join(stops, race, by ="stop_id")%>%
 
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
-ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
+ggplot(race_ois, aes(x = reorder(Race, Percent), y = Percent, fill = Race))+
   geom_bar(stat = "identity") + #to create barplot
   geom_text(aes(label = paste0(Percent, "%")), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 3,
+          size =3,
           color = "white")+ 
   labs(title = "Officer-Initiated Stops by Race",
        x = "Race",
        y = "Percentage (%)") +
-  scale_fill_manual(values = c("navy", "navy", "navy", "navy", "navy", "navy", "navy"))+
-  theme_bw()+
-  theme(plot.title = element_text(hjust =0.5),
- #sets y-axis labels to be horizontal
-      legend.position ="none", #removes legend
-      axis.text.y = element_text(angle =0, hjust=1), #Makes y-axis text readable
-      axis.text.x = element_text(angle =0, hjust=0.5))+ #Makes x-axis text readable
-  coord_flip() ##flips coordinates for readability
-
-##VISUALIZATION FOR COUNT OF OIS BY RACE ##
-
-ggplot(race_ois, aes(x = reorder(Race, Count), y = Count, fill = Race))+
-  geom_bar(stat = "identity") + #to create barplot
-  geom_text(aes(label = Count), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
-          size =5,
-          color = "white")+ 
-  labs(title = "Officer-Initiated Stops by Race",
-       x = "Race",
-       y = "Count") +
   scale_fill_manual(values = c("navy", "navy", "navy", "navy", "navy", "navy", "navy"))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
@@ -244,17 +225,21 @@ age_ois<- left_join(age, stops, by ="stop_id")%>%
 ##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
 
   ggplot(age_ois, aes(x = Age, y=Percent))+
-      geom_bar( stat = "identity", fill="#362178") + 
+      geom_bar( stat = "identity", fill="navy") + 
   geom_text(aes( label = paste0(round(Percent, digits=1),"%" ),
-                 y= Percent),vjust = 1.4, size =4,color = "white",
+                 y= Percent),
+            vjust = 1.4, 
+            size =3,
+            color = "white",
              fontface = "bold")+
-      xlab("")+
-  ylab("Percent of Officer-Initiated Stops (%)")+
+    labs(title = "Officer-Initiated Stops by Age Group",
+      x = "Age Group",
+  y = "Percent of Officer-Initiated Stops (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=15),
-        strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=12, face="bold"),
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=10),
+        strip.background = element_rect(fill = "navy"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())
