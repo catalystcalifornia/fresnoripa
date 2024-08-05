@@ -110,7 +110,7 @@ rate_ois <- stops %>%
     summarise (percent = 100 * n()/ nrow(stops)) %>%
       mutate(percent =round(percent, digits =1),
         Stop_Type = ifelse(Stop_Type, "Officer Initiated Stop", "Calls for Service")) %>%
-  rename(Type = Stop_Type)
+  rename('Type' = 'Stop_Type')
 
 
 
@@ -155,6 +155,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
        mutate(total=sum(count))%>%
         rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
 
+* In 2022, Fresno PD stopped a total of 5,060 people through Officer-Initiated Stops.
 
 ```
 
@@ -225,19 +226,19 @@ age_ois<- left_join(age, stops, by ="stop_id")%>%
 ##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
 
   ggplot(age_ois, aes(x = Age, y=Percent))+
-      geom_bar( stat = "identity", fill="navy") + 
-  geom_text(aes( label = paste0(round(Percent, digits=1),"%" ),
+      geom_bar( stat = "identity", fill="navy") + #create barchart 
+  geom_text(aes( label = paste0(round(Percent, digits=1),"%" ), #round to tenths place within barchart label
                  y= Percent),
             vjust = 1.4, 
             size =3,
             color = "white",
              fontface = "bold")+
     labs(title = "Officer-Initiated Stops by Age Group",
-      x = "Age Group",
+      x = "Age Group", #labels
   y = "Percent of Officer-Initiated Stops (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=10),
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=10), #aesthetics of the barchart
         strip.background = element_rect(fill = "navy"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -255,9 +256,46 @@ Officer-initiated stops by perceived gender of persons stopped
 ```{r}
 
 # Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
-gender_ois <-left_join(persons, stops, by = "stop_id")%>%
 
- 
+  gender_ois<- left_join(person, stops, by ="stop_id")%>%
+  filter(call_for_service ==0)%>%
+  select(g_full)%>% 
+  mutate(Total=n())%>%
+  group_by(g_full)%>%
+  mutate(Count=n(), 
+         Percent = round(Count/Total*100, 1))%>%
+  slice(1)%>%
+  rename('Gender' ='g_full')%>%
+  arrange(-Percent)
+
+##RECODING FOR GENDERSO THAT X-AXIS DISPLAYS GENDERS INSTEAD OF 1:5##
+
+gender_recode <- data.frame(
+  value = c("Male", "Female", "Transgender Man/Boy", "Transgender Woman/Girl", "Nonconforming")
+)
+
+gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER RECODE TO MAKE ONE DATAFRAME##
+
+###VISUALIZATION FOR OIS BY PERCEIVED GENDER###
+ggplot(gender_df, aes(x=value, y=Percent, fill = value))+
+      geom_bar( stat = "identity", fill="navy") + #create barchart 
+  geom_text(aes( label = paste0(round(Percent, digits=1),"%" ), #round to tenths place within barchart label
+                 y= Percent),
+            vjust = 1.4, 
+            size =3,
+            color = "white",
+             fontface = "bold")+
+    labs(title = "Officer-Initiated Stops by Perceived Gender",
+      x = "Perceived Gender", #labels
+  y = "Percent of Officer-Initiated Stops (%)")+
+    scale_x_discrete(labels = wrap_format(10))+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "navy"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
 
 ```
 
