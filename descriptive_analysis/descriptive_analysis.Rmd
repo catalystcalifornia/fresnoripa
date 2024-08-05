@@ -99,14 +99,6 @@ count_cfs <- stops %>%
        slice(1) %>% 
            select(-stop_id) 
 
-##CREATE DF TO CREATE VISUAL##
-counts_df <- bind_cols(count_ois, count_cfs)
-ft <- flextable(counts_df)
-
-
-##VISUAL FOR COUNTS##
-
-
 
 
 * In 2022, there were 5,317 police stops made by Fresno PD. Of those stops, 5028 were officer-initiated stops and 289 were calls for service. 
@@ -132,7 +124,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
   geom_bar(stat = "identity") + #to create barplot
   geom_text(aes(label = paste0(round(percent,1), "%")), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 5,
+          size = 4,
           color = "white")+ 
   labs(title = "Rate of Stop Types (%)", #labels to visual
        x = "Type of Stop",
