@@ -256,16 +256,7 @@ Officer-initiated stops by perceived gender of persons stopped
 
 # Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
 gender_ois <-left_join(persons, stops, by = "stop_id")%>%
-  mutate(
-    has_perceived_gender = rowSums(select(., g_male, g_female, g_transgender_man, g_transgender_woman, g_gender_nonconforming, g_lgbt)%>%
-                                     filter(has_perceived_gender)%>%
-                                     summarise(
-  g_male_count = sum(g_male),
-  g_female_count = sum(g_female),
-  g_transgender_woman_count =sum(g_transgender_woman),
-  g_transgender_man = sum(g_transgender_man),
-  g_gender_nonconforming = sum(g_gender_nonconforming),
- g_lgbt = sum(g_lgbt))
+
  
 
 ```
