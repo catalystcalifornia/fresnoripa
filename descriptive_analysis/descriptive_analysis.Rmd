@@ -308,6 +308,9 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 # Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
 
+combined_df <- merge(gender_df, race_ois, by = "stop_id", all = TRUE)
+combined_df <- merge(combined_df, age_ois, by = 'stop_id", all = TRUE)
+
 
 ```
 
