@@ -277,9 +277,9 @@ gender_recode <- data.frame(
 gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER RECODE TO MAKE ONE DATAFRAME##
 
 ###VISUALIZATION FOR OIS BY PERCEIVED GENDER###
-ggplot(gender_df, aes(x=value, y=Percent, fill = value))+
+ggplot(gender_df, aes(x= reorder(value, Percent), y= Percent, fill = value))+
       geom_bar( stat = "identity", fill="navy") + #create barchart 
-  geom_text(aes( label = paste0(round(Percent, digits=1),"%" ), #round to tenths place within barchart label
+  geom_text(aes(label = paste0(round(Percent, digits=1),"%"), #round to tenths place within barchart label
                  y= Percent),
             vjust = 1.4, 
             size =3,
@@ -290,12 +290,13 @@ ggplot(gender_df, aes(x=value, y=Percent, fill = value))+
   y = "Percent of Officer-Initiated Stops (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size=10), #aesthetics of the barchart
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size=7), #aesthetics of the barchart
         strip.background = element_rect(fill = "navy"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-panel.background = element_blank())
+panel.background = element_blank())+ 
+coord_flip()
 
 ```
 
