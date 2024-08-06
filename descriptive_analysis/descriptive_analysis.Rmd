@@ -246,10 +246,11 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
              fontface = "bold")+
     labs(title = "Officer-Initiated Stops by Age Group",
       x = "Age Group", #labels
-  y = "Percent of Officer-Initiated Stops (%)")+
+  y = "Percentage (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+    theme(plot.title = element_text(hjust =0.5),
+  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -301,7 +302,8 @@ ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+
   y = "Percent (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
+  theme(plot.title = element_text(hjust =0.5),
+  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
