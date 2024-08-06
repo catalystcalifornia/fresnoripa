@@ -129,12 +129,19 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
   labs(title = "Rate of Stop Types (%)", #labels to visual
        x = "Type of Stop",
        y = "Percentage (%)") +
-  scale_fill_manual(values = c("Officer-Initiated Stop"="navy",
-      "Calls for Service" = "navy" ))+
+  scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
+      "Calls for Service" = "#362178" ))+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       legend.position ="none", #removes legend
-      plot.title = element_text(hjust=0.5))
+      plot.title = element_text(hjust=0.5))+ 
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
+
 
 
 ```
@@ -182,7 +189,7 @@ race_ois<- left_join(stops, race, by ="stop_id")%>%
 
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
-ggplot(race_ois, aes(x = reorder(Race, Percent), y = Percent, fill = Race))+
+ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
   geom_bar(stat = "identity") + #to create barplot
   geom_text(aes(label = paste0(Percent, "%")), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
@@ -191,16 +198,20 @@ ggplot(race_ois, aes(x = reorder(Race, Percent), y = Percent, fill = Race))+
   labs(title = "Officer-Initiated Stops by Race",
        x = "Race",
        y = "Percentage (%)") +
-  scale_fill_manual(values = c("navy", "navy", "navy", "navy", "navy", "navy", "navy"))+
+  scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178"))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
  #sets y-axis labels to be horizontal
       legend.position ="none", #removes legend
       axis.text.y = element_text(angle =0, hjust=1), #Makes y-axis text readable
-      axis.text.x = element_text(angle =0, hjust=0.5))+
-                   #Makes x-axis text readable
-  coord_flip() ##flips coordinates 
-
+      axis.text.x = element_text(angle =0, hjust=0.5)) +
+  theme(axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
+#Makes x-axis text readable
 
 ```
 
@@ -225,8 +236,8 @@ age_ois<- left_join(age, stops, by ="stop_id")%>%
 
 ##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
 
-  ggplot(age_ois, aes(x = Age, y=Percent))+
-      geom_bar( stat = "identity", fill="navy") + #create barchart 
+ggplot(age_ois, aes(x = Age, y=Percent))+
+      geom_bar( stat = "identity", fill="#362178") + #create barchart 
   geom_text(aes( label = paste0(round(Percent, digits=1),"%" ), #round to tenths place within barchart label
                  y= Percent),
             vjust = 1.4, 
@@ -238,8 +249,8 @@ age_ois<- left_join(age, stops, by ="stop_id")%>%
   y = "Percent of Officer-Initiated Stops (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=10), #aesthetics of the barchart
-        strip.background = element_rect(fill = "navy"),
+  theme(axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -277,8 +288,8 @@ gender_recode <- data.frame(
 gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER RECODE TO MAKE ONE DATAFRAME##
 
 ###VISUALIZATION FOR OIS BY PERCEIVED GENDER###
-ggplot(gender_df, aes(x= reorder(value, Percent), y= Percent, fill = value))+
-      geom_bar( stat = "identity", fill="navy") + #create barchart 
+ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+
+      geom_bar( stat = "identity", fill="#362178") + #create barchart 
   geom_text(aes(label = paste0(round(Percent, digits=1),"%"), #round to tenths place within barchart label
                  y= Percent),
             vjust = 1.4, 
@@ -287,16 +298,15 @@ ggplot(gender_df, aes(x= reorder(value, Percent), y= Percent, fill = value))+
              fontface = "bold")+
     labs(title = "Officer-Initiated Stops by Perceived Gender",
       x = "Perceived Gender", #labels
-  y = "Percent of Officer-Initiated Stops (%)")+
+  y = "Percent (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1, size=7), #aesthetics of the barchart
-        strip.background = element_rect(fill = "navy"),
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-panel.background = element_blank())+ 
-coord_flip()
+panel.background = element_blank())
 
 ```
 
