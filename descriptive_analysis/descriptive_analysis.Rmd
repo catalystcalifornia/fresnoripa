@@ -187,6 +187,7 @@ race_ois<- left_join(stops, race, by ="stop_id")%>%
   rename('Race' ='nh_race')%>%
   arrange(-Percent)
 
+race_df <- data.frame()
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
 ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
@@ -223,17 +224,18 @@ Officer-initiated stops by perceived age of persons stopped
 ```{r}
 
 # Calculate the count and rate of officer-initiated stops by age-brackets of person stopped. Use the 'rel_age' table & 'rel_stops'
-age_ois<- left_join(age, stops, by ="stop_id")%>%
-  filter(call_for_service ==0)%>%
-  select(age_group_re)%>% 
-  mutate(Total=n())%>%
-  group_by(age_group_re)%>%
+
+age_ois<- left_join(age, stops, by ="stop_id")%>% #Joined tables 
+  filter(call_for_service ==0)%>% #Filtered for OIS
+  select(age_group_re)%>% # Selected table of interest
+  mutate(Total=n())%>% #To find total number for OIS 
+  group_by(age_group_re)%>% # Grouping by recoded age brackets
   mutate(Count=n(), 
          Percent = round(Count/Total*100, 1))%>%
   slice(1)%>%
   rename('Age' ='age_group_re')%>%
   arrange(-Percent)
-
+age_df <- data.frame()
 ##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
 
 ggplot(age_ois, aes(x = Age, y=Percent))+
@@ -250,7 +252,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
     theme(plot.title = element_text(hjust =0.5),
-  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -280,13 +282,13 @@ Officer-initiated stops by perceived gender of persons stopped
   rename('Gender' ='g_full')%>%
   arrange(-Percent)
 
-##RECODING FOR GENDERSO THAT X-AXIS DISPLAYS GENDERS INSTEAD OF 1:5##
+##RECODING FOR GENDER SO THAT X-AXIS DISPLAYS GENDERS INSTEAD OF 1:5##
 
 gender_recode <- data.frame(
-  value = c("Male", "Female", "Transgender Man/Boy", "Transgender Woman/Girl", "Nonconforming")
-)
+  value = c("Male", "Female", "Transgender Man/Boy", "Transgender Woman/Girl", "Nonconforming"))
 
-gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER RECODE TO MAKE ONE DATAFRAME##
+gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER                                                             RECODE TO MAKE ONE DATAFRAME##
+
 
 ###VISUALIZATION FOR OIS BY PERCEIVED GENDER###
 ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+
@@ -320,10 +322,7 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 # Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
 
-combined_df <- merge(gender_df, race_ois, by = "stop_id", all = TRUE)
-combined_df <- merge(combined_df, age_ois, by = 'stop_id", all = TRUE)
-
-
+ 
 ```
 
 
