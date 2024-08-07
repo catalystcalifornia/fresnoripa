@@ -116,6 +116,7 @@ rate_ois <- stops %>%
 
 
 ###BAR CHART to VISUALIZE RATE OF CALLS FOR SERVICE VS OFFICER INITIATED STOP###
+
 rate_ois <- data.frame( #create df to create a visual later
   Type = c("Officer-Initiated Stop", "Calls for Service"),
   percent = c(94.6, 5.4))
@@ -164,6 +165,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 * In 2022, Fresno PD stopped a total of 5,060 people through Officer-Initiated Stops.
 
+
 ```
 
 # Demographics 
@@ -177,17 +179,16 @@ Officer-initiated stops by perceived race of persons stopped
 # Calculate the count and rate of officer-initiated stops by perceived race of person stopped. Use the 'rel_races_recode' table & 'rel_stops'
 
 ##CALCULATES COUNT AND RATE FOR OIS BY RACE##
-race_ois<- left_join(stops, race, by ="stop_id")%>%
-  filter(call_for_service ==0)%>%
-  select(nh_race)%>% 
+race_ois<- left_join(stops, race, by ="stop_id")%>% #joining tables 
+  filter(call_for_service ==0)%>% #filtering for OIS
+  select(nh_race)%>% # Selecting race column and adding finding the count for each
   mutate(Total=n())%>%
   group_by(nh_race)%>%
-  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% # finding rate and rounding to tenths place
   slice(1)%>%
   rename('Race' ='nh_race')%>%
   arrange(-Percent)
 
-race_df <- data.frame()
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
 ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
@@ -225,18 +226,18 @@ Officer-initiated stops by perceived age of persons stopped
 
 # Calculate the count and rate of officer-initiated stops by age-brackets of person stopped. Use the 'rel_age' table & 'rel_stops'
 
-age_ois<- left_join(age, stops, by ="stop_id")%>% #Joined tables 
+age_ois<- left_join(age, stops, by ="stop_id")%>% #Joined tables
   filter(call_for_service ==0)%>% #Filtered for OIS
   select(age_group_re)%>% # Selected table of interest
   mutate(Total=n())%>% #To find total number for OIS 
   group_by(age_group_re)%>% # Grouping by recoded age brackets
   mutate(Count=n(), 
-         Percent = round(Count/Total*100, 1))%>%
+         Percent = round(Count/Total*100, 1))%>% #Create percentages and rounding them to tenths place
   slice(1)%>%
   rename('Age' ='age_group_re')%>%
   arrange(-Percent)
-age_df <- data.frame()
-##VISUALIZATION FOR RATE OF OIS BY AGE GROUP##
+
+#########VISUALIZATION FOR RATE OF OIS BY AGE GROUP########
 
 ggplot(age_ois, aes(x = Age, y=Percent))+
       geom_bar( stat = "identity", fill="#362178") + #create barchart 
@@ -271,7 +272,7 @@ Officer-initiated stops by perceived gender of persons stopped
 
 # Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
 
-  gender_ois<- left_join(person, stops, by ="stop_id")%>%
+  gender_ois<- left_join(person, stops, by ="stop_id")%>% 
   filter(call_for_service ==0)%>%
   select(g_full)%>% 
   mutate(Total=n())%>%
@@ -290,8 +291,10 @@ gender_recode <- data.frame(
 gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER                                                             RECODE TO MAKE ONE DATAFRAME##
 
 
-###VISUALIZATION FOR OIS BY PERCEIVED GENDER###
-ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+
+#########VISUALIZATION FOR OIS BY PERCEIVED GENDER########
+
+ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+ #'value' comes from adding name of perceived gender and combining it with gender_ois table
+
       geom_bar( stat = "identity", fill="#362178") + #create barchart 
   geom_text(aes(label = paste0(round(Percent, digits=1),"%"), #round to tenths place within barchart label
                  y= Percent),
@@ -318,9 +321,32 @@ panel.background = element_blank())
 
 Rate and count of perceived gender and age of people stopped within each perceived racial group
 
+
 ```{r}
 
 # Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
+
+  age_race_gender_ois<- left_join(age, stops, by ="stop_id")%>% 
+  left_join(race, by =c("stop_id","person_number"))%>%
+  left_join(person%>%mutate(person_number=as.character(person_number)),by =c("stop_id","person_number"))
+
+age_race_gender_ois_table<-age_race_gender_ois%>%
+  filter(call_for_service ==0)%>% #Filtered for OIS
+  group_by(age_group_re)%>%
+  mutate(total_age=n())%>% #To find total number for each age group
+  group_by(age_group_re,nh_race,g_full,total_age)%>% # Grouping by all 3 variables and keeping the total per age group recoded
+  summarise(Count=n(), # count for the age/race/gender combo
+         Percent = round(Count/total_age*100, 1))%>% # percentage for the race/gender combo out of the age category
+  slice(1)
+
+##Visualization for distribution##
+
+ggplot(age_race_gender_ois_table, aes(x = age_group_re, y = Percent, fill = g_full))+
+  geom_bar(stat = "identity") +
+  facet_wrap(vars(nh_race))+
+  theme_minimal()
+
+
 
  
 ```
