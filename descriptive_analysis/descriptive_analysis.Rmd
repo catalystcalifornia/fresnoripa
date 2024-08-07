@@ -341,11 +341,20 @@ age_race_gender_ois_table<-age_race_gender_ois%>%
 
 ##Visualization for distribution##
 
-ggplot(age_race_gender_ois_table, aes(x = age_group_re, y = Percent, fill = g_full))+
-  geom_bar(stat = "identity") +
-  facet_wrap(vars(nh_race))+
-  theme_minimal()
+gender_legend_re <- c("1" = "Male", "2" = "Female", "3" = "Transgender Man", "4"="Transgender Woman", "5"= "Gender Nonconforming")
 
+ggplot(age_race_gender_ois_table, aes(x =nh_race, y = Percent, fill = g_full))+ ##Problem with Graph - clusters the races
+  geom_bar(stat = "identity", position="stack") +
+  facet_wrap(~age_group_re)+
+ labs(x= "Race", y = "Percentage (%)", fill="Gender", title ="Distribution of OIS by Race, Gender, and Age")+
+  scale_fill_manual(values = c("#003f5c", "#05518f", "#565cbb", "#00a2a5", "#00d38c"), labels= gender_legend_re)+
+  theme_minimal()+
+  theme(
+    plot.title= element_text(hjust=0.5),
+    axis.text.x = element_text(angle=90, hjust=0, size=7),
+        strip.text.x = element_text(size=8),
+        strip.text.y = element_text(size=8),
+        panel.spacing = unit(0.5, "lines"))
 
 
  
