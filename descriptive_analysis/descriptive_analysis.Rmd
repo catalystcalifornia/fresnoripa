@@ -129,9 +129,9 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
           size = 3,
           color = "white")+ 
   labs(title = "Nearly 95% of all stops Fresno PD makes are not responding to community calls", 
-       subtitle = "Percentage of police stops by stop-type made by Fresno PD in 2022",
-       x = "Stop Type", #labels to visual
-       y = "Percentage (%)") +
+       subtitle = "Percentage of Police Stops by Stop-Type Made by Fresno PD in 2022",
+       x = "", #labels to visual
+       y = "") +
   scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
       "Calls for Service" = "#362178" ))+
   theme_bw()+
@@ -269,8 +269,8 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
              fontface = "bold")+
     labs(title = "Residents Aged 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
          subtitle= "Officer-Initiated Stops by Age Group",
-      x = "Age Group", #labels
-  y = "Percentage (%)")+
+      x = "", #labels
+  y = "")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
     theme(plot.title = element_text(hjust =0.5, size = 11.5, face="bold"),
@@ -328,14 +328,14 @@ ggplot(gender_ois, aes(x= reorder(Gender, -Percent), y= Percent, fill = Gender))
             color = "white",
              fontface = "bold")+
     labs(title = "Males Account for Nearly 57% of Officer-Initiated Stops",
-         subtitle = "Officer-Initiated Stops by Perceived Gender",
-      x = "Perceived Gender", #labels
-  y = "Percent (%)")+
+         subtitle = "Officer-Initiated Stops by Perceived Gender in 2022",
+      x = "", #labels
+  y = "")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
          plot.subtitle = element_text(hjust=0.5),
-  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
+  axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
