@@ -213,10 +213,10 @@ ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
-  labs(title = "Latinx Residents Make Up More than 50% of Officer-Initiated Stops by Fresno PD",
+  labs(title = "Latinx Residents Make Up More than Half of Officer-Initiated Stops by Fresno PD",
        subtitle = "Percentage of Officer-Initiated Stops by Race",
-       x = "Race",
-       y = "Percentage (%)") +
+       x = "",
+       y = "") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
