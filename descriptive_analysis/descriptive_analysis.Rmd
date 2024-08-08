@@ -233,7 +233,8 @@ panel.background = element_blank())
 ## Age 
 
 Officer-initiated stops by perceived age of persons stopped
-Fresno PD Office-Initiated Stops are=
+
+Individuals aged 25-34 are most likely to experience Officer-Initiated Stops by Fresno PD.
 
 ```{r}
 
