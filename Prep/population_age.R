@@ -25,22 +25,22 @@ con_shared<-connect_to_db("rda_shared_data")
 #####DO NOT RE-RUN just QA the table in postgres: rda_shared_data.acs_5yr_s0101_multigeo_2022 ------------------------
 
 # Source ACS update function because we need to add the most recent S0101 table to demographics.rda_shared_data
-source("W:\\RDA Team\\R\\Github\\RDA Functions\\acs_rda_shared_tables_adds0101.R") ##JZ change filepath when HK updates main function script
+# source("W:\\RDA Team\\R\\Github\\RDA Functions\\acs_rda_shared_tables_adds0101.R") ##JZ change filepath when HK updates main function script
 
 # Script file path, for postgres table comment
-filepath <- "W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\population_age.R"
+# filepath <- "W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\population_age.R"
 
 # Define arguments for ACS table update fx
-yr <- 2022 # update for the ACS data/ZCTA vintage needed
+# yr <- 2022 # update for the ACS data/ZCTA vintage needed
 
 ### If you add a new table, you must also update table_vars below
-rc_acs_indicators <- list(
-  "S0101"   # sex and age
-
-) 
+# rc_acs_indicators <- list(
+#   "S0101"   # sex and age
+# 
+# ) 
 
 ## Run fx to get updates ACS table(s)
-update_acs(yr=yr, acs_tables=rc_acs_indicators,filepath)
+# update_acs(yr=yr, acs_tables=rc_acs_indicators,filepath)
 
 # Analyze age population estimates using updated S0101 table-------------------------
 
@@ -103,27 +103,30 @@ age35_44_moe=moe_sum(estimate=c(age35_39,age40_44),
                       moe=c(age35_39_moe, age40_44_moe)),
 age45_54=sum(age45_49,age50_54),
 age45_54_moe=moe_sum(estimate=c(age45_49,age50_54),
-                     moe=c(age45_49_moe, age50_54_moe))
+                     moe=c(age45_49_moe, age50_54_moe)),
+age55_64=sum(age55_59,age60_64),
+age55_64_moe=moe_sum(estimate=c(age55_59,age60_64),
+                     moe=c(age55_59_moe, age60_64_moe))
 )%>%
    select(name, geoid, total, total_moe, age0_17, age0_17_moe, age18_24, age18_24_moe,
           age25_34, age25_34_moe, age35_44, age35_44_moe, age45_54, age45_54_moe, 
-          age55_59, age55_59_moe, age60_64, age60_64_moe, age65over,   age65over_moe)
+          age55_64, age55_64_moe, age65over,   age65over_moe)
 
 ## pivot table to long format
 
 df_e<-df %>%
-  pivot_longer(3:20, names_to = "variable", values_to = "age")%>%
+  pivot_longer(3:18, names_to = "variable", values_to = "age")%>%
   filter(!grepl("moe", variable))
 
 df_m<-df %>%
-  pivot_longer(3:20, names_to = "variable", values_to = "moe")%>%
+  pivot_longer(3:18, names_to = "variable", values_to = "moe")%>%
   filter(grepl("moe", variable))
 
 df_long<-cbind(df_e, df_m)
 
 df_long<-df_long%>%
   select(1:4, 8)%>%
-  rename("estimate"="age")
+  rename("count"="age")
 
 # recode age variables
 df_long<-df_long%>%
@@ -133,27 +136,27 @@ df_long<-df_long%>%
                                                    ifelse(variable %in% "age25_34", "25-34",
                                                           ifelse(variable %in% "age35_44", "35-44",
                                                                  ifelse(variable %in% "age45_54", "45-54",
-                                                                        ifelse(variable %in% "age55_59", "55-59",
-                                                                               ifelse(variable %in% "age60_64", "60-64",
+                                                                        ifelse(variable %in% "age55_64", "55-64",
                                                                                       ifelse(variable %in% "age65over", "65 and older",
                                                                                                     "NULL"
-                                                                                                    ))))))))))%>%
+                                                                                                    )))))))))%>%
   filter(age_re != "NULL")
                                                                                                            
 # set order of age_re column manually
 
-x <- c("17 and under", "18-24", "25-34","35-44","45-54","55-59","60-64","65 and older","Total")
+x <- c("17 and under", "18-24", "25-34","35-44","45-54","55-64","65 and older","Total")
 
 df_long<-df_long%>%
    mutate(age_re =  factor(age_re, levels = x)) %>%
    arrange(age_re)%>%
    select(-c(variable, geoid))%>%
-   select(name, age_re, estimate, moe)
+   select(name, age_re, count, moe)
 
 # Calculate rates for each age bracket -------------------------
+total<-df_long$count[df_long$age_re=="Total"]
 
 df_long<-df_long%>%
-  mutate(rate=estimate/541528*100)
+  mutate(rate=count/total*100)
          
 # Finalize and push table to postgres --------------------------------
 # set field types for postgresql db
@@ -165,36 +168,36 @@ charvect <- replace(charvect, c(3,4,5), c("numeric"))
 
 names(charvect) <- colnames(df_long)
 
-# dbWriteTable(con,  "population_age_fresno_city", df_long, 
+# dbWriteTable(con,  "population_age_fresno_city", df_long,
 #              overwrite = TRUE, row.names = FALSE, field.types = charvect
 # )
 
 
 # add table comment
-dbSendQuery(con, paste0("comment on table population_age_fresno_city is 
-                        'Population estimates and percentages for Fresno city by age-brackets
-                         See W:\\Project\\eCI\\Fresno RIPA\\R\\Data and Geo Prep\\population_age.R for more info
-                        QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_population_age_fresno_city.docx';"))
+# dbSendQuery(con, paste0("comment on table population_age_fresno_city is 
+#                         'Population estimates and percentages for Fresno city by age-brackets
+#                          See W:\\Project\\eCI\\Fresno RIPA\\R\\Data and Geo Prep\\population_age.R for more info
+#                         QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_population_age_fresno_city.docx';"))
 
-# dbSendQuery(con, paste0("COMMENT ON COLUMN 
+# dbSendQuery(con, paste0("COMMENT ON COLUMN
 #                          population_age_fresno_city.name
-#                          IS 
+#                          IS
 #                          'name of city';
-#                          COMMENT ON COLUMN 
+#                          COMMENT ON COLUMN
 #                          population_age_fresno_city.age_re
 #                          IS 'Recoded age brackets';
-#                          COMMENT ON COLUMN 
-#                          population_age_fresno_city.estimate
-#                          IS 
+#                          COMMENT ON COLUMN
+#                          population_age_fresno_city.count
+#                          IS
 #                          'estimated count of age bracket or total based on city level ACS data';
-#                          COMMENT ON COLUMN 
+#                          COMMENT ON COLUMN
 #                          population_age_fresno_city.moe
-#                          IS 
+#                          IS
 #                          'Margin of error for estimated count of age bracket or total based on city level ACS data';
-#                          COMMENT ON COLUMN 
+#                          COMMENT ON COLUMN
 #                          population_age_fresno_city.rate
-#                          IS 
+#                          IS
 #                          'estimated percent of age bracket (in decimal format) out of total based on city level ACS data';"))
 # 
-
-
+# 
+# 
