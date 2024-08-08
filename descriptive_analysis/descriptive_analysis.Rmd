@@ -186,18 +186,20 @@ race_ois<- left_join(stops, race, by ="stop_id")%>% #joining tables
   group_by(nh_race)%>%
   mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% # finding rate and rounding to tenths place
   slice(1)%>%
-  rename('Race' ='nh_race')%>%
   arrange(-Percent)
 
 ##Recode for Race##
 
-race_ois <- 
-### Flextable for OIS by Race###
-
-flextable(race_ois) %>% 
-  set_caption('Total Count of Officer-Initiated Stops Over Time') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in")
+race_ois <- race_ois %>%
+  mutate(Race = recode(nh_race,
+                         'latinx'= 'Latinx',
+                         'nh_white' = 'White',
+                         'nh_black' = "Black",
+                       'nh_asian' = 'Asian',
+                         'nh_sswana' = 'SSWANA',
+                         'nh_aian' = 'AIAN',
+                         'nh_multiracial' = 'Multiracial',
+                         'nh_nhpi' = 'NHPI'))
 
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
