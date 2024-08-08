@@ -200,12 +200,16 @@ race_ois <- race_ois %>%
                          'nh_aian' = 'AIAN',
                          'nh_multiracial' = 'Multiracial',
                          'nh_nhpi' = 'NHPI'))
+##ADDING TOTAL NUMBER TO LABEL##
+
+race_ois <- race_ois%>%
+  mutate(label = paste0("Total: ", Count, "\n", round(Percent, 1),"%"))
 
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
 ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
   geom_bar(stat = "identity") + #to create barplot
-  geom_text(aes(label = paste0(Percent, "%")), #add percentage labels within the bars
+  geom_text(aes(label = label), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
