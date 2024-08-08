@@ -189,6 +189,9 @@ race_ois<- left_join(stops, race, by ="stop_id")%>% #joining tables
   rename('Race' ='nh_race')%>%
   arrange(-Percent)
 
+##Recode for Race##
+
+race_ois <- 
 ### Flextable for OIS by Race###
 
 flextable(race_ois) %>% 
@@ -262,7 +265,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
   y = "Percentage (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-    theme(plot.title = element_text(hjust =0.5),
+    theme(plot.title = element_text(hjust =0.5, size = 11.5, face="bold"),
           plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
@@ -279,6 +282,8 @@ panel.background = element_blank())
 
 Officer-initiated stops by perceived gender of persons stopped
 
+In the year 2022, Males account for __nearly 57%__ of Officer-Initiated Stops by Fresno PD.
+
 ```{r}
 
 # Calculate people stopped for officer-initiated stop by perceived gender. Use the table 'rel_persons' & 'rel_stops'
@@ -291,21 +296,22 @@ Officer-initiated stops by perceived gender of persons stopped
   mutate(Count=n(), 
          Percent = round(Count/Total*100, 1))%>%
   slice(1)%>%
-  rename('Gender' ='g_full')%>%
   arrange(-Percent)
 
 ##RECODING FOR GENDER SO THAT X-AXIS DISPLAYS GENDERS INSTEAD OF 1:5##
 
-gender_recode <- data.frame(
-  value = c("Male", "Female", "Transgender Man/Boy", "Transgender Woman/Girl", "Nonconforming"))
-
-gender_df <-cbind(gender_ois, gender = gender_recode)##COMBINE GENDER_OIS WITH GENDER                                                             RECODE TO MAKE ONE DATAFRAME##
+gender_ois <- gender_ois %>%
+  mutate(Gender = recode(g_full,
+                         '1'= 'Male',
+                         '2' = 'Female',
+                         '3' = "Transgender Man/Boy",
+                         '4' = 'Transgender Woman/Girl',
+                         '5' = 'Gender Nonconforming'))
 
 
 #########VISUALIZATION FOR OIS BY PERCEIVED GENDER########
 
-ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+ #'value' comes from adding name of perceived gender and combining it with gender_ois table
-
+ggplot(gender_ois, aes(x= reorder(Gender, -Percent), y= Percent, fill = Gender))+
       geom_bar( stat = "identity", fill="#362178") + #create barchart 
   geom_text(aes(label = paste0(round(Percent, digits=1),"%"), #round to tenths place within barchart label
                  y= Percent),
@@ -313,12 +319,14 @@ ggplot(gender_df, aes(x= reorder(value, -Percent), y= Percent, fill = value))+ #
             size =3,
             color = "white",
              fontface = "bold")+
-    labs(title = "Officer-Initiated Stops by Perceived Gender",
+    labs(title = "Males Account for Nearly 57% of Officer-Initiated Stops",
+         subtitle = "Officer-Initiated Stops by Perceived Gender",
       x = "Perceived Gender", #labels
   y = "Percent (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
+         plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
