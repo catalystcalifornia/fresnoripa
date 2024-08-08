@@ -86,6 +86,7 @@ In 2022, __94.6%___ of Fresno Police Department stops were officer initiated sto
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
 
 ###CALCULATE TOTAL OFFICER INITIATED STOPS##
+
 count_ois <- stops %>%  
   filter(call_for_service == 0) %>% #filters for Officer-Initiated Stops
     select(stop_id) %>% 
@@ -94,6 +95,7 @@ count_ois <- stops %>%
            select(-stop_id) 
 
 ###CALCULATE CALLS FOR SERVICE TOTAL###
+
 count_cfs <- stops %>%
   filter(call_for_service == 1) %>% 
     select(stop_id) %>% 
@@ -126,15 +128,17 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size = 3,
           color = "white")+ 
-  labs(title = "Rate of Stop Types (%)", #labels to visual
-       x = "Type of Stop",
+  labs(title = "Nearly 95% of all stops Fresno PD makes are not responding to community calls", 
+       subtitle = "Percentage of police stops by stop-type made by Fresno PD in 2022",
+       x = "Stop Type", #labels to visual
        y = "Percentage (%)") +
   scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
       "Calls for Service" = "#362178" ))+
   theme_bw()+
   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       legend.position ="none", #removes legend
-      plot.title = element_text(hjust=0.5))+ 
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
   theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
@@ -158,9 +162,8 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
   filter(call_for_service ==0)%>%  
     summarise(count=n())%>%
      ungroup()%>%
-       mutate(total=sum(count))%>%
+       mutate(Total=sum(count))%>%
         rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
-
 
 
 ```
@@ -186,6 +189,13 @@ race_ois<- left_join(stops, race, by ="stop_id")%>% #joining tables
   rename('Race' ='nh_race')%>%
   arrange(-Percent)
 
+### Flextable for OIS by Race###
+
+flextable(race_ois) %>% 
+  set_caption('Total Count of Officer-Initiated Stops Over Time') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in")
+
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
 ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
@@ -194,12 +204,14 @@ ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
-  labs(title = "Officer-Initiated Stops by Race",
+  labs(title = "Latinx Residents Make Up More than 50% of Officer-Initiated Stops by Fresno PD",
+       subtitle = "Percentage of Officer-Initiated Stops by Race",
        x = "Race",
        y = "Percentage (%)") +
-  scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178"))+
+  scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
   theme_bw()+
   theme(plot.title = element_text(hjust =0.5),
+        plot.subtitle = element_text(hjust =0.5),
  #sets y-axis labels to be horizontal
       legend.position ="none", #removes legend
       axis.text.y = element_text(angle =0, hjust=1), #Makes y-axis text readable
@@ -244,12 +256,14 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             size =3,
             color = "white",
              fontface = "bold")+
-    labs(title = "Officer-Initiated Stops by Age Group",
+    labs(title = "Residents Aged 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
+         subtitle= "Officer-Initiated Stops by Age Group",
       x = "Age Group", #labels
   y = "Percentage (%)")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
     theme(plot.title = element_text(hjust =0.5),
+          plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
