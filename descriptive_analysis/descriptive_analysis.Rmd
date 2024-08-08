@@ -16,12 +16,10 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
 
-
 list.of.packages <- c("usethis", "highcharter", "tidyverse", "sf", "leaflet", "sp", "htmltools", "magrittr", "flextable", "htmlwidgets")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
-
 
 
 #### Load libraries ####
@@ -80,6 +78,10 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 ## Number and Rate of Officer-Initiated Stops vs. Calls for Service
 
+In 2022, there were 5,317 police stops made by Fresno PD. Of those stops, __5028 were officer-initiated stops__ and __289 were calls for service.__
+
+In 2022, __94.6%___ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
+
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
 
@@ -99,9 +101,6 @@ count_cfs <- stops %>%
        slice(1) %>% 
            select(-stop_id) 
 
-
-
-* In 2022, there were 5,317 police stops made by Fresno PD. Of those stops, 5028 were officer-initiated stops and 289 were calls for service. 
 
 ### CALCULATE THE RATE OF OFFICER INITIATED STOPS AND CALLS FOR SERVICE###
 
@@ -144,13 +143,12 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
 panel.background = element_blank())
 
 
-
 ```
-* In the year 2022, 94.6% of Fresno Police Department stops were officer initiated stops while only 5.4% of stops were calls for service.
 
 
 ## Total number of people stopped 
 
+In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
 ```{r}
 
 # Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
@@ -163,7 +161,6 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
        mutate(total=sum(count))%>%
         rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
 
-* In 2022, Fresno PD stopped a total of 5,060 people through Officer-Initiated Stops.
 
 
 ```
