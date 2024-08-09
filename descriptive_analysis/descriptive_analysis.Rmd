@@ -373,16 +373,51 @@ panel.background = element_blank())
 
 
 ```{r}
-age_race_ois<- left_join(age, stops, by ="stop_id")%>% 
+
+race_age_ois <- left_join(age, stops, by ="stop_id")%>% 
   left_join(race, by =c("stop_id","person_number"))%>%
-    filter(call_for_service ==0)%>% 
-      group_by(age_group_re)%>%
-        mutate(total_age=n())%>%
-             group_by(age_group_re, nh_race)
+  left_join(person%>%mutate(person_number=as.character(person_number)),by =c("stop_id","person_number"))
+
+race_age_ois<-race_age_ois%>%
+  filter(call_for_service ==0)%>% #Filtered for OIS
+  group_by(age_group_re)%>%
+  mutate(total_age=n())%>% #To find total number for each age group
+  group_by(age_group_re,nh_race,total_age)%>% # Grouping by all 3 variables and keeping the total per age group recoded
+  summarise(Count=n(), # count for the age/race combo
+         Percent = round(Count/total_age*100, 1))%>% # percentage for the race combo out of the age category
+  slice(1)
+
+##Clean to make Flextable##
+
+
+race_age_ois <- race_age_ois%>% #Rename column
+  rename('Age Group' = age_group_re, 'Total' = total_age)
 
 
 
+race_age_ois <- race_age_ois %>% #Recode for race
+  mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+      nh_race == 'nh_sswana' ~ 'SSWANA'))
 
+####Deleting nh_race columns to make a cleaner flextable####
+race_age_ois <- race_age_ois[, !names(race_age_ois) %in% c("nh_race")]
+
+#####Reordering columns#####
+race_age_ois <- race_age_ois %>% 
+  select(`Age Group`, Race, everything())
+
+##Flextable for Age Group, Race##
+  flextable(race_age_ois) %>% 
+  set_caption('Officer-Initiated Stops in 2022 by Race and Age') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in")
 
 ```
 ## Race by age and gender
@@ -408,9 +443,9 @@ age_race_gender_ois_table<-age_race_gender_ois%>%
          Percent = round(Count/total_age*100, 1))%>% # percentage for the race/gender combo out of the age category
   slice(1)
 
- 
-#Recode for Race#
-age_race_gender_ois_table <- age_race_gender_ois_table %>%
+ ##Clean to make Flextable##
+
+age_race_gender_ois_table <- age_race_gender_ois_table %>% #Recode for Race#
   mutate(Race = case_when(
     nh_race == 'latinx' ~ "Latinx", 
     nh_race =='nh_white' ~ 'White',
@@ -420,9 +455,9 @@ age_race_gender_ois_table <- age_race_gender_ois_table %>%
     nh_race == 'nh_nhpi' ~ 'NHPI',
     nh_race == 'nh_multiracial' ~ 'Multiracial',
       nh_race == 'nh_sswana' ~ 'SSWANA'))
-##Recode for Gender##
 
-age_race_gender_ois_table <- age_race_gender_ois_table %>%
+
+age_race_gender_ois_table <- age_race_gender_ois_table %>% ##Recode for Gender##
   mutate(Gender = recode(g_full,
                          '1'= 'Male',
                          '2' = 'Female',
@@ -430,14 +465,10 @@ age_race_gender_ois_table <- age_race_gender_ois_table %>%
                          '4' = 'Transgender Woman/Girl',
                          '5' = 'Gender Nonconforming'))
 
-##Cleaning up data for Flextable##
-###Renaming age_group_re column### 
 
-age_race_gender_ois_table <- age_race_gender_ois_table%>%
-  rename('Age Group' = age_group_re)
+age_race_gender_ois_table <- age_race_gender_ois_table%>% ###Renaming columns### 
+  rename('Age Group' = age_group_re, 'Total' = total_age )
 
-age_race_gender_ois_table <- age_race_gender_ois_table%>%
-  rename('Total' = total_age)
 
 ####Deleting nh_race and  g_full columns to make a cleaner flextable####
 age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "g_full")]
