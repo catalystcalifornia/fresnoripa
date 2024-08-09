@@ -389,6 +389,7 @@ age_race_ois<- left_join(age, stops, by ="stop_id")%>%
 
 Rate and count of perceived gender and age of people stopped within each perceived racial group
 
+In 2022, Latinx individuals aged 24-35, both Male and Female, were the most frequently stopped by Fresno PD during Officer-Initiated Stops.
 
 ```{r}
 
@@ -435,8 +436,11 @@ age_race_gender_ois_table <- age_race_gender_ois_table %>%
 age_race_gender_ois_table <- age_race_gender_ois_table%>%
   rename('Age Group' = age_group_re)
 
-####Deleting nh_race , g_full, total_age columns to make a cleaner flextable####
-age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "total_age", "g_full")]
+age_race_gender_ois_table <- age_race_gender_ois_table%>%
+  rename('Total' = total_age)
+
+####Deleting nh_race and  g_full columns to make a cleaner flextable####
+age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "g_full")]
 
 #####Reordering columns#####
 age_race_gender_ois_table <- age_race_gender_ois_table%>% 
