@@ -63,8 +63,8 @@ person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
 race<-dbGetQuery(con, "SELECT * FROM rel_race_recode")
-
-
+actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 
 
 ```
@@ -152,6 +152,7 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 ```
 
+# Traffic Stops
 
 ## Traffic stops by type
 
@@ -164,7 +165,6 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 
 ```
-
 
 ## Citations within equipment/non-moving traffic stops
 
@@ -187,6 +187,7 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 ```
 
+
 # Stop Results
 
 ## Over-all stops by stop result out of all officer-initiated stops
@@ -200,9 +201,55 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 ### Total count/rate out of all officer-initiated stops
 
+```{r, include=FALSE}
+uof<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%left_join(actions)%>%
+    filter(call_for_service==0)
+
+
+df<-uof%>%
+  mutate(total=n())%>%
+  group_by(use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, total, count, rate)
+
+```
+
 ### Total count/rate by stop reason
 
-### By race
+```{r, include=FALSE}
+
+df<-uof%>%
+  left_join(reason)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(use_of_force, stop_reason_simple)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, stop_reason_simple, total, count, rate)
+
+```
+
+### By race / gender
+
+```{r, include=FALSE}
+
+# df_nh<-uof%>%
+#   left_join(race)%>%
+#   group_by(nh_race)%>%
+#     mutate(total=n())%>%
+#   group_by(nh_race, use_of_force)%>%
+#   mutate(count=n(),
+#          rate=count/total*100)%>%
+#   slice(1)%>%
+#   select(nh_race, use_of_force, total, count, rate)
+
+
+```
 
 ## Field Interview (FI) Card
 
