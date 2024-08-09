@@ -179,35 +179,60 @@ Officer-Initiated Stops by the Fresno Police Department disproportionately targe
 # Calculate the count and rate of officer-initiated stops by perceived race of person stopped. Use the 'rel_races_recode' table & 'rel_stops'
 
 ##CALCULATES COUNT AND RATE FOR OIS BY RACE##
-race_ois<- left_join(stops, race, by ="stop_id")%>% #joining tables 
-  filter(call_for_service ==0)%>% #filtering for OIS
-  select(nh_race)%>% # Selecting race column and adding finding the count for each
+
+df_race <-  left_join(stops, race, by ="stop_id")%>% #joining tables 
+  filter(call_for_service ==0)
+
+
+df_nh <- df_race %>% ##creates df for nh_race
+  select(nh_race)%>% 
   mutate(Total=n())%>%
   group_by(nh_race)%>%
-  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% # finding rate and rounding to tenths place
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
   slice(1)%>%
   arrange(-Percent)
 
-##Recode for Race##
+df_sswana <- df_race %>% #creates df for sswana
+  mutate(Total=n())%>%
+  group_by(sswana_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(sswana_label, Total, Count, Percent)
+  
+final_race <- rbind(df_nh, df_sswana) ##combines nh_race and sswana
 
-race_ois <- race_ois %>%
-  mutate(Race = recode(nh_race,
-                         'latinx'= 'Latinx',
-                         'nh_white' = 'White',
-                         'nh_black' = "Black",
-                       'nh_asian' = 'Asian',
-                         'nh_sswana' = 'SSWANA',
-                         'nh_aian' = 'AIAN',
-                         'nh_multiracial' = 'Multiracial',
-                         'nh_nhpi' = 'NHPI'))
+final_race <- final_race[-c(4,9),] ##deletes nh_sswana and not_sswana rows
+
+
+
+##Recode for nh_race since there was no value for SSWANA in nh_race after deleting the other SSWANA and not_sswana rows##
+
+final_race <- final_race %>%
+  mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+    is.na(nh_race) ~ 'SSWANA', 
+    TRUE ~ as.character(nh_race)))
+    
+                      
+                
+                        
+
 ##ADDING TOTAL NUMBER TO LABEL##
 
-race_ois <- race_ois%>%
+final_race <- final_race%>%
   mutate(label = paste0("Total: ", Count, "\n", round(Percent, 1),"%"))
 
 ##VISUALIZATION FOR RATE OF OIS BY RACE ##
 
-ggplot(race_ois, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
+ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
   geom_bar(stat = "identity") + #to create barplot
   geom_text(aes(label = label), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
@@ -357,34 +382,30 @@ Rate and count of perceived gender and age of people stopped within each perceiv
   left_join(race, by =c("stop_id","person_number"))%>%
   left_join(person%>%mutate(person_number=as.character(person_number)),by =c("stop_id","person_number"))
 
+age_race_gender_table <-age_race_gender_ois%>%
+    filter(call_for_service ==0)%>% #Filtered for OIS
+  group_by(age_group_re)%>%
+
+
+final_sswana <- age_race_gender_table %>% #creates df for sswana ###WORK IN PROGRESS
+  mutate(Total=n())%>%
+  group_by(sswana_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(age_group_re, sswana_label, Total, Count, Percent)
+
+
 age_race_gender_ois_table<-age_race_gender_ois%>%
   filter(call_for_service ==0)%>% #Filtered for OIS
   group_by(age_group_re)%>%
   mutate(total_age=n())%>% #To find total number for each age group
-  group_by(age_group_re,nh_race,g_full,total_age)%>% # Grouping by all 3 variables and keeping the total per age group recoded
+  group_by(age_group_re, nh_race,g_full,total_age, sswana_flag, sswana_label)%>% # Grouping by all 3 variables and keeping the total per age group recoded
   summarise(Count=n(), # count for the age/race/gender combo
          Percent = round(Count/total_age*100, 1))%>% # percentage for the race/gender combo out of the age category
   slice(1)
 
-##Visualization for distribution##
-
-gender_legend_re <- c("1" = "Male", "2" = "Female", "3" = "Transgender Man", "4"="Transgender Woman", "5"= "Gender Nonconforming")
-
-ggplot(age_race_gender_ois_table, aes(x =nh_race, y = Percent, fill = g_full))+ ##Problem with Graph - clusters the races
-  geom_bar(stat = "identity", position="stack") +
-  facet_wrap(~age_group_re)+
- labs(x= "Race", y = "Percentage (%)", fill="Gender", title ="Distribution of OIS by Race, Gender, and Age")+
-  scale_fill_manual(values = c("#003f5c", "#05518f", "#565cbb", "#00a2a5", "#00d38c"), labels= gender_legend_re)+
-  theme_minimal()+
-  theme(
-    plot.title= element_text(hjust=0.5),
-    axis.text.x = element_text(angle=90, hjust=0, size=7),
-        strip.text.x = element_text(size=8),
-        strip.text.y = element_text(size=8),
-        panel.spacing = unit(0.5, "lines"))
-
-
- 
 ```
 
 
