@@ -1,4 +1,4 @@
-###Data Prep: Recode race/ethnicity categories from RIPA data t conform with RDA race category standards.
+###Data Prep: Recode race/ethnicity categories from RIPA data to conform with RDA race category standards.
 ###Create AIAN/NHPI/SSWANA flag that defines AIAN/NHPI/SSWANA as alone or in combination with any other race
 
 
@@ -38,19 +38,19 @@ table(race$race_count_re) # Max count is 3 perceived races
 
 # Exploring the records where multiracial=1
 
-multi<-race%>%filter(rae_multiracial==1) # 13/18 of the multiracial records include latinx. Thinking we should recode those as latinx, and the remaining 15 records as multiracial
+multi<-race%>%filter(rae_multiracial==1) # 13/18 of the multiracial records include latinx. Thinking we should recode those as latinx, and the remaining 5 records as multiracial
 
 
 #### RECODE racial groups ####
 
 race<-race%>%
-  mutate(nh_race=ifelse( rae_asian==1 & rae_hispanic_latino==0, 'nh_asian',
-                        ifelse(rae_black_african_american	==1 & rae_hispanic_latino==0, 'nh_black',
-                               ifelse(rae_middle_eastern_south_asian==1 & rae_hispanic_latino==0,  'nh_sswana',
-                                      ifelse(rae_native_american==1 & rae_hispanic_latino==0,'nh_aian',
-                                             ifelse(rae_pacific_islander==1 & rae_hispanic_latino==0,'nh_nhpi',
-                                                    ifelse(rae_white==1 & rae_hispanic_latino==0, 'nh_white', 
-                                                           ifelse(rae_multiracial==1 & rae_hispanic_latino==0, 'multiracial', 
+  mutate(nh_race=ifelse( rae_asian==1 & rae_hispanic_latino==0 & rae_multiracial==0, 'nh_asian', # nh groups where hispanic/latino is 0 and NOT multiracial
+                        ifelse(rae_black_african_american	==1 & rae_hispanic_latino==0 & rae_multiracial==0, 'nh_black',
+                               ifelse(rae_middle_eastern_south_asian==1 & rae_hispanic_latino==0 & rae_multiracial==0,  'nh_sswana',
+                                      ifelse(rae_native_american==1 & rae_hispanic_latino==0 & rae_multiracial==0,'nh_aian',
+                                             ifelse(rae_pacific_islander==1 & rae_hispanic_latino==0 & rae_multiracial==0,'nh_nhpi',
+                                                    ifelse(rae_white==1 & rae_hispanic_latino==0 & rae_multiracial==0, 'nh_white', 
+                                                           ifelse(rae_multiracial==1 & rae_hispanic_latino==0, 'nh_multiracial', 
                                                            'latinx'))))))))%>%
   mutate(sswana_flag=ifelse(nh_race %in% 'nh_sswana', 1,0),
          sswana_label=ifelse(sswana_flag %in% 1, 'sswana', 
@@ -123,7 +123,7 @@ COMMENT ON COLUMN rel_races_recode.nhpi_flag IS 'Native Hawaiian/Pacific Islande
 COMMENT ON COLUMN rel_races_recode.nhpi_label IS 'Native Hawaiian/Pacific Islander Alone or in Combination label originally in data as Pacific Islander';")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# dbSendQuery(conn = con, table_comment)
 
 # add indices
 

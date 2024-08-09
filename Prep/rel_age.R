@@ -33,14 +33,13 @@ age<-age%>%
                                     ifelse(age>=25 & age <= 34, "25-34",
                                            ifelse(age>=35 & age <=44, "35-44",
                                                   ifelse(age>=45 & age <=54, "45-54",
-                                                         ifelse(age>=55 & age <=59,"55-59",
-                                                                ifelse(age>=60 & age <=64,"60-64",
-                                                                "65 and older"))))))))%>%
+                                                         ifelse(age>=55 & age <=64,"55-64",
+                                                                "65 and older")))))))%>%
   select(-age_group)
 
 # set order of the age_group_re column
 
-x <- c("17 and under", "18-24", "25-34","35-44","45-54","55-59","60-64","65 and older","Total")
+x <- c("17 and under", "18-24", "25-34","35-44","45-54","55-64","65 and older")
   
 
 age<-age%>%
@@ -58,10 +57,10 @@ names(charvect) <- colnames(age)
 
 ##### Export Data #####
 
-# dbWriteTable(con,  "rel_age", age, 
+# dbWriteTable(con,  "rel_age", age,
 #              overwrite = TRUE, row.names = FALSE,
 #              field.types = charvect)
-
+# 
 
 # write comment to table, and column metadata
 
