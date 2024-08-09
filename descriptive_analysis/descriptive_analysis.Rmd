@@ -146,11 +146,27 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 ```{r}
 
-# Total count and rates of officer-initiated stops by stop reason. Officer-initiated stops is the denominator. 
+# Total count and rates of officer-initiated stops by stop reason. Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_reason 
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
+
+
+```
+
+# Stop Results 
+
+## Over-all stops by stop result out of all officer-initiated stops
+
+```{r}
+
+# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
 
 
 
 ```
+
 
 # Traffic Stops
 
@@ -162,11 +178,38 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 #Denominator is out of all officer-initiated traffic stops. 
 
+# Create universe of traffic stops for all traffic analyses (person level)
 
+# person level traffic universe:
 
+traffic<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%
+  left_join(person_reason, by =c("stop_id","person_number"))%>%
+  filter(call_for_service==0 & reason=='Traffic violation')%>% # keep only officer-initiated stops and traffic violations
+  select(stop_id, person_number, reason, g_full, reason, traffic_violation_type, rfs_traffic_violation_type.x, rfs_traffic_violation_code.x )
+ 
+# remove the .x from colunm names
+
+names(traffic) <- gsub(x = names(traffic), pattern = "\\.x", replacement = "")  
+
+# Analyses for traffic stop types
+
+df<-traffic%>%
+  mutate(total=n())%>%
+  group_by(traffic_violation_type)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(traffic_violation_type, total, count,rate)%>%
+  arrange(-rate)
+  
+  
+  
+  
 ```
 
-## Citations within equipment/non-moving traffic stops
+### Citations within equipment/non-moving traffic stops
 
 ```{r}
 
@@ -178,7 +221,24 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 ```
 
-## Traffic stops that result in a citation for driving without a license
+## Traffic stops by result
+
+```{r}
+# count and rates
+
+```
+
+
+### Traffic citations as stop result
+
+```{r}
+
+# Total count/rate of each citation out of all traffic stops
+
+```
+
+
+### Traffic stops that result in a citation for driving without a license
 
 ```{r}
 
@@ -188,25 +248,21 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 ```
 
 
-# Stop Results
-
-## Over-all stops by stop result out of all officer-initiated stops
-
-## Traffic Citations as Stop Result
-
-### Total count/rate of each citation out of all officer-initiated stops
-
 
 ## Use of Force
 
 ### Total count/rate out of all officer-initiated stops
 
-```{r, include=FALSE}
+```{r}
+
+# Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
+
 uof<-person%>%
   mutate(person_number=as.character(person_number))%>%
   left_join(stops)%>%left_join(actions)%>%
     filter(call_for_service==0)
 
+# Analysis
 
 df<-uof%>%
   mutate(total=n())%>%
@@ -216,11 +272,21 @@ df<-uof%>%
   slice(1)%>%
   select(use_of_force, total, count, rate)
 
+#create and style flextable
+
+  flextable(df) %>% 
+colformat_double(j = c("rate"), digits = 1)%>% 
+  set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
+  theme_vanilla() %>%
+  width(j=2,2.5,unit="in")
+
 ```
 
 ### Total count/rate by stop reason
 
-```{r, include=FALSE}
+All incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+
+```{r}
 
 df<-uof%>%
   left_join(reason)%>%
@@ -232,21 +298,37 @@ df<-uof%>%
   slice(1)%>%
   select(use_of_force, stop_reason_simple, total, count, rate)
 
+
+
 ```
 
 ### By race / gender
 
 ```{r, include=FALSE}
 
-# df_nh<-uof%>%
-#   left_join(race)%>%
-#   group_by(nh_race)%>%
-#     mutate(total=n())%>%
-#   group_by(nh_race, use_of_force)%>%
-#   mutate(count=n(),
-#          rate=count/total*100)%>%
-#   slice(1)%>%
-#   select(nh_race, use_of_force, total, count, rate)
+df_nh<-uof%>%
+  left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, use_of_force, total, count, rate)%>%
+  arrange(-rate)
+
+df_gender<-uof%>%
+    left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, g_full, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, g_full, use_of_force, total, count, rate)%>%
+  arrange(nh_race, -rate)
 
 
 ```
