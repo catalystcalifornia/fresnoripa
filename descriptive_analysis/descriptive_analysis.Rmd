@@ -23,7 +23,6 @@ if(length(new.packages)) install.packages(new.packages)
 
 
 #### Load libraries ####
-library(usethis)
 library(highcharter)
 library(tidyverse)
 library(sf)
@@ -238,7 +237,7 @@ ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
-  labs(title = "Latinx Residents Make Up More than Half of Officer-Initiated Stops by Fresno PD",
+  labs(title = "Latinx Individuals Make Up More than Half of Officer-Initiated Stops by Fresno PD",
        subtitle = "Percentage of Officer-Initiated Stops by Race",
        x = "",
        y = "") +
@@ -293,7 +292,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             color = "white",
              fontface = "bold")+
     labs(title = "Residents Aged 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
-         subtitle= "Officer-Initiated Stops by Age Group",
+         subtitle= "Percentage of Officer-Initiated Stops by Age Group",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
@@ -302,7 +301,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
           plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=10, face="bold"),
+        strip.text = element_text(color = "white", size=10),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())
@@ -369,6 +368,23 @@ panel.background = element_blank())
 
 ```
 
+
+## Race by age 
+
+
+```{r}
+age_race_ois<- left_join(age, stops, by ="stop_id")%>% 
+  left_join(race, by =c("stop_id","person_number"))%>%
+    filter(call_for_service ==0)%>% 
+      group_by(age_group_re)%>%
+        mutate(total_age=n())%>%
+             group_by(age_group_re, nh_race)
+
+
+
+
+
+```
 ## Race by age and gender
 
 Rate and count of perceived gender and age of people stopped within each perceived racial group
@@ -378,34 +394,61 @@ Rate and count of perceived gender and age of people stopped within each perceiv
 
 # Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
 
-  age_race_gender_ois<- left_join(age, stops, by ="stop_id")%>% 
+age_race_gender_ois<- left_join(age, stops, by ="stop_id")%>% 
   left_join(race, by =c("stop_id","person_number"))%>%
   left_join(person%>%mutate(person_number=as.character(person_number)),by =c("stop_id","person_number"))
-
-age_race_gender_table <-age_race_gender_ois%>%
-    filter(call_for_service ==0)%>% #Filtered for OIS
-  group_by(age_group_re)%>%
-
-
-final_sswana <- age_race_gender_table %>% #creates df for sswana ###WORK IN PROGRESS
-  mutate(Total=n())%>%
-  group_by(sswana_flag)%>%
-  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
-  slice(1)%>%
-  arrange(-Percent)%>%
-  ungroup()%>%
-  select(age_group_re, sswana_label, Total, Count, Percent)
-
 
 age_race_gender_ois_table<-age_race_gender_ois%>%
   filter(call_for_service ==0)%>% #Filtered for OIS
   group_by(age_group_re)%>%
   mutate(total_age=n())%>% #To find total number for each age group
-  group_by(age_group_re, nh_race,g_full,total_age, sswana_flag, sswana_label)%>% # Grouping by all 3 variables and keeping the total per age group recoded
+  group_by(age_group_re,nh_race,g_full,total_age)%>% # Grouping by all 3 variables and keeping the total per age group recoded
   summarise(Count=n(), # count for the age/race/gender combo
          Percent = round(Count/total_age*100, 1))%>% # percentage for the race/gender combo out of the age category
   slice(1)
 
+ 
+#Recode for Race#
+age_race_gender_ois_table <- age_race_gender_ois_table %>%
+  mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+      nh_race == 'nh_sswana' ~ 'SSWANA'))
+##Recode for Gender##
+
+age_race_gender_ois_table <- age_race_gender_ois_table %>%
+  mutate(Gender = recode(g_full,
+                         '1'= 'Male',
+                         '2' = 'Female',
+                         '3' = "Transgender Man/Boy",
+                         '4' = 'Transgender Woman/Girl',
+                         '5' = 'Gender Nonconforming'))
+
+##Cleaning up data for Flextable##
+###Renaming age_group_re column### 
+
+age_race_gender_ois_table <- age_race_gender_ois_table%>%
+  rename('Age Group' = age_group_re)
+
+####Deleting nh_race , g_full, total_age columns to make a cleaner flextable####
+age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "total_age", "g_full")]
+
+#####Reordering columns#####
+age_race_gender_ois_table <- age_race_gender_ois_table%>% 
+  select(`Age Group`, Race, Gender, everything())
+
+##Flextable for Age Group, Race, and Gender##
+  flextable(age_race_gender_ois_table) %>% 
+  set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in")
+
+    
 ```
 
 
