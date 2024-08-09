@@ -152,6 +152,7 @@ panel.background = element_blank())
 ## Total number of people stopped 
 
 In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
+
 ```{r}
 
 # Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
@@ -171,7 +172,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Race
 
-Officer-Initiated Stops by the Fresno Police Department disproportionately target Latinx residents.  
+Officer-Initiated Stops by the Fresno Police Department __disproportionately target Latinx residents.__  
 
 ```{r}
 
@@ -371,6 +372,10 @@ panel.background = element_blank())
 
 ## Race by age 
 
+In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the Officer-Initiated Stops by Fresno PD.
+
+
+In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped   during Officer-Initiated Stops by Fresno PD.
 
 ```{r}
 
