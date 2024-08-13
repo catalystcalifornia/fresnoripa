@@ -496,10 +496,35 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 ## Total counts and rates
 
+The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, __Over 99%__ of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
+
 ```{r}
 
 # Total count and rates of officer-initiated stops by stop reason. Officer-initiated stops is the denominator. 
 
+##Create df of all officer-initiated stops w/ stop reason variables##
+ois_reason <- left_join(stops, person_reason, by ="stop_id")%>%
+  filter(call_for_service ==0) %>%
+  select(stop_id, reason, everything())
+
+##Create df with rates and counts by stop reason##
+count_ois_reason <- ois_reason %>%
+  group_by(reason) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+    arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
+  rename('Reported Stop Reason' = reason, 
+         '# of Stops' = Count, 
+         '% of All Stops' = Percent) %>%
+     mutate(`% of All Stops` = sprintf("%.2f%%", `% of All Stops`))
+
+##Flextable for counts and rates of stop reasons##
+  flextable(count_ois_reason) %>% 
+  set_caption('Reasons for Officer-Initiated Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
 
 
 ```
@@ -507,18 +532,48 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 ## Traffic stops by type
 
+Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations.
+
 ```{r}
 
 # Total count and rates of traffic stops by each traffic stop type: 1 Moving; 2 Equipment; 3 Nonmoving; Blank. 
 
 #Denominator is out of all officer-initiated traffic stops. 
 
+##Filter out non-traffic violation stops##
+tv_reason <- ois_reason %>%
+  filter(reason == "Traffic violation")
 
+##Create df with count and rates for different traffic stop types##
+ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
+  geom_text(
+    aes(label = case_when(
+      traffic_violation_type == "Equipment" ~ paste(Count, "stops (15%)"),
+      traffic_violation_type == "Moving" ~ paste(Count, "stops (77%)"),
+      traffic_violation_type == "Non-moving" ~ paste(Count, "stops (8%)")
+    )),
+    vjust = 1.2, color = "white", size = 4) +
+  labs(
+    title = "Fresno PD Traffic Violation Stops by Type (2022)",
+    x = "Traffic Violation Type",
+    y = "% of All Stops for Traffic Violations") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
+                               size = 12,
+                               margin = margin(t = 2)),
+    axis.text.y = element_text(size = 12),
+    legend.position = "none") +
+  scale_y_continuous(limits = c(0, 100))
 
 ```
 
 
 ## Citations within equipment/non-moving traffic stops
+
+Over 50% of the non-moving or equipment-related traffic citations issued by Fresno PD in 2022 were for vehicles with obstructed windows or improper registration.
 
 ```{r}
 
@@ -526,16 +581,62 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 # Use table 'rel_persons_reason' and the column 'rfs_traffic_violation_code.' You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"  
 
+##Filter out moving traffic stops from data set##
+tv_nonmove_reason <- tv_reason %>%
+  filter(traffic_violation_type != "Moving")
 
+##Create data frame with counts/rates for 50 most frequent citations##
+tv_citation_count <- tv_nonmove_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count))
+
+##Create data frame for table visualization with top 10 citations##
+tv_citation_flex <- tv_citation_count[1:10, ] %>%
+  mutate('Traffic Violation' = case_when(
+    rfs_traffic_violation_code == "54571" ~ "Obstructed window/mirrors", 
+    rfs_traffic_violation_code == "54657" ~ "Unregistered vehicle",
+    rfs_traffic_violation_code == "54644" ~ "License plates improperly displayed",
+    rfs_traffic_violation_code == "54099" ~ "Unregistered vehicle in public parking facility",
+    rfs_traffic_violation_code == "54109" ~ "Improper vehicle lighting",
+    rfs_traffic_violation_code == "54168" ~ "Expired registration",
+    rfs_traffic_violation_code == "54116" ~ "Inadequate mufflers",
+    rfs_traffic_violation_code == "54141" ~ "Improper bicycle lighting",
+    rfs_traffic_violation_code == "54110" ~ "License plate not illuminated",
+    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding discriptions of violation indicated by citation code 
+  select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
+  rename(
+    `% of Total Equipment/Non-moving Traffic Violations` = Percent,
+    `# of Times Cited` = Count) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Equipment/Non-moving Traffic Violations` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Violations`)) %>% #Improving display of percentages for table
+  select(2:4) # Hiding citation codes for table
+  
+##Create Flex table##
+  flextable(tv_citation_flex) %>% 
+  set_caption('Fresno PD Equipment and Non-moving Traffic Citations Issued (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+    
 
 ```
 
 ## Traffic stops that result in a citation for driving without a license
 
+The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+
 ```{r}
 
 # Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
 
+##Get count for how many citations there were for driving w/o license##
+noDL_count <- tv_reason %>%
+  filter(                         #All citation codes for driving w/o license
+    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  summarise(count = n())
+print(noDL_count)
 
 ```
 
