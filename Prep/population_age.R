@@ -25,7 +25,7 @@ con_shared<-connect_to_db("rda_shared_data")
 #####DO NOT RE-RUN just QA the table in postgres: rda_shared_data.acs_5yr_s0101_multigeo_2022 ------------------------
 
 # Source ACS update function because we need to add the most recent S0101 table to demographics.rda_shared_data
-# source("W:\\RDA Team\\R\\Github\\RDA Functions\\acs_rda_shared_tables_adds0101.R") ##JZ change filepath when HK updates main function script
+# source("W:\\RDA Team\\R\\Github\\RDA Functions\\main\\RDA-Functions\\acs_rda_shared_tables.R") 
 
 # Script file path, for postgres table comment
 # filepath <- "W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\population_age.R"
