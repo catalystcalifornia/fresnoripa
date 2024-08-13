@@ -551,6 +551,25 @@ Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which re
 
 ```{r}
 
+# JZ code chunk for prep
+
+### Create traffic violation universe at person level
+
+traffic<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%
+  left_join(person_reason, by =c("stop_id","person_number"))%>%
+  filter(call_for_service==0 & reason=='Traffic violation')%>% # keep only officer-initiated stops and traffic violations
+  select(stop_id, person_number, reason, g_full, reason, traffic_violation_type, rfs_traffic_violation_type.x, rfs_traffic_violation_code.x )
+ 
+# remove the .x from colunm names
+
+names(traffic) <- gsub(x = names(traffic), pattern = "\\.x", replacement = "")  
+
+```
+
+```{r}
+
 # Total count and rates of traffic stops by each traffic stop type: 1 Moving; 2 Equipment; 3 Nonmoving; Blank. 
 
 #Denominator is out of all officer-initiated traffic stops. 
@@ -560,7 +579,7 @@ tv_reason <- ois_reason %>%
   filter(reason == "Traffic violation")
 
 ##Create df with count and rates for different traffic stop types##
-ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
+ggplot(tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
   geom_text(
