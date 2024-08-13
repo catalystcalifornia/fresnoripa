@@ -419,6 +419,7 @@ race_age_ois <- race_age_ois %>%
   width(width=2,unit="in")
 
 ```
+
 ## Race by age and gender
 
 Rate and count of perceived gender and age of people stopped within each perceived racial group
@@ -771,7 +772,6 @@ noDL_count <- tv_reason %>%
 print(noDL_count)
 
 ```
-
 
 
 #### By Race
