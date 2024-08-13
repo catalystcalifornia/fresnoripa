@@ -573,6 +573,8 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
 
 ## Citations within equipment/non-moving traffic stops
 
+Over 50% of the non-moving or equipment-related traffic citations issued by Fresno PD in 2022 were for vehicles with obstructed windows or improper registration.
+
 ```{r}
 
 # This can be a table looking at the top 50 citations within non-moving/equipment traffic stop types. Denominator is non-moving/equipment traffic stops
@@ -623,10 +625,18 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ## Traffic stops that result in a citation for driving without a license
 
+The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+
 ```{r}
 
 # Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
 
+##Get count for how many citations there were for driving w/o license##
+noDL_count <- tv_reason %>%
+  filter(                         #All citation codes for driving w/o license
+    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  summarise(count = n())
+print(noDL_count)
 
 ```
 
