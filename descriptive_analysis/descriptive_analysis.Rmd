@@ -521,6 +521,8 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 ## Traffic stops by type
 
+Out of all officer-initiated traffic stops made by Fresno PD, 77.2% (3,876) are moving violations, 14.8% (741) are equipment violations, and 8.1% (406) are non-moving violations. 
+
 ```{r}
 
 # Total count and rates of traffic stops by each traffic stop type: 1 Moving; 2 Equipment; 3 Nonmoving; Blank. 
@@ -552,13 +554,14 @@ df<-traffic%>%
   slice(1)%>%
   select(traffic_violation_type, total, count,rate)%>%
   arrange(-rate)
+
   
   
   
   
 ```
 
-### Citations within equipment/non-moving traffic stops
+### Stop reasons within equipment/non-moving traffic stops
 
 ```{r}
 
@@ -566,14 +569,106 @@ df<-traffic%>%
 
 # Use table 'rel_persons_reason' and the column 'rfs_traffic_violation_code.' You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"  
 
+df<-traffic%>%
+  left_join(codes, by=c("rfs_traffic_violation_code"="offense_code")) # get offense codes
+
+# analyze
+
+df<-df%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  group_by(traffic_violation_type, rfs_traffic_violation_code)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(traffic_violation_type, rfs_traffic_violation_code, statute_literal_25, total, count,rate)%>%
+  arrange(traffic_violation_type, -rate)%>%
+  group_by(traffic_violation_type)%>%
+   slice(1:3)
+
+#create and style flextable-----------
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+df<-df%>%
+  rename("Statute"="Statute Literal 25")
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Top 3 Reasons for an Officer-Initiated Traffic Stop by Traffic Stop Type') %>%
+  theme_vanilla() %>%
+  width(j=3,2,unit="in")
+
+
+
 
 
 ```
 
-## Traffic stops by result
+## Traffic stops by result of stop
+
+Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
 ```{r}
-# count and rates
+
+# read in table
+
+person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
+
+# join to person-level traffic universe and analyze
+
+df<-traffic%>%
+  left_join(person_result)%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  group_by(traffic_violation_type, stop_result_simple)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(traffic_violation_type, stop_result_simple, total, count,rate)%>%
+  arrange(traffic_violation_type, -rate)%>%
+  group_by(traffic_violation_type)%>%
+   slice(1:3)
+
+## ggplot?-----------
+  
+
+ggplot(df, aes(x = stop_result_simple, y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
+  labs(title = "Most Officer-Initiated Traffic Stops Result in a Citation", 
+       subtitle = "Top three most common stop results for officer-initiated traffic stops by traffic-stop type",
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+     facet_grid(. ~ traffic_violation_type)
+
+
+#create and style flextable-----------
+
+# names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+# 
+#   flextable(df) %>%
+# colformat_double(j = c("Rate"), digits = 1)%>%
+#   set_caption('Top 3 Results of Officer-Initiated Traffic Stops by Traffic Stop Type') %>%
+#   theme_vanilla() %>%
+#   width(j=2,2,unit="in")
+#   
+
+  
 
 ```
 
@@ -584,6 +679,47 @@ df<-traffic%>%
 
 # Total count/rate of each citation out of all traffic stops
 
+# read in traffic citations table at person level
+citation_result<-dbGetQuery(con, "SELECT * FROM rel_persons_citations")
+
+# read in offense codes
+codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
+
+# join to our traffic universe 
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))
+
+# analyze
+
+df<-df%>%
+  select(offense_code)%>%
+  mutate(total=n())%>%
+  group_by(offense_code)%>%
+mutate(count=n(),
+       rate=count/total*100)%>%
+  slice(1)%>%
+  arrange(-rate)%>%
+  head(7)%>%
+  left_join(codes)%>% # join additional info on offense codes
+select(1,6,8,2,3,4)
+
+
+#create and style flextable
+
+names(df)<-tools::toTitleCase(sub("_"," ",names(df))) # clean up column names for table
+
+df<-df%>%
+  rename("Statute"="Statute Literal_25")
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Most Common Citations that resulted from an Officer-Initiated Traffic Stop') %>%
+  theme_vanilla() %>%
+  width(j=3,2.5,unit="in")
+
+
 ```
 
 
@@ -593,16 +729,72 @@ df<-traffic%>%
 
 # Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
 
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(codes, by=c("offense_code"="offense_code"))%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  filter(offense_statute=="12500(A)")%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(traffic_violation_type, offense_statute, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+# create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+
+df<-df%>%
+  rename("Statute"="Statute Literal 25")
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Traffic Stops Resulting in Driving without License Citation by Stop Type') %>%
+  theme_vanilla() %>%
+  width(j=3,2,unit="in")
+
 
 ```
 
+
+
+#### By Race
+
+```{r}
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(codes, by=c("offense_code"="offense_code"))%>%
+  filter(offense_statute=="12500(A)")%>%
+  mutate(total=n())%>%
+  left_join(race)%>%
+  group_by(nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(nh_race, offense_statute, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+
+
+```
 
 
 ## Use of Force
 
 ### Total count/rate out of all officer-initiated stops
 
+Out of all officer-initiated stops made by Fresno PD, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
+
 ```{r}
+
+# read in postgres tables:
+actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 
 # Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
 
@@ -623,11 +815,11 @@ df<-uof%>%
 
 #create and style flextable
 
-  flextable(df) %>% 
-colformat_double(j = c("rate"), digits = 1)%>% 
-  set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
-  theme_vanilla() %>%
-  width(j=2,2.5,unit="in")
+#   flextable(df) %>% 
+# colformat_double(j = c("rate"), digits = 1)%>% 
+#   set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
+#   theme_vanilla() %>%
+#   width(j=2,2.5,unit="in")
 
 ```
 
