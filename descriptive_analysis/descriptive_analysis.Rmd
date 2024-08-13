@@ -496,10 +496,35 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 ## Total counts and rates
 
+The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, __Over 99%__ of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
+
 ```{r}
 
 # Total count and rates of officer-initiated stops by stop reason. Officer-initiated stops is the denominator. 
 
+##Create df of all officer-initiated stops w/ stop reason variables##
+ois_reason <- left_join(stops, person_reason, by ="stop_id")%>%
+  filter(call_for_service ==0) %>%
+  select(stop_id, reason, everything())
+
+##Create df with rates and counts by stop reason##
+count_ois_reason <- ois_reason %>%
+  group_by(reason) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+    arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
+  rename('Reported Stop Reason' = reason, 
+         '# of Stops' = Count, 
+         '% of All Stops' = Percent) %>%
+     mutate(`% of All Stops` = sprintf("%.2f%%", `% of All Stops`))
+
+##Flextable for counts and rates of stop reasons##
+  flextable(count_ois_reason) %>% 
+  set_caption('Reasons for Officer-Initiated Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
 
 
 ```
@@ -507,13 +532,41 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 ## Traffic stops by type
 
+Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations.
+
 ```{r}
 
 # Total count and rates of traffic stops by each traffic stop type: 1 Moving; 2 Equipment; 3 Nonmoving; Blank. 
 
 #Denominator is out of all officer-initiated traffic stops. 
 
+##Filter out non-traffic violation stops##
+tv_reason <- ois_reason %>%
+  filter(reason == "Traffic violation")
 
+##Create df with count and rates for different traffic stop types##
+ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
+  geom_text(
+    aes(label = case_when(
+      traffic_violation_type == "Equipment" ~ paste(Count, "stops (15%)"),
+      traffic_violation_type == "Moving" ~ paste(Count, "stops (77%)"),
+      traffic_violation_type == "Non-moving" ~ paste(Count, "stops (8%)")
+    )),
+    vjust = 1.2, color = "white", size = 4) +
+  labs(
+    title = "Fresno PD Traffic Violation Stops by Type (2022)",
+    x = "Traffic Violation Type",
+    y = "% of All Stops for Traffic Violations") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
+                               size = 12,
+                               margin = margin(t = 2)),
+    axis.text.y = element_text(size = 12),
+    legend.position = "none") +
+  scale_y_continuous(limits = c(0, 100))
 
 ```
 
@@ -525,6 +578,7 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 # This can be a table looking at the top 50 citations within non-moving/equipment traffic stop types. Denominator is non-moving/equipment traffic stops
 
 # Use table 'rel_persons_reason' and the column 'rfs_traffic_violation_code.' You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"  
+
 
 
 
