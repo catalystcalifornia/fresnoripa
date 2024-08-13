@@ -63,17 +63,7 @@ results<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
-<<<<<<< HEAD
-actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
-reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table name on postgres is rel_races_recode
-=======
-race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table name on postgres is rel_races_recode
-
-
-
-
->>>>>>> 249d638ef967714cbae35afb11b9f2908a700620
 
 ```
 
