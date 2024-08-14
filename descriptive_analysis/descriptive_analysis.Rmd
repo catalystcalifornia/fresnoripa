@@ -545,6 +545,12 @@ tv_reason <- ois_reason %>%
   filter(reason == "Traffic violation")
 
 ##Create df with count and rates for different traffic stop types##
+count_tv_reason <- tv_reason %>%
+group_by(traffic_violation_type) %>%
+summarise(Count = n(), .groups = 'drop') %>%
+mutate(Percent = Count/sum(Count) * 100)
+
+##Create bar chart to visualize counts and rates##
 ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
