@@ -160,7 +160,7 @@ ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           size =3,
           color = "white")+ 
   labs(title = "Latinx Individuals Make Up Half of Officer-Initiated Stops by Fresno PD",
-       subtitle = "Percentage of People Stopped During Officer-Initiated Stops by Race",
+       subtitle = "Percentage of People Stopped During Officer-Initiated Stops by Perceived Race",
        x = "",
        y = "") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
@@ -212,7 +212,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             color = "white",
              fontface = "bold")+
     labs(title = "People Ages 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
-         subtitle= "Percentage of People Stopped During Officer-Initiated Stops by Age",
+         subtitle= "Percentage of People Stopped During Officer-Initiated Stops by Perceived Age",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
