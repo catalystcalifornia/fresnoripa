@@ -63,7 +63,8 @@ results<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
-race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table name on postgres is rel_races_recode
+race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") 
+person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 
 ```
 
@@ -980,10 +981,6 @@ Across all three types of officer-initiated traffic stops (Equipment, Moving, No
 
 ```{r}
 
-# read in table
-
-person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
-
 # join to person-level traffic universe and analyze
 
 df<-traffic%>%
@@ -1081,7 +1078,7 @@ select(1,6,8,2,3,4)
 names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
 df<-df%>%
-  rename("Statute"="Statute Literal_25")
+  rename("Statute"="Statute Literal 25")
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
