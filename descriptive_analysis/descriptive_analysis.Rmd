@@ -371,8 +371,6 @@ panel.background = element_blank())+
 
 ## Race by age and gender
 
-Rate and count of perceived gender and age of people stopped within each perceived racial group
-
 In 2022, __Latinx individuals aged 24-35, both Male and Female,__ were the __most frequently stopped__ by Fresno PD during Officer-Initiated Stops.
 
 In 2022, __more than 40% of Latinx males 17 and under__ were stopped by Fresno PD through an Officer-Initiated Stop.
@@ -424,17 +422,48 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>% ###Renaming columns###
 ####Deleting nh_race and  g_full columns to make a cleaner flextable####
 age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "g_full")]
 
+# add percent out of race and age
+age_race_gender_ois_table<-age_race_gender_ois_table%>%
+  group_by(`Age Group`,Race)%>%
+  mutate(total_race=sum(Count))%>%
+  ungroup%>%
+  mutate(percent_race=Count/total_race*100)
+
 #####Reordering columns#####
 age_race_gender_ois_table <- age_race_gender_ois_table%>% 
-  select(`Age Group`, Race, Gender, everything())
+  select(`Age Group`, Race, Gender, everything())%>%
+  filter(Gender=='Male' | Gender=='Female')
 
-##Flextable for Age Group, Race, and Gender##
-  flextable(age_race_gender_ois_table) %>% 
-  set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in")
+# ##Flextable for Age Group, Race, and Gender##
+#   flextable(age_race_gender_ois_table) %>% 
+#   set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
+#   theme_vanilla() %>%
+#   width(width=2,unit="in")
 
-    
+ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
+  geom_bar(stat = "identity"
+           ) + 
+   scale_fill_manual(values = c("#CEC4E2","#362178"))+#to create barplot
+  # geom_text(aes(label = paste0(round(Percent,1), "%"),y=Percent+5), #add percentage labels within the bars
+  #         # position = position_dodge(2), #center percentage within the bar
+  #         # vjust = "outward",
+  #         size = 3)+
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
+  labs(title = "Men Account for Most Stops Across Age and Race Groups", 
+       subtitle = "Officer-Initiated Stops in 2022 by Age, Race, and Gender",
+       x = "", #labels to visual
+       y = "Percent of Age Group") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+     facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')    
     
 ```
 
