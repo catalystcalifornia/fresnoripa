@@ -603,6 +603,8 @@ df<-uof%>%
 
 ### By race / gender
 
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
+
 ```{r, include=FALSE}
 
 df_nh<-uof%>%
@@ -628,6 +630,35 @@ df_gender<-uof%>%
   filter(use_of_force==1)%>%
   select(nh_race, g_full, use_of_force, total, count, rate)%>%
   arrange(nh_race, -rate)
+
+# Format the gender table for visualizing 
+
+df<-df_gender%>%
+  mutate(g_full=ifelse(g_full %in% '1', 'Male',
+                       ifelse(g_full %in% '2', 'Female',
+                              g_full)))%>%
+    mutate(nh_race=ifelse(nh_race %in% 'latinx', 'Latinx',
+                       ifelse(nh_race %in% 'nh_asian', 'Asian',
+                              ifelse(nh_race %in% 'nh_sswana', 'SSWANA',
+                              "White"))))%>%
+  rename("Perceived Gender"="g_full",
+         "Perceived Race"="nh_race")%>%
+  ungroup()%>%
+  select(-3)
+
+#create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Use of Force by Perceived Race and Gender') %>%
+  theme_vanilla() %>%
+  width(j=3,2.5,unit="in")
+
+
+  
 
 
 ```
@@ -821,7 +852,7 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())+
-     facet_grid(. ~ traffic_violation_type)
+  facet_grid(. ~ traffic_violation_type)
 
 
 #create and style flextable-----------
@@ -875,7 +906,7 @@ select(1,6,8,2,3,4)
 
 #create and style flextable
 
-names(df)<-tools::toTitleCase(sub("_"," ",names(df))) # clean up column names for table
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
 df<-df%>%
   rename("Statute"="Statute Literal_25")
@@ -906,30 +937,6 @@ noDL_count <- tv_reason %>%
 print(noDL_count)
 
 ```
-
-
-#### By race
-
-```{r}
-
-df<-traffic%>%
-  left_join(citation_result%>%
-              mutate(person_number=as.character(person_number)))%>%
-  left_join(codes, by=c("offense_code"="offense_code"))%>%
-  filter(offense_statute=="12500(A)")%>%
-  mutate(total=n())%>%
-  left_join(race)%>%
-  group_by(nh_race)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(nh_race, offense_statute, statute_literal_25, total, count,rate)%>%
-  arrange(-rate)
-
-
-
-```
-
 
 # Time spent
 
