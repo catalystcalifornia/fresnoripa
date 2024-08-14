@@ -633,7 +633,7 @@ count_ois_reason <- ois_reason %>%
 
 ### Total count/rate out of all officer-initiated stops
 
-Out of all officer-initiated stops made by Fresno PD, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
+Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
 
 ```{r}
 
@@ -658,19 +658,12 @@ df<-uof%>%
   slice(1)%>%
   select(use_of_force, total, count, rate)
 
-#create and style flextable
-
-#   flextable(df) %>% 
-# colformat_double(j = c("rate"), digits = 1)%>% 
-#   set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
-#   theme_vanilla() %>%
-#   width(j=2,2.5,unit="in")
 
 ```
 
-### Total count/rate by stop reason
+### Use of force by stop reason
 
-All incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
 
 ```{r}
 
