@@ -484,10 +484,13 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
   set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
   theme_vanilla() %>%
   width(width=2,unit="in")
+  
+  
+  
+  
+  ```
+  
 
-    
-    
-```
 
 # Stop Reasons
 
