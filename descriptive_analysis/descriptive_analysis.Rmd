@@ -671,15 +671,30 @@ flextable(count_ois_result) %>%
 
 ### Total count/rate by stop reason 
 
+Fresno PD __only made four stops__ in 2022 that resulted in officers completing and filing a field interview card. All four of these stops were due to perceived traffic violations.
+
 ```{r, include=FALSE}
+
+##Create df that includes only FI card results and merges in stop reason data##
+fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(
+    stop_result_simple == "field interview card completed" |
+    grepl("field interview", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())    #Only 4 stops where result was FI, reason for all was TV
 
 
 ```
 
 ### By race and gender
 
+Of the five individuals that Fresno PD completed field interview cards for in 2022, four were identified by officers as Black or Latinx. Officers also identified three of these individuals as men and two as women.
+
 ```{r, include=FALSE}
 
+##Merge age_race_gender with FI card df##
+fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop_id")   #Df shows 5 individuals who had FI cards filed,
+              # 2 Black, 2 Latinx, 1 white.
+              # 3 men, 2 women
 
 ```
 
