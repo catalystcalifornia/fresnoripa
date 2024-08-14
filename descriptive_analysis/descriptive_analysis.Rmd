@@ -504,19 +504,6 @@ The Fresno Police Department makes an overwhelming majority of their officer-ini
 
 # Feel free to visualize as a bar graph, table, or whatever you think works best!
 
-
-```
-
-# Stop Results 
-
-## Over-all stops by stop result out of all officer-initiated stops
-
-```{r}
-
-# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
-
-# Feel free to visualize as a bar graph, table, or whatever you think works best!
-
 ##Create df of all officer-initiated stops w/ stop reason variables##
 ois_reason <- left_join(stops, person_reason, by ="stop_id")%>%
   filter(call_for_service ==0) %>%
@@ -540,6 +527,19 @@ count_ois_reason <- ois_reason %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
     align(j = 3, align = "right", part = "header")
+
+```
+
+# Stop Results 
+
+## Over-all stops by stop result out of all officer-initiated stops
+
+```{r}
+
+# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
+
 
 
 ```
