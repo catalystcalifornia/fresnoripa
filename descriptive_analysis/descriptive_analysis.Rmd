@@ -579,7 +579,7 @@ tv_reason <- ois_reason %>%
   filter(reason == "Traffic violation")
 
 ##Create df with count and rates for different traffic stop types##
-ggplot(tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
+ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
   geom_text(
