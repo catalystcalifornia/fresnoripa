@@ -290,10 +290,10 @@ panel.background = element_blank())
 
 ## Race by age 
 
-In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the Officer-Initiated Stops by Fresno PD.
+In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. __In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.__
 
 
-In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped   during Officer-Initiated Stops by Fresno PD.
+In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops by Fresno PD. White individuals may make up a higher share of the population in these age groups in Fresno. Generally, White individuals make up 25.4% of the Fresno population.
 
 ```{r}
 
@@ -336,11 +336,36 @@ race_age_ois <- race_age_ois[, !names(race_age_ois) %in% c("nh_race")]
 race_age_ois <- race_age_ois %>% 
   select(`Age Group`, Race, everything())
 
-##Flextable for Age Group, Race##
-  flextable(race_age_ois) %>% 
-  set_caption('Officer-Initiated Stops in 2022 by Race and Age') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in")
+# ##Flextable for Age Group, Race##
+#   flextable(race_age_ois) %>% 
+#   set_caption('Officer-Initiated Stops in 2022 by Race and Age') %>% 
+#   theme_vanilla() %>%
+#   width(width=2,unit="in")
+  
+  ##Visualization for distribution##
+ggplot(race_age_ois, aes(x = Race, y = Percent))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(Percent,1), "%"),y=Percent+5), #add percentage labels within the bars
+          position = position_dodge(2), #center percentage within the bar
+          # vjust = "outward",
+          size = 3)+
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
+  labs(title = "Latinx People Make Up Most Stops by Age, but Black People Are Overrepresented", 
+       subtitle = "Officer-Initiated Stops in 2022 by Race and Age",
+       x = "", #labels to visual
+       y = "Percent of Age Group") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+     facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')
 
 ```
 
