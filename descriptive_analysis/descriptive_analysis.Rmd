@@ -73,7 +73,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 ## Race
 
-Officer-Initiated Stops by the Fresno Police Department __disproportionately target Latinx residents.__  
+Fresno PD __mostly stops people they perceive Latinx__ during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, __11.3%__ of people they stopped Fresno PD __perceived as Black__ while the __Fresno City's population only comprises of 6.2% Black people__.
 
 ```{r}
 
@@ -100,15 +100,37 @@ df_sswana <- df_race %>% #creates df for sswana
   slice(1)%>%
   arrange(-Percent)%>%
   ungroup()%>%
-  select(sswana_label, Total, Count, Percent)
+  select(sswana_label, Total, Count, Percent)%>%
+    rename(nh_race=sswana_label)
+
+df_nhpi <- df_race %>% #creates df for nhpi
+  mutate(Total=n())%>%
+  group_by(nhpi_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(nhpi_label, Total, Count, Percent)%>%
+    rename(nh_race=nhpi_label)
+
+df_aian <- df_race %>% #creates df for aian
+  mutate(Total=n())%>%
+  group_by(aian_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(aian_label, Total, Count, Percent)%>%
+  rename(nh_race=aian_label)
   
-final_race <- rbind(df_nh, df_sswana) ##combines nh_race and sswana
+final_race <- rbind(df_nh%>%filter(!nh_race %in% c("nh_aian","nh_sswana","nh_nhpi")), 
+                    df_sswana%>%filter(nh_race=='sswana'),
+                    df_aian%>%filter(nh_race=='aian'),
+                    df_nhpi%>%filter(nh_race=='nhpi')) ##combines nh_race and sswana, nhpi, aian
 
-final_race <- final_race[-c(4,9),] ##deletes nh_sswana and not_sswana rows
+qa<-df_race%>%group_by(nh_race,sswana_flag, aian_flag,nhpi_flag)%>%summarise(count=n())
 
-
-
-##Recode for nh_race since there was no value for SSWANA in nh_race after deleting the other SSWANA and not_sswana rows##
+## Recode for nh_race for visual labels
 
 final_race <- final_race %>%
   mutate(Race = case_when(
@@ -116,15 +138,13 @@ final_race <- final_race %>%
     nh_race =='nh_white' ~ 'White',
     nh_race =='nh_black' ~ 'Black',
     nh_race == 'nh_asian' ~ 'Asian',
-    nh_race == 'nh_aian' ~ 'AIAN',
-    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'aian' ~ 'AIAN',
+    nh_race == 'nhpi' ~ 'NHPI',
     nh_race == 'nh_multiracial' ~ 'Multiracial',
-    is.na(nh_race) ~ 'SSWANA', 
+     nh_race == 'sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(nh_race)))
     
                       
-                
-                        
 
 ##ADDING TOTAL NUMBER TO LABEL##
 
@@ -139,8 +159,8 @@ ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
-  labs(title = "Latinx Individuals Make Up More than Half of Officer-Initiated Stops by Fresno PD",
-       subtitle = "Percentage of Officer-Initiated Stops by Race",
+  labs(title = "Latinx Individuals Make Up Half of Officer-Initiated Stops by Fresno PD",
+       subtitle = "Percentage of People Stopped During Officer-Initiated Stops by Race",
        x = "",
        y = "") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
@@ -164,8 +184,7 @@ panel.background = element_blank())
 
 ## Age 
 
-
-Individuals aged 25-34 experienced the highest rates of Officer-Initiated Stops by Fresno PD in the year 2022.
+Individuals __aged 25-34__ experienced the highest numbers of officer-initiated stops by Fresno PD in the year 2022.
 
 ```{r}
 
@@ -192,8 +211,8 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             size =3,
             color = "white",
              fontface = "bold")+
-    labs(title = "Residents Aged 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
-         subtitle= "Percentage of Officer-Initiated Stops by Age Group",
+    labs(title = "People Ages 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
+         subtitle= "Percentage of People Stopped During Officer-Initiated Stops by Age",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
@@ -214,7 +233,7 @@ panel.background = element_blank())
 ## Gender 
 
 
-In the year 2022, Males account for __nearly 57%__ of Officer-Initiated Stops by Fresno PD.
+In 2022, people identified as men (males) accounted for __nearly 57%__ of officer-initiated stops by Fresno PD.
 
 ```{r}
 
