@@ -464,11 +464,11 @@ panel.background = element_blank())+
 
 ```
 
-## Race by age and gender
+## Age by race and gender
 
-In 2022, __Latinx individuals aged 24-35, both Male and Female,__ were the __most frequently stopped__ by Fresno PD during Officer-Initiated Stops.
+In 2022, __people perceived as men (males) were the most frequently stopped group across most age and race combinations__. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
 
-In 2022, __more than 40% of Latinx males 17 and under__ were stopped by Fresno PD through an Officer-Initiated Stop.
+In 2022, __Latinx men ages 17 and under comprised more than 40% of people stopped under the age of 17__. Similarly, Latinx men ages 18-24 made up about 37% of people stopped between the ages of 18-24.
 
 ```{r}
 
