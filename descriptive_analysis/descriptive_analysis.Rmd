@@ -69,101 +69,6 @@ race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table na
 
 Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basis tallies on each of the following:
 
-# Stops overview 
-
-## Number and Rate of Officer-Initiated Stops vs. Calls for Service
-
-In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
-
-In 2022, __94.6%___ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
-
-```{r}
-# Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
-
-###CALCULATE TOTAL OFFICER INITIATED STOPS##
-
-count_ois <- stops %>%  
-  filter(call_for_service == 0) %>% #filters for Officer-Initiated Stops
-    select(stop_id) %>% 
-       mutate('Total Officer Initiated Stops' = n()) %>%  
-         slice(1) %>% 
-           select(-stop_id) 
-
-###CALCULATE CALLS FOR SERVICE TOTAL###
-
-count_cfs <- stops %>%
-  filter(call_for_service == 1) %>% 
-    select(stop_id) %>% 
-      mutate('Total Calls for Service' =n()) %>% 
-       slice(1) %>% 
-           select(-stop_id) 
-
-
-### CALCULATE THE RATE OF OFFICER INITIATED STOPS AND CALLS FOR SERVICE###
-
-rate_ois <- stops %>%
-  group_by(Stop_Type = call_for_service == 0) %>%
-    summarise (percent = 100 * n()/ nrow(stops)) %>%
-      mutate(percent =round(percent, digits =1),
-        Stop_Type = ifelse(Stop_Type, "Officer Initiated Stop", "Calls for Service")) %>%
-  rename('Type' = 'Stop_Type')
-
-
-
-
-###BAR CHART to VISUALIZE RATE OF CALLS FOR SERVICE VS OFFICER INITIATED STOP###
-
-rate_ois <- data.frame( #create df to create a visual later
-  Type = c("Officer-Initiated Stop", "Calls for Service"),
-  percent = c(94.6, 5.4))
-
-ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
-  geom_bar(stat = "identity") + #to create barplot
-  geom_text(aes(label = paste0(round(percent,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 3,
-          color = "white")+ 
-  labs(title = "Nearly 95% of All Stops Fresno PD Makes Are Not Responding to Community Calls", 
-       subtitle = "Percentage of Police Stops by Stop-Type Made by Fresno PD in 2022",
-       x = "", #labels to visual
-       y = "") +
-  scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
-      "Calls for Service" = "#362178" ))+
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
-      legend.position ="none", #removes legend
-      plot.title = element_text(hjust=0.5),
-      plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
-        strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=10, face="bold"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-panel.background = element_blank())
-
-
-```
-
-
-## Total number of people stopped 
-
-In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
-
-```{r}
-
-# Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
-
-tot_ois <- left_join(stops, person, by ="stop_id")%>%
-  select(call_for_service)%>%
-  filter(call_for_service ==0)%>%  
-    summarise(count=n())%>%
-     ungroup()%>%
-       mutate(Total=sum(count))%>%
-        rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
-
-
-```
-
 # Demographics 
 
 ## Race
@@ -490,6 +395,103 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 ```
 
 
+
+# Stops overview 
+
+## Number and Rate of Officer-Initiated Stops vs. Calls for Service
+
+In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
+
+In 2022, __94.6%___ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
+
+```{r}
+# Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
+
+###CALCULATE TOTAL OFFICER INITIATED STOPS##
+
+count_ois <- stops %>%  
+  filter(call_for_service == 0) %>% #filters for Officer-Initiated Stops
+    select(stop_id) %>% 
+       mutate('Total Officer Initiated Stops' = n()) %>%  
+         slice(1) %>% 
+           select(-stop_id) 
+
+###CALCULATE CALLS FOR SERVICE TOTAL###
+
+count_cfs <- stops %>%
+  filter(call_for_service == 1) %>% 
+    select(stop_id) %>% 
+      mutate('Total Calls for Service' =n()) %>% 
+       slice(1) %>% 
+           select(-stop_id) 
+
+
+### CALCULATE THE RATE OF OFFICER INITIATED STOPS AND CALLS FOR SERVICE###
+
+rate_ois <- stops %>%
+  group_by(Stop_Type = call_for_service == 0) %>%
+    summarise (percent = 100 * n()/ nrow(stops)) %>%
+      mutate(percent =round(percent, digits =1),
+        Stop_Type = ifelse(Stop_Type, "Officer Initiated Stop", "Calls for Service")) %>%
+  rename('Type' = 'Stop_Type')
+
+
+
+
+###BAR CHART to VISUALIZE RATE OF CALLS FOR SERVICE VS OFFICER INITIATED STOP###
+
+rate_ois <- data.frame( #create df to create a visual later
+  Type = c("Officer-Initiated Stop", "Calls for Service"),
+  percent = c(94.6, 5.4))
+
+ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
+  geom_bar(stat = "identity") + #to create barplot
+  geom_text(aes(label = paste0(round(percent,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  labs(title = "Nearly 95% of All Stops Fresno PD Makes Are Not Responding to Community Calls", 
+       subtitle = "Percentage of Police Stops by Stop-Type Made by Fresno PD in 2022",
+       x = "", #labels to visual
+       y = "") +
+  scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
+      "Calls for Service" = "#362178" ))+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
+
+
+```
+
+
+## Total number of people stopped 
+
+In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
+
+```{r}
+
+# Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
+
+tot_ois <- left_join(stops, person, by ="stop_id")%>%
+  select(call_for_service)%>%
+  filter(call_for_service ==0)%>%  
+    summarise(count=n())%>%
+     ungroup()%>%
+       mutate(Total=sum(count))%>%
+        rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
+
+
+```
+
+
 # Stop Reasons
 
 ## Total counts and rates
@@ -542,6 +544,117 @@ count_ois_reason <- ois_reason %>%
 
 ```
 
+
+## Use of Force
+
+### Total count/rate out of all officer-initiated stops
+
+Out of all officer-initiated stops made by Fresno PD, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
+
+```{r}
+
+# read in postgres tables:
+actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
+
+# Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
+
+uof<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%left_join(actions)%>%
+    filter(call_for_service==0)
+
+# Analysis
+
+df<-uof%>%
+  mutate(total=n())%>%
+  group_by(use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, total, count, rate)
+
+#create and style flextable
+
+#   flextable(df) %>% 
+# colformat_double(j = c("rate"), digits = 1)%>% 
+#   set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
+#   theme_vanilla() %>%
+#   width(j=2,2.5,unit="in")
+
+```
+
+### Total count/rate by stop reason
+
+All incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+
+```{r}
+
+df<-uof%>%
+  left_join(reason)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(use_of_force, stop_reason_simple)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, stop_reason_simple, total, count, rate)
+
+
+
+```
+
+### By race / gender
+
+```{r, include=FALSE}
+
+df_nh<-uof%>%
+  left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, use_of_force, total, count, rate)%>%
+  arrange(-rate)
+
+df_gender<-uof%>%
+    left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, g_full, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, g_full, use_of_force, total, count, rate)%>%
+  arrange(nh_race, -rate)
+
+
+```
+
+## Field Interview (FI) Card
+
+### Total count/rate out of all officer-initiated stops
+
+### Total count/rate by stop reason 
+
+### By race and gender
+
+
+## Referral to US Department of Homeland Security ICE
+
+### Total count/rate out of all officer-initiated stops
+
+### Total count/rate by stop reason
+
+### By race and gender
+
+## Stops with a search that resulted in no contraband [RDA: lower prioritiy]
+
+### Total count/rate out of all officer-initiated stops
 
 # Traffic Stops
 
@@ -798,7 +911,7 @@ print(noDL_count)
 ```
 
 
-#### By Race
+#### By race
 
 ```{r}
 
@@ -820,117 +933,6 @@ df<-traffic%>%
 
 ```
 
-
-## Use of Force
-
-### Total count/rate out of all officer-initiated stops
-
-Out of all officer-initiated stops made by Fresno PD, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
-
-```{r}
-
-# read in postgres tables:
-actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
-reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
-
-# Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
-
-uof<-person%>%
-  mutate(person_number=as.character(person_number))%>%
-  left_join(stops)%>%left_join(actions)%>%
-    filter(call_for_service==0)
-
-# Analysis
-
-df<-uof%>%
-  mutate(total=n())%>%
-  group_by(use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(use_of_force, total, count, rate)
-
-#create and style flextable
-
-#   flextable(df) %>% 
-# colformat_double(j = c("rate"), digits = 1)%>% 
-#   set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
-#   theme_vanilla() %>%
-#   width(j=2,2.5,unit="in")
-
-```
-
-### Total count/rate by stop reason
-
-All incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
-
-```{r}
-
-df<-uof%>%
-  left_join(reason)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(use_of_force, stop_reason_simple)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(use_of_force, stop_reason_simple, total, count, rate)
-
-
-
-```
-
-### By race / gender
-
-```{r, include=FALSE}
-
-df_nh<-uof%>%
-  left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  filter(use_of_force==1)%>%
-  select(nh_race, use_of_force, total, count, rate)%>%
-  arrange(-rate)
-
-df_gender<-uof%>%
-    left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, g_full, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  filter(use_of_force==1)%>%
-  select(nh_race, g_full, use_of_force, total, count, rate)%>%
-  arrange(nh_race, -rate)
-
-
-```
-
-## Field Interview (FI) Card
-
-### Total count/rate out of all officer-initiated stops
-
-### Total count/rate by stop reason 
-
-### By race
-
-
-## Referral to US Department of Homeland Security ICE
-
-### Total count/rate out of all officer-initiated stops
-
-### Total count/rate by stop reason
-
-### By race
-
-## Stops with a search that resulted in no contraband [RDA: lower prioritiy]
-
-### Total count/rate out of all officer-initiated stops
 
 # Time spent
 
