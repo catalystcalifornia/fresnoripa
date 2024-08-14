@@ -489,6 +489,9 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
     
 ```
 
+
+
+
 # Stop Reasons
 
 ## Total counts and rates
@@ -536,6 +539,19 @@ count_ois_reason <- ois_reason %>%
 # Feel free to visualize as a bar graph, table, or whatever you think works best!
 
 
+
+
+```
+
+# Stop Results 
+
+## Over-all stops by stop result out of all officer-initiated stops
+
+```{r}
+
+# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
 
 
 
@@ -667,18 +683,104 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ### Total count/rate out of all officer-initiated stops
 
+Just two stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
+
+```{r, include=FALSE}
+
+##Create df of all officer-initiated stops w/ stop result variables##
+ois_result <- left_join(stops, person_result, by ="stop_id")%>%
+  filter(call_for_service ==0) %>%
+  select(stop_id, stop_result_simple, stop_result_list, everything())
+
+##Create df to find count and rate of all stop results##
+count_ois_result <- ois_result %>%
+  group_by(stop_result_simple) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+    arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
+  rename('Recorded Stop Result' = stop_result_simple, 
+         `# of Times Recorded` = Count, 
+         `% of All Stop Results` = Percent) %>%
+     mutate(`% of All Stop Results` = sprintf("%.2f%%", `% of All Stop Results`))
+
+##Table to show result counts and rates of all OIS, with FI result highlighted##
+flextable(count_ois_result) %>% 
+  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header") %>%
+   bold(i = 8, bold = TRUE, part = "body") %>%
+  color(i = 8, color = "red", part = "body")
+
+
+```
+
 ### Total count/rate by stop reason 
+
+Fresno PD __only made four stops__ in 2022 that resulted in officers completing and filing a field interview card. All four of these stops were due to perceived traffic violations.
+
+```{r, include=FALSE}
+
+##Create df that includes only FI card results and merges in stop reason data##
+fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(
+    stop_result_simple == "field interview card completed" |
+    grepl("field interview", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())    #Only 4 stops where result was FI, reason for all was TV
+
+
+```
 
 ### By race and gender
 
+Of the five individuals that Fresno PD completed field interview cards for in 2022, four were identified by officers as Black or Latinx. Officers also identified three of these individuals as men and two as women.
+
+```{r, include=FALSE}
+
+##Merge age_race_gender with FI card df##
+fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop_id")   #Df shows 5 individuals who had FI cards filed,
+              # 2 Black, 2 Latinx, 1 white.
+              # 3 men, 2 women
+
+```
 
 ## Referral to US Department of Homeland Security ICE
 
 ### Total count/rate out of all officer-initiated stops
 
+Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE.
+
+```{r, include=FALSE}
+
+##count_ois_result shows us 0 under simple results, 
+##query to see how many times it is listed under multiple results##
+sum(grepl("homeland security", ois_result$stop_result_list, ignore.case = TRUE)) #only 1 total referral to ICE
+
+```
+
 ### Total count/rate by stop reason
 
+The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
+
+```{r, include=FALSE}
+##Create df for one ICE result and merge reason##
+ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(grepl("homeland security", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())
+
+```
+
 ### By race and gender
+
+The one individual referred to ICE by Fresno PD in 2022 was a Latino male.
+
+```{r, include=FALSE}
+
+##Merge in race and gender variables for one observation##
+ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
+
+```
 
 ## Stops with a search that resulted in no contraband [RDA: lower prioritiy]
 
@@ -725,6 +827,12 @@ summarise(Count = n(), .groups = 'drop') %>%
 mutate(Percent = Count/sum(Count) * 100)
 
 ##Create df with count and rates for different traffic stop types##
+count_tv_reason <- tv_reason %>%
+group_by(traffic_violation_type) %>%
+summarise(Count = n(), .groups = 'drop') %>%
+mutate(Percent = Count/sum(Count) * 100)
+
+##Create bar chart to visualize counts and rates##
 ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
@@ -783,7 +891,7 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
     rfs_traffic_violation_code == "54116" ~ "Inadequate mufflers",
     rfs_traffic_violation_code == "54141" ~ "Improper bicycle lighting",
     rfs_traffic_violation_code == "54110" ~ "License plate not illuminated",
-    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding discriptions of violation indicated by citation code 
+    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
   select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
   rename(
     `% of Total Equipment/Non-moving Traffic Violations` = Percent,
