@@ -610,7 +610,7 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
     rfs_traffic_violation_code == "54116" ~ "Inadequate mufflers",
     rfs_traffic_violation_code == "54141" ~ "Improper bicycle lighting",
     rfs_traffic_violation_code == "54110" ~ "License plate not illuminated",
-    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding discriptions of violation indicated by citation code 
+    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
   select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
   rename(
     `% of Total Equipment/Non-moving Traffic Violations` = Percent,
