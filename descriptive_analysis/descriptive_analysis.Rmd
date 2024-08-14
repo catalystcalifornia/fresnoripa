@@ -700,29 +700,38 @@ fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop
 
 ## Referral to US Department of Homeland Security ICE
 
-```{r, include=FALSE}
-
-
-```
-
 ### Total count/rate out of all officer-initiated stops
 
+Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE.
+
 ```{r, include=FALSE}
 
+##count_ois_result shows us 0 under simple results, 
+##query to see how many times it is listed under multiple results##
+sum(grepl("homeland security", ois_result$stop_result_list, ignore.case = TRUE)) #only 1 total referral to ICE
 
 ```
 
 ### Total count/rate by stop reason
 
-```{r, include=FALSE}
+The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
 
+```{r, include=FALSE}
+##Create df for one ICE result and merge reason##
+ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(grepl("homeland security", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())
 
 ```
 
 ### By race and gender
 
+The one individual referred to ICE by Fresno PD in 2022 was a Latino male.
+
 ```{r, include=FALSE}
 
+##Merge in race and gender variables for one observation##
+ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ```
 
