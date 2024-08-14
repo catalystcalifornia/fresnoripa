@@ -168,7 +168,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Race
 
-Officer-Initiated Stops by the Fresno Police Department __disproportionately target Latinx residents.__  
+Fresno PD __mostly stops people they perceive Latinx__ during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, __11.3%__ of people they stopped Fresno PD __perceived as Black__ while the __Fresno City's population only comprises of 6.2% Black people__.
 
 ```{r}
 
@@ -195,15 +195,37 @@ df_sswana <- df_race %>% #creates df for sswana
   slice(1)%>%
   arrange(-Percent)%>%
   ungroup()%>%
-  select(sswana_label, Total, Count, Percent)
+  select(sswana_label, Total, Count, Percent)%>%
+    rename(nh_race=sswana_label)
+
+df_nhpi <- df_race %>% #creates df for nhpi
+  mutate(Total=n())%>%
+  group_by(nhpi_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(nhpi_label, Total, Count, Percent)%>%
+    rename(nh_race=nhpi_label)
+
+df_aian <- df_race %>% #creates df for aian
+  mutate(Total=n())%>%
+  group_by(aian_flag)%>%
+  mutate(Count=n(), Percent = round(Count/Total*100, 1))%>% 
+  slice(1)%>%
+  arrange(-Percent)%>%
+  ungroup()%>%
+  select(aian_label, Total, Count, Percent)%>%
+  rename(nh_race=aian_label)
   
-final_race <- rbind(df_nh, df_sswana) ##combines nh_race and sswana
+final_race <- rbind(df_nh%>%filter(!nh_race %in% c("nh_aian","nh_sswana","nh_nhpi")), 
+                    df_sswana%>%filter(nh_race=='sswana'),
+                    df_aian%>%filter(nh_race=='aian'),
+                    df_nhpi%>%filter(nh_race=='nhpi')) ##combines nh_race and sswana, nhpi, aian
 
-final_race <- final_race[-c(4,9),] ##deletes nh_sswana and not_sswana rows
+qa<-df_race%>%group_by(nh_race,sswana_flag, aian_flag,nhpi_flag)%>%summarise(count=n())
 
-
-
-##Recode for nh_race since there was no value for SSWANA in nh_race after deleting the other SSWANA and not_sswana rows##
+## Recode for nh_race for visual labels
 
 final_race <- final_race %>%
   mutate(Race = case_when(
@@ -211,15 +233,13 @@ final_race <- final_race %>%
     nh_race =='nh_white' ~ 'White',
     nh_race =='nh_black' ~ 'Black',
     nh_race == 'nh_asian' ~ 'Asian',
-    nh_race == 'nh_aian' ~ 'AIAN',
-    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'aian' ~ 'AIAN',
+    nh_race == 'nhpi' ~ 'NHPI',
     nh_race == 'nh_multiracial' ~ 'Multiracial',
-    is.na(nh_race) ~ 'SSWANA', 
+     nh_race == 'sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(nh_race)))
     
                       
-                
-                        
 
 ##ADDING TOTAL NUMBER TO LABEL##
 
@@ -234,8 +254,8 @@ ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           position = position_stack(vjust=0.5), #center percentage within the bar
           size =3,
           color = "white")+ 
-  labs(title = "Latinx Individuals Make Up More than Half of Officer-Initiated Stops by Fresno PD",
-       subtitle = "Percentage of Officer-Initiated Stops by Race",
+  labs(title = "Latinx Individuals Make Up Half of Officer-Initiated Stops by Fresno PD",
+       subtitle = "Percentage of People Stopped During Officer-Initiated Stops by Perceived Race",
        x = "",
        y = "") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
@@ -259,8 +279,7 @@ panel.background = element_blank())
 
 ## Age 
 
-
-Individuals aged 25-34 experienced the highest rates of Officer-Initiated Stops by Fresno PD in the year 2022.
+Individuals __aged 25-34__ experienced the highest numbers of officer-initiated stops by Fresno PD in the year 2022.
 
 ```{r}
 
@@ -287,8 +306,8 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             size =3,
             color = "white",
              fontface = "bold")+
-    labs(title = "Residents Aged 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
-         subtitle= "Percentage of Officer-Initiated Stops by Age Group",
+    labs(title = "People Ages 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
+         subtitle= "Percentage of People Stopped During Officer-Initiated Stops by Perceived Age",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
@@ -309,7 +328,7 @@ panel.background = element_blank())
 ## Gender 
 
 
-In the year 2022, Males account for __nearly 57%__ of Officer-Initiated Stops by Fresno PD.
+In 2022, people identified as men (males) accounted for __nearly 57%__ of officer-initiated stops by Fresno PD.
 
 ```{r}
 
@@ -366,10 +385,10 @@ panel.background = element_blank())
 
 ## Race by age 
 
-In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the Officer-Initiated Stops by Fresno PD.
+In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. __In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.__
 
 
-In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped   during Officer-Initiated Stops by Fresno PD.
+In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops by Fresno PD. White individuals may make up a higher share of the population in these age groups in Fresno. Generally, White individuals make up 25.4% of the Fresno population.
 
 ```{r}
 
@@ -412,21 +431,44 @@ race_age_ois <- race_age_ois[, !names(race_age_ois) %in% c("nh_race")]
 race_age_ois <- race_age_ois %>% 
   select(`Age Group`, Race, everything())
 
-##Flextable for Age Group, Race##
-  flextable(race_age_ois) %>% 
-  set_caption('Officer-Initiated Stops in 2022 by Race and Age') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in")
+# ##Flextable for Age Group, Race##
+#   flextable(race_age_ois) %>% 
+#   set_caption('Officer-Initiated Stops in 2022 by Race and Age') %>% 
+#   theme_vanilla() %>%
+#   width(width=2,unit="in")
+  
+  ##Visualization for distribution##
+ggplot(race_age_ois, aes(x = Race, y = Percent))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(Percent,1), "%"),y=Percent+5), #add percentage labels within the bars
+          position = position_dodge(2), #center percentage within the bar
+          # vjust = "outward",
+          size = 3)+
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
+  labs(title = "Latinx People Make Up Most Stops by Age, but Black People Are Overrepresented", 
+       subtitle = "Officer-Initiated Stops in 2022 by Race and Age",
+       x = "", #labels to visual
+       y = "Percent of Age Group") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+     facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')
 
 ```
 
-## Race by age and gender
+## Age by race and gender
 
-Rate and count of perceived gender and age of people stopped within each perceived racial group
+In 2022, __people perceived as men (males) were the most frequently stopped group across most age and race combinations__. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
 
-In 2022, __Latinx individuals aged 24-35, both Male and Female,__ were the __most frequently stopped__ by Fresno PD during Officer-Initiated Stops.
-
-In 2022, __more than 40% of Latinx males 17 and under__ were stopped by Fresno PD through an Officer-Initiated Stop.
+In 2022, __Latinx men ages 17 and under comprised more than 40% of people stopped under the age of 17__. Similarly, Latinx men ages 18-24 made up about 37% of people stopped between the ages of 18-24.
 
 ```{r}
 
@@ -475,21 +517,50 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>% ###Renaming columns###
 ####Deleting nh_race and  g_full columns to make a cleaner flextable####
 age_race_gender_ois_table <- age_race_gender_ois_table[, !names(age_race_gender_ois_table) %in% c("nh_race", "g_full")]
 
+# add percent out of race and age
+age_race_gender_ois_table<-age_race_gender_ois_table%>%
+  group_by(`Age Group`,Race)%>%
+  mutate(total_race=sum(Count))%>%
+  ungroup%>%
+  mutate(percent_race=Count/total_race*100)
+
 #####Reordering columns#####
 age_race_gender_ois_table <- age_race_gender_ois_table%>% 
-  select(`Age Group`, Race, Gender, everything())
+  select(`Age Group`, Race, Gender, everything())%>%
+  filter(Gender=='Male' | Gender=='Female')
 
-##Flextable for Age Group, Race, and Gender##
-  flextable(age_race_gender_ois_table) %>% 
-  set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in")
+# ##Flextable for Age Group, Race, and Gender##
+#   flextable(age_race_gender_ois_table) %>% 
+#   set_caption('Officer-Initiated Stops Over Time by Age Group, Race, and Gender') %>% 
+#   theme_vanilla() %>%
+#   width(width=2,unit="in")
 
-    
-    
+ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
+  geom_bar(stat = "identity"
+           ) + 
+   scale_fill_manual(values = c("#CEC4E2","#362178"))+#to create barplot
+  # geom_text(aes(label = paste0(round(Percent,1), "%"),y=Percent+5), #add percentage labels within the bars
+  #         # position = position_dodge(2), #center percentage within the bar
+  #         # vjust = "outward",
+  #         size = 3)+
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
+  labs(title = "Men Account for Most Stops Across Age and Race Groups", 
+       subtitle = "Officer-Initiated Stops in 2022 by Age, Race, and Gender",
+       x = "", #labels to visual
+       y = "Percent of Age Group") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+     facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')    
+
 ```
-
-
 
 
 # Stop Reasons
