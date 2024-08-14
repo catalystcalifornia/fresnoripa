@@ -396,13 +396,13 @@ age_race_gender_ois_table <- age_race_gender_ois_table%>%
 
 
 
-# Stops overview 
+# Stops Overview 
 
-## Number and Rate of Officer-Initiated Stops vs. Calls for Service
+## Number and rate of officer-initiated stops vs. calls for service
 
 In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
 
-In 2022, __94.6%___ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
+In other words, __94.6%__ of Fresno PD stops were officer-initiated stops while __only 5.4%__ of stops were calls for service.
 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
@@ -451,7 +451,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
           size = 3,
           color = "white")+ 
   labs(title = "Nearly 95% of All Stops Fresno PD Makes Are Not Responding to Community Calls", 
-       subtitle = "Percentage of Police Stops by Stop-Type Made by Fresno PD in 2022",
+       subtitle = "Percentage of Stops by Stop Type in 2022",
        x = "", #labels to visual
        y = "") +
   scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
@@ -474,20 +474,18 @@ panel.background = element_blank())
 
 ## Total number of people stopped 
 
-In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
+In 2022, Fresno PD stopped a total of __5,365__ people either through officer-initiated stops or calls for service. Of these people, __94.3%__ of them, or __5,060 people__, were stopped through officer-initiated stops.
 
 ```{r}
 
 # Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
 
-tot_ois <- left_join(stops, person, by ="stop_id")%>%
-  select(call_for_service)%>%
-  filter(call_for_service ==0)%>%  
-    summarise(count=n())%>%
-     ungroup()%>%
-       mutate(Total=sum(count))%>%
-        rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
-
+tot_cfs_ois <- left_join(stops, person, by ="stop_id")%>%
+  mutate(total=n())%>%
+  group_by(call_for_service)%>%  
+    summarise(count=n(),
+              percent=count/min(total)*100,
+              total=min(total))
 
 ```
 
