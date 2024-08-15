@@ -963,7 +963,7 @@ df<-uof%>%
 
 Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
 
-```{r, include=FALSE}
+```{r}
 
 df_nh<-uof%>%
   left_join(race)%>%
@@ -1103,7 +1103,7 @@ ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
 
 ### By race and gender
 
-The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as a Latinx male.
+The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as __a Latinx male__.
 
 ```{r, include=FALSE}
 
@@ -1121,8 +1121,7 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ## Time spent on stops by stop reason
 
-## Time spent on stops by stop result
-
+## Time spent on traffic stops resulting in a citation
 
 
 
