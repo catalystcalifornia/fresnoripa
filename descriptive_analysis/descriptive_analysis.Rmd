@@ -63,7 +63,11 @@ results<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
-race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") ##Updated code. table name on postgres is rel_races_recode
+race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") 
+person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
+actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
+
 
 ```
 
@@ -559,7 +563,7 @@ ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
         panel.grid.minor = element_blank(),
 panel.background = element_blank())+
      facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')    
-    
+
 ```
 
 
@@ -598,6 +602,19 @@ count_ois_reason <- ois_reason %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
     align(j = 3, align = "right", part = "header")
+```
+
+# Stop Results 
+
+## Over-all stops by stop result out of all officer-initiated stops
+
+```{r}
+# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
+
+
+
 
 ```
 
@@ -620,13 +637,9 @@ count_ois_reason <- ois_reason %>%
 
 ### Total count/rate out of all officer-initiated stops
 
-Out of all officer-initiated stops made by Fresno PD, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
+Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
 
 ```{r}
-
-# read in postgres tables:
-actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
-reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 
 # Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
 
@@ -645,19 +658,12 @@ df<-uof%>%
   slice(1)%>%
   select(use_of_force, total, count, rate)
 
-#create and style flextable
-
-#   flextable(df) %>% 
-# colformat_double(j = c("rate"), digits = 1)%>% 
-#   set_caption('Total and Rate of Use of Force during Officer-Initiated Stops in 2022') %>% 
-#   theme_vanilla() %>%
-#   width(j=2,2.5,unit="in")
 
 ```
 
-### Total count/rate by stop reason
+### Use of force by stop reason
 
-All incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
 
 ```{r}
 
@@ -676,6 +682,8 @@ df<-uof%>%
 ```
 
 ### By race / gender
+
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
 
 ```{r, include=FALSE}
 
@@ -703,6 +711,35 @@ df_gender<-uof%>%
   select(nh_race, g_full, use_of_force, total, count, rate)%>%
   arrange(nh_race, -rate)
 
+# Format the gender table for visualizing 
+
+df<-df_gender%>%
+  mutate(g_full=ifelse(g_full %in% '1', 'Male',
+                       ifelse(g_full %in% '2', 'Female',
+                              g_full)))%>%
+    mutate(nh_race=ifelse(nh_race %in% 'latinx', 'Latinx',
+                       ifelse(nh_race %in% 'nh_asian', 'Asian',
+                              ifelse(nh_race %in% 'nh_sswana', 'SSWANA',
+                              "White"))))%>%
+  rename("Perceived Gender"="g_full",
+         "Perceived Race"="nh_race")%>%
+  ungroup()%>%
+  select(-3)
+
+#create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Use of Force by Perceived Race and Gender') %>%
+  theme_vanilla() %>%
+  width(j=3,2.5,unit="in")
+
+
+  
+
 
 ```
 
@@ -710,7 +747,7 @@ df_gender<-uof%>%
 
 ### Total count/rate out of all officer-initiated stops
 
-Just two stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
+Just two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
 
 ```{r, include=FALSE}
 
@@ -731,8 +768,8 @@ count_ois_result <- ois_result %>%
      mutate(`% of All Stop Results` = sprintf("%.2f%%", `% of All Stop Results`))
 
 ##Table to show result counts and rates of all OIS, with FI result highlighted##
-flextable(count_ois_result) %>% 
-  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>% 
+flextable(count_ois_result) %>%
+  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>%
   theme_vanilla() %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
@@ -745,7 +782,7 @@ flextable(count_ois_result) %>%
 
 ### Total count/rate by stop reason 
 
-Fresno PD __only made four stops__ in 2022 that resulted in officers completing and filing a field interview card. All four of these stops were due to perceived traffic violations.
+Fresno PD __only made four stops__ in 2022 that resulted in officers completing an officer-initiated stop that resulted in a field interview card. All four of these stops were made during traffic stops.
 
 ```{r, include=FALSE}
 
@@ -761,7 +798,7 @@ fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
 
 ### By race and gender
 
-Of the five individuals that Fresno PD completed field interview cards for in 2022, four were identified by officers as Black or Latinx. Officers also identified three of these individuals as men and two as women.
+Every individual that Fresno PD stopped and completed field interview cards for in 2022 were perceived by officers as Black or Latinx. Officers also perceived three of these individuals as male and one as female.
 
 ```{r, include=FALSE}
 
@@ -943,10 +980,6 @@ Across all three types of officer-initiated traffic stops (Equipment, Moving, No
 
 ```{r}
 
-# read in table
-
-person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
-
 # join to person-level traffic universe and analyze
 
 df<-traffic%>%
@@ -987,7 +1020,7 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())+
-     facet_grid(. ~ traffic_violation_type)
+  facet_grid(. ~ traffic_violation_type)
 
 
 #create and style flextable-----------
@@ -1041,10 +1074,10 @@ select(1,6,8,2,3,4)
 
 #create and style flextable
 
-names(df)<-tools::toTitleCase(sub("_"," ",names(df))) # clean up column names for table
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
 df<-df%>%
-  rename("Statute"="Statute Literal_25")
+  rename("Statute"="Statute Literal 25")
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
@@ -1072,30 +1105,6 @@ noDL_count <- tv_reason %>%
 print(noDL_count)
 
 ```
-
-
-#### By race
-
-```{r}
-
-df<-traffic%>%
-  left_join(citation_result%>%
-              mutate(person_number=as.character(person_number)))%>%
-  left_join(codes, by=c("offense_code"="offense_code"))%>%
-  filter(offense_statute=="12500(A)")%>%
-  mutate(total=n())%>%
-  left_join(race)%>%
-  group_by(nh_race)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(nh_race, offense_statute, statute_literal_25, total, count,rate)%>%
-  arrange(-rate)
-
-
-
-```
-
 
 # Time spent
 
