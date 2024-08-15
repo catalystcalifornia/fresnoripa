@@ -65,6 +65,9 @@ person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
 age<-dbGetQuery(con, "SELECT * FROM rel_age")
 race<-dbGetQuery(con, "SELECT * FROM rel_races_recode") 
 person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
+actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
+
 
 ```
 
@@ -638,10 +641,6 @@ Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops wer
 
 ```{r}
 
-# read in postgres tables:
-actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
-reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
-
 # Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
 
 uof<-person%>%
@@ -748,7 +747,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ### Total count/rate out of all officer-initiated stops
 
-Just two stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
+Just two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
 
 ```{r, include=FALSE}
 
@@ -769,8 +768,8 @@ count_ois_result <- ois_result %>%
      mutate(`% of All Stop Results` = sprintf("%.2f%%", `% of All Stop Results`))
 
 ##Table to show result counts and rates of all OIS, with FI result highlighted##
-flextable(count_ois_result) %>% 
-  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>% 
+flextable(count_ois_result) %>%
+  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>%
   theme_vanilla() %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
@@ -783,7 +782,7 @@ flextable(count_ois_result) %>%
 
 ### Total count/rate by stop reason 
 
-Fresno PD __only made four stops__ in 2022 that resulted in officers completing and filing a field interview card. All four of these stops were due to perceived traffic violations.
+Fresno PD __only made four stops__ in 2022 that resulted in officers completing an officer-initiated stop that resulted in a field interview card. All four of these stops were made during traffic stops.
 
 ```{r, include=FALSE}
 
@@ -799,7 +798,7 @@ fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
 
 ### By race and gender
 
-Of the five individuals that Fresno PD completed field interview cards for in 2022, four were identified by officers as Black or Latinx. Officers also identified three of these individuals as men and two as women.
+Every individual that Fresno PD stopped and completed field interview cards for in 2022 were perceived by officers as Black or Latinx. Officers also perceived three of these individuals as male and one as female.
 
 ```{r, include=FALSE}
 
