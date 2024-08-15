@@ -905,7 +905,13 @@ tv_citation_count <- tv_nonmove_reason %>%
   mutate(Percent = Count/sum(Count) * 100) %>%
   arrange(desc(Count))
 
+statutes<-dbGetQuery(con, "SELECT offense_code,statute_literal_25,offense_type_of_charge FROM cadoj_ripa_offense_codes_2023")
+
 ##Create data frame for table visualization with top 10 citations##
+tv_citation_flex_qa <- tv_citation_count %>%
+  left_join(statutes,
+            by=c("rfs_traffic_violation_code"="offense_code"))
+            
 tv_citation_flex <- tv_citation_count[1:10, ] %>%
   mutate('Traffic Violation' = case_when(
     rfs_traffic_violation_code == "54571" ~ "Obstructed window/mirrors", 
