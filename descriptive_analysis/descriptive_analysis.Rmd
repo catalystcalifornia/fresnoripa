@@ -75,11 +75,11 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 # Stops overview 
 
-## Number and Rate of Officer-Initiated Stops vs. Calls for Service
+## Total number and rate of officer-initiated stops
 
 In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
 
-In 2022, __94.6%___ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
+In 2022, __94.6%__ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
@@ -149,9 +149,9 @@ panel.background = element_blank())
 ```
 
 
-## Total number of people stopped 
+## Total number of people stopped for officer-initiated stops
 
-In 2022, Fresno PD stopped a total of __5,060 people__ through Officer-Initiated Stops.
+In 2022, Fresno PD stopped a total of __5,060 people__ through officer-initiated stops.
 
 ```{r}
 
@@ -170,7 +170,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 # Demographics 
 
-## Race
+## Perceived race of people stopped
 
 Fresno PD __mostly stops people they perceive Latinx__ during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, __11.3%__ of people they stopped Fresno PD __perceived as Black__ while the __Fresno City's population only comprises of 6.2% Black people__.
 
@@ -281,7 +281,7 @@ panel.background = element_blank())
 ```
 
 
-## Age 
+## Perceived age of people stopped 
 
 Individuals __aged 25-34__ experienced the highest numbers of officer-initiated stops by Fresno PD in the year 2022.
 
@@ -329,7 +329,7 @@ panel.background = element_blank())
 ```
 
 
-## Gender 
+## Perceived gender of people stopped 
 
 
 In 2022, people identified as men (males) accounted for __nearly 57%__ of officer-initiated stops by Fresno PD.
@@ -387,7 +387,7 @@ panel.background = element_blank())
 ```
 
 
-## Race by age 
+## Perceived race and age group
 
 In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. __In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.__
 
@@ -468,7 +468,7 @@ panel.background = element_blank())+
 
 ```
 
-## Age by race and gender
+## Perceived age by race and gender
 
 In 2022, __people perceived as men (males) were the most frequently stopped group across most age and race combinations__. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
 
@@ -569,7 +569,10 @@ panel.background = element_blank())+
 
 # Stop Reasons
 
-## Total counts and rates
+The following explores the most common reasons for officer-initiated stops in 2022. __Traffic violations__ are the overwhelming majority of officer-initiated stops that Fresno PD made in 2022, exceeding more than what is seen in other police jurisdictions in California. For this reason, we explore [traffic stops](#traffic) more in depth as its own section. 
+
+
+## Officer-initiated stops by stop reason
 
 The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, __Over 99%__ of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
 
@@ -604,257 +607,18 @@ count_ois_reason <- ois_reason %>%
     align(j = 3, align = "right", part = "header")
 ```
 
-# Stop Results 
+# Traffic Stops {#traffic}
 
-## Over-all stops by stop result out of all officer-initiated stops
-
-```{r}
-# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
-
-# Feel free to visualize as a bar graph, table, or whatever you think works best!
-
-
-
-
-```
-
-# Stop Results 
-
-## Over-all stops by stop result out of all officer-initiated stops
+## Traffic stops by race and gender
 
 ```{r}
 
-# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
-
-# Feel free to visualize as a bar graph, table, or whatever you think works best!
-
-
 
 ```
 
+## Count and rate of traffic stops by stop-type
 
-## Use of Force
-
-### Total count/rate out of all officer-initiated stops
-
-Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops).
-
-```{r}
-
-# Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
-
-uof<-person%>%
-  mutate(person_number=as.character(person_number))%>%
-  left_join(stops)%>%left_join(actions)%>%
-    filter(call_for_service==0)
-
-# Analysis
-
-df<-uof%>%
-  mutate(total=n())%>%
-  group_by(use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(use_of_force, total, count, rate)
-
-
-```
-
-### Use of force by stop reason
-
-All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
-
-```{r}
-
-df<-uof%>%
-  left_join(reason)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(use_of_force, stop_reason_simple)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  select(use_of_force, stop_reason_simple, total, count, rate)
-
-
-
-```
-
-### By race / gender
-
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
-
-```{r, include=FALSE}
-
-df_nh<-uof%>%
-  left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  filter(use_of_force==1)%>%
-  select(nh_race, use_of_force, total, count, rate)%>%
-  arrange(-rate)
-
-df_gender<-uof%>%
-    left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, g_full, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  filter(use_of_force==1)%>%
-  select(nh_race, g_full, use_of_force, total, count, rate)%>%
-  arrange(nh_race, -rate)
-
-# Format the gender table for visualizing 
-
-df<-df_gender%>%
-  mutate(g_full=ifelse(g_full %in% '1', 'Male',
-                       ifelse(g_full %in% '2', 'Female',
-                              g_full)))%>%
-    mutate(nh_race=ifelse(nh_race %in% 'latinx', 'Latinx',
-                       ifelse(nh_race %in% 'nh_asian', 'Asian',
-                              ifelse(nh_race %in% 'nh_sswana', 'SSWANA',
-                              "White"))))%>%
-  rename("Perceived Gender"="g_full",
-         "Perceived Race"="nh_race")%>%
-  ungroup()%>%
-  select(-3)
-
-#create and style flextable
-
-names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
-
-
-  flextable(df) %>%
-colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Use of Force by Perceived Race and Gender') %>%
-  theme_vanilla() %>%
-  width(j=3,2.5,unit="in")
-
-
-  
-
-
-```
-
-## Field Interview (FI) Card
-
-### Total count/rate out of all officer-initiated stops
-
-Just two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed.
-
-```{r, include=FALSE}
-
-##Create df of all officer-initiated stops w/ stop result variables##
-ois_result <- left_join(stops, person_result, by ="stop_id")%>%
-  filter(call_for_service ==0) %>%
-  select(stop_id, stop_result_simple, stop_result_list, everything())
-
-##Create df to find count and rate of all stop results##
-count_ois_result <- ois_result %>%
-  group_by(stop_result_simple) %>%
-  summarise(Count = n(), .groups = 'drop') %>%
-  mutate(Percent = Count/sum(Count) * 100) %>%
-    arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
-  rename('Recorded Stop Result' = stop_result_simple, 
-         `# of Times Recorded` = Count, 
-         `% of All Stop Results` = Percent) %>%
-     mutate(`% of All Stop Results` = sprintf("%.2f%%", `% of All Stop Results`))
-
-##Table to show result counts and rates of all OIS, with FI result highlighted##
-flextable(count_ois_result) %>%
-  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>%
-  theme_vanilla() %>%
-  width(width=2,unit="in") %>%
-    align(j = 3, align = "right", part = "body") %>%
-    align(j = 3, align = "right", part = "header") %>%
-   bold(i = 8, bold = TRUE, part = "body") %>%
-  color(i = 8, color = "red", part = "body")
-
-
-```
-
-### Total count/rate by stop reason 
-
-Fresno PD __only made four stops__ in 2022 that resulted in officers completing an officer-initiated stop that resulted in a field interview card. All four of these stops were made during traffic stops.
-
-```{r, include=FALSE}
-
-##Create df that includes only FI card results and merges in stop reason data##
-fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
-  filter(
-    stop_result_simple == "field interview card completed" |
-    grepl("field interview", stop_result_list, ignore.case = TRUE)) %>%
-  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())    #Only 4 stops where result was FI, reason for all was TV
-
-
-```
-
-### By race and gender
-
-Every individual that Fresno PD stopped and completed field interview cards for in 2022 were perceived by officers as Black or Latinx. Officers also perceived three of these individuals as male and one as female.
-
-```{r, include=FALSE}
-
-##Merge age_race_gender with FI card df##
-fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop_id")   #Df shows 5 individuals who had FI cards filed,
-              # 2 Black, 2 Latinx, 1 white.
-              # 3 men, 2 women
-
-```
-
-## Referral to US Department of Homeland Security ICE
-
-### Total count/rate out of all officer-initiated stops
-
-Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE.
-
-```{r, include=FALSE}
-
-##count_ois_result shows us 0 under simple results, 
-##query to see how many times it is listed under multiple results##
-sum(grepl("homeland security", ois_result$stop_result_list, ignore.case = TRUE)) #only 1 total referral to ICE
-
-```
-
-### Total count/rate by stop reason
-
-The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
-
-```{r, include=FALSE}
-##Create df for one ICE result and merge reason##
-ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
-  filter(grepl("homeland security", stop_result_list, ignore.case = TRUE)) %>%
-  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())
-
-```
-
-### By race and gender
-
-The one individual referred to ICE by Fresno PD in 2022 was a Latino male.
-
-```{r, include=FALSE}
-
-##Merge in race and gender variables for one observation##
-ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
-
-```
-
-## Stops with a search that resulted in no contraband [RDA: lower prioritiy]
-
-### Total count/rate out of all officer-initiated stops
-
-# Traffic Stops
-
-## Traffic stops by type
-
-Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations.
+Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
 
 ```{r}
 
@@ -922,7 +686,15 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
 
 ```
 
-### Stop reasons within equipment/non-moving traffic stops
+### By race and gender
+
+```{r}
+
+
+
+```
+
+## Stop reasons for equipment/non-moving traffic stops
 
 Over 50% of the non-moving or equipment-related traffic citations issued by Fresno PD in 2022 were for vehicles with obstructed windows or improper registration.
 
@@ -974,7 +746,16 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```
 
-## Traffic stops by result of stop
+### By race and gender
+
+```{r}
+
+
+
+```
+
+
+## Count and rate of traffic stops by result of stop
 
 Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
@@ -1039,7 +820,7 @@ panel.background = element_blank())+
 ```
 
 
-### Traffic citations as stop result
+### Most common citations that resulted from traffic stop
 
 ```{r}
 
@@ -1088,8 +869,15 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
+#### By race and gender
 
-### Traffic stops that result in a citation for driving without a license
+```{r}
+
+
+
+```
+
+## Traffic stops that result in a citation for driving without a license
 
 The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
 
@@ -1106,12 +894,234 @@ print(noDL_count)
 
 ```
 
+### By race and gender
+
+```{r}
+
+
+
+```
+
+# Stop Results 
+
+## Over-all rate and count of stops by stop result
+
+```{r}
+
+# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+
+# Feel free to visualize as a bar graph, table, or whatever you think works best!
+
+
+
+```
+
+
+## Stops resulting in use of force
+
+Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
+
+```{r}
+
+# Create universe for use of force analysis: person and stop level data joined together and filtered for officer-initiated stops
+
+uof<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%left_join(actions)%>%
+    filter(call_for_service==0)
+
+# Analysis
+
+df<-uof%>%
+  mutate(total=n())%>%
+  group_by(use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, total, count, rate)
+
+
+```
+
+```{r}
+
+df<-uof%>%
+  left_join(reason)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(use_of_force, stop_reason_simple)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(use_of_force, stop_reason_simple, total, count, rate)
+
+
+
+```
+
+### By race and gender
+
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
+
+```{r}
+
+df_nh<-uof%>%
+  left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, use_of_force, total, count, rate)%>%
+  arrange(-rate)
+
+df_gender<-uof%>%
+    left_join(race)%>%
+  group_by(use_of_force)%>%
+    mutate(total=n())%>%
+  group_by(nh_race, g_full, use_of_force)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  filter(use_of_force==1)%>%
+  select(nh_race, g_full, use_of_force, total, count, rate)%>%
+  arrange(nh_race, -rate)
+
+# Format the gender table for visualizing 
+
+df<-df_gender%>%
+  mutate(g_full=ifelse(g_full %in% '1', 'Male',
+                       ifelse(g_full %in% '2', 'Female',
+                              g_full)))%>%
+    mutate(nh_race=ifelse(nh_race %in% 'latinx', 'Latinx',
+                       ifelse(nh_race %in% 'nh_asian', 'Asian',
+                              ifelse(nh_race %in% 'nh_sswana', 'SSWANA',
+                              "White"))))%>%
+  rename("Perceived Gender"="g_full",
+         "Perceived Race"="nh_race")%>%
+  ungroup()%>%
+  select(-3)
+
+#create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Use of Force by Perceived Race and Gender') %>%
+  theme_vanilla() %>%
+  width(j=3,2.5,unit="in")
+
+
+  
+
+
+```
+
+## Stops resulting in a field interview (FI) card
+
+Two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed. A total of __four people__ were stopped and given FI cards during an officer-initiated stop. All four FI cards were given to people during __traffic stops__. 
+
+```{r, include=FALSE}
+
+##Create df of all officer-initiated stops w/ stop result variables##
+ois_result <- left_join(stops, person_result, by ="stop_id")%>%
+  filter(call_for_service ==0) %>%
+  select(stop_id, stop_result_simple, stop_result_list, everything())
+
+##Create df to find count and rate of all stop results##
+count_ois_result <- ois_result %>%
+  group_by(stop_result_simple) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+    arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
+  rename('Recorded Stop Result' = stop_result_simple, 
+         `# of Times Recorded` = Count, 
+         `% of All Stop Results` = Percent) %>%
+     mutate(`% of All Stop Results` = sprintf("%.2f%%", `% of All Stop Results`))
+
+##Table to show result counts and rates of all OIS, with FI result highlighted##
+flextable(count_ois_result) %>%
+  set_caption('Results of Officer-Initiated Stops by Fresno PD (2022)') %>%
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header") %>%
+   bold(i = 8, bold = TRUE, part = "body") %>%
+  color(i = 8, color = "red", part = "body")
+
+
+```
+
+```{r, include=FALSE}
+
+##Create df that includes only FI card results and merges in stop reason data##
+fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(
+    stop_result_simple == "field interview card completed" |
+    grepl("field interview", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())    #Only 4 stops where result was FI, reason for all was TV
+
+
+```
+
+### By race and gender
+
+Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as __Black or Latinx__. Officers also perceived three of these individuals as male and one as female.
+
+```{r, include=FALSE}
+
+##Merge age_race_gender with FI card df##
+fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop_id")   #Df shows 5 individuals who had FI cards filed,
+              # 2 Black, 2 Latinx, 1 white.
+              # 3 men, 2 women
+
+```
+
+## Stops resulting in referral to US Department of Homeland Security ICE
+
+Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
+
+```{r, include=FALSE}
+
+##count_ois_result shows us 0 under simple results, 
+##query to see how many times it is listed under multiple results##
+sum(grepl("homeland security", ois_result$stop_result_list, ignore.case = TRUE)) #only 1 total referral to ICE
+
+```
+
+```{r, include=FALSE}
+##Create df for one ICE result and merge reason##
+ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
+  filter(grepl("homeland security", stop_result_list, ignore.case = TRUE)) %>%
+  select(stop_id, stop_result_simple, stop_reason_simple, stop_result_list, everything())
+
+```
+
+### By race and gender
+
+The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as __a Latinx male__.
+
+```{r, include=FALSE}
+
+##Merge in race and gender variables for one observation##
+ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
+
+```
+
+## Stops that resulted in a search that resulted in no contraband
+
+### By race and gender
+
+
 # Time spent
 
-## Time spent by stop reason
+## Time spent on stops by stop reason
 
-## Time spent by stop result
-
+## Time spent on traffic stops resulting in a citation
 
 
 
