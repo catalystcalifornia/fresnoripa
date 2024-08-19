@@ -68,6 +68,8 @@ person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 
+# read in offense codes
+codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 ```
 
@@ -609,17 +611,6 @@ count_ois_reason <- ois_reason %>%
 
 # Traffic Stops {#traffic}
 
-## Over-all traffic stops by race and gender
-
-```{r}
-
-
-```
-
-## Traffic stops by stop-type
-
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
-
 ```{r}
 
 # JZ code chunk for prep
@@ -638,6 +629,129 @@ traffic<-person%>%
 names(traffic) <- gsub(x = names(traffic), pattern = "\\.x", replacement = "")  
 
 ```
+
+## Over-all traffic stops by race and gender
+
+```{r}
+
+# join race data to traffic-person level table
+
+df<-traffic%>%
+  left_join(race)
+  
+# Analyze and visualize race only cut ----------------------
+
+df_race<-df%>%
+  mutate(total=n())%>%
+  group_by(nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+ ungroup()%>%
+    mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+   select(Race, total, count,rate)%>%
+arrange(-rate)
+
+# graph
+
+ggplot(df_race, aes(x = Race, y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
+  labs(title = "Half of the people Fresno PD stops in traffic are people perceived as Latinx", 
+       subtitle = "Perceived race of people stopped in traffic by Fresno PD",
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())
+
+    
+#  Analyze and visualize race+gender cut-----------------------------
+
+gender<-df%>%
+    group_by(nh_race)%>%
+  mutate(total=n())%>%
+  group_by(nh_race, g_full)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+     mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+    mutate(Gender = recode(g_full,
+                         '1'= 'Male',
+                         '2' = 'Female',
+                         '3' = "Transgender Man/Boy",
+                         '4' = 'Transgender Woman/Girl',
+                         '5' = 'Gender Nonconforming'))%>%
+  select(Race, Gender, total, count,rate)%>%
+  arrange(-rate)
+
+# graph: I don't know if this is worth showing I don't think the disparity is that high or compelling of a story but open to other thoughts
+
+# ggplot(gender, aes(x = Gender, y = rate))+
+#   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+#   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+#           position = position_stack(vjust=0.5), #center percentage within the bar
+#           size = 3,
+#           color = "white")+ 
+#   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
+#   labs(title = "Most Officer-Initiated Traffic Stops Result in a Citation", 
+#        subtitle = "Perceived race and gender of people stopped in traffic by Fresno PD",
+#        x = "", #labels to visual
+#        y = "") +
+#   theme_bw()+
+#   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+#       legend.position ="none", #removes legend
+#       plot.title = element_text(hjust=0.5),
+#       plot.subtitle = element_text(hjust=0.5))+
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.7, hjust=1, size=10), #aesthetics of the barchart
+#         strip.background = element_rect(fill = "#362178"),
+#         strip.text = element_text(color = "white", size=7, face="bold"),
+#         panel.grid.major = element_blank(), 
+#         panel.grid.minor = element_blank(),
+# panel.background = element_blank())+
+#   facet_wrap(~Race, ncol=4)
+
+
+
+
+
+```
+
+## Traffic stops by stop-type
+
+Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
+
+
 
 ```{r}
 
@@ -742,6 +856,39 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```{r}
 
+df<-traffic%>%
+  left_join(race)%>%
+  group_by(rfs_traffic_violation_code)%>%
+  mutate(total=n())%>%
+  group_by(rfs_traffic_violation_code,nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+   mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+    # mutate(Gender = recode(g_full,
+    #                      '1'= 'Male',
+    #                      '2' = 'Female',
+    #                      '3' = "Transgender Man/Boy",
+    #                      '4' = 'Transgender Woman/Girl',
+    #                      '5' = 'Gender Nonconforming'))%>%
+  select(rfs_traffic_violation_code, Race, total, count,rate)%>%
+  group_by(Race)%>%
+    arrange(Race, -count)%>%
+   slice(1:3)%>%
+  left_join(codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)
+  
+
+
 
 
 ```
@@ -840,8 +987,6 @@ panel.background = element_blank())+
 # read in traffic citations table at person level
 citation_result<-dbGetQuery(con, "SELECT * FROM rel_persons_citations")
 
-# read in offense codes
-codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 # join to our traffic universe 
 
