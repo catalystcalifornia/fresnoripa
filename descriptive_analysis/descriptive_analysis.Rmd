@@ -664,12 +664,7 @@ mutate(Percent = Count/sum(Count) * 100)
 ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178")) +
-  geom_text(
-    aes(label = case_when(
-      traffic_violation_type == "Equipment" ~ paste(Count, "stops (15%)"),
-      traffic_violation_type == "Moving" ~ paste(Count, "stops (77%)"),
-      traffic_violation_type == "Non-moving" ~ paste(Count, "stops (8%)")
-    )),
+  geom_text(aes(label = paste0(Count," people (",round(Percent,1),'%)')),
     vjust = 1.2, color = "white", size = 4) +
   labs(
     title = "Fresno PD Traffic Violation Stops by Type (2022)",
@@ -677,12 +672,14 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
     y = "% of All People Stopped for Traffic Violations") +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
-    axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10),
+    axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
+                               size = 12,
+                               margin = margin(t = 2)),
+     axis.text.y = element_text(size = 12),
+    legend.position = "none",
     panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-panel.background = element_blank(),
-    axis.text.y = element_text(size = 12),
-    legend.position = "none") +
+panel.background = element_blank()) +
   scale_y_continuous(limits = c(0, 100))
 
 ```
