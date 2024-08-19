@@ -889,9 +889,17 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
+
+### Traffic stops resulting in driving without license citation
+
+```{r}
+
+```
+
+
 # Stop Results 
 
-## Over-all rate and count of stops by stop result
+## Officer-initiated stops by stop result
 
 ```{r}
 
