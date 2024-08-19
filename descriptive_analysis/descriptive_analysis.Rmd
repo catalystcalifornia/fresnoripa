@@ -880,7 +880,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ## Traffic stops that result in a citation for driving without a license
 
-The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
 ```{r}
 
@@ -888,10 +888,10 @@ The Fresno Police Department only stopped 8 people in 2022 for driving without a
 
 ##Get count for how many citations there were for driving w/o license##
 noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license
-    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
+    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
   summarise(count = n())
-print(noDL_count)
+#print(noDL_count) #count is 9
 
 ```
 
