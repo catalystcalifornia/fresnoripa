@@ -594,9 +594,9 @@ count_ois_reason <- ois_reason %>%
   mutate(Percent = Count/sum(Count) * 100) %>%
     arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
   rename('Reported Stop Reason' = reason, 
-         '# of Stops' = Count, 
-         '% of All Stops' = Percent) %>%
-     mutate(`% of All Stops` = sprintf("%.2f%%", `% of All Stops`))
+         '# of People Stopped' = Count, 
+         '% of All People Stopped' = Percent) %>%
+     mutate(`% of All People Stopped` = sprintf("%.2f%%", `% of All People Stopped`))
 
 ##Flextable for counts and rates of stop reasons##
   flextable(count_ois_reason) %>% 
@@ -618,7 +618,7 @@ count_ois_reason <- ois_reason %>%
 
 ## Count and rate of traffic stops by stop-type
 
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
+Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
 ```{r}
 
@@ -663,7 +663,7 @@ mutate(Percent = Count/sum(Count) * 100)
 ##Create bar chart to visualize counts and rates##
 ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
-  scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
+  scale_fill_manual(values = c("#362178", "#362178", "#362178")) +
   geom_text(
     aes(label = case_when(
       traffic_violation_type == "Equipment" ~ paste(Count, "stops (15%)"),
@@ -674,12 +674,13 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
   labs(
     title = "Fresno PD Traffic Violation Stops by Type (2022)",
     x = "Traffic Violation Type",
-    y = "% of All Stops for Traffic Violations") +
-  theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5),
-    axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
-                               size = 12,
-                               margin = margin(t = 2)),
+    y = "% of All People Stopped for Traffic Violations") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10),
+    panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank(),
     axis.text.y = element_text(size = 12),
     legend.position = "none") +
   scale_y_continuous(limits = c(0, 100))
