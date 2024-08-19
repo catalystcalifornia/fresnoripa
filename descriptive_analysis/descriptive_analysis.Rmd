@@ -697,7 +697,7 @@ panel.background = element_blank(),
 
 ## Stop reasons for equipment/non-moving traffic stops
 
-Over 50% of the non-moving or equipment-related traffic citations issued by Fresno PD in 2022 were for vehicles with obstructed windows or improper registration.
+Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
 
 ```{r}
 
@@ -731,14 +731,14 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
     rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
   select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
   rename(
-    `% of Total Equipment/Non-moving Traffic Violations` = Percent,
-    `# of Times Cited` = Count) %>% # Renaming columns to serve as better table headers
-  mutate(`% of Total Equipment/Non-moving Traffic Violations` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Violations`)) %>% #Improving display of percentages for table
+    `% of Total Equipment/Non-moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Equipment/Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
   select(2:4) # Hiding citation codes for table
   
 ##Create Flex table##
   flextable(tv_citation_flex) %>% 
-  set_caption('Fresno PD Equipment and Non-moving Traffic Citations Issued (2022)') %>% 
+  set_caption('Reasons for Equipment and Non-moving Traffic Stops by Fresno PD (2022)') %>% 
   theme_vanilla() %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
