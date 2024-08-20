@@ -789,7 +789,7 @@ flextable(tv_equip_flex) %>%
 
 ### Non-moving stops only - reasons
 
-There is heavy inconsistencies in Fresno PD's classification of traffic stops as "non-moving." Of the 10 most common offenses reported as reasons for non-moving traffic stops, six of them also appear in the 10 most common reasons for equipment-related stops, while two also appear in the list of most common reasons for moving stops.
+There are heavy inconsistencies in Fresno PD's classification of traffic stops as "non-moving." Of the 10 most common offenses reported as reasons for non-moving traffic stops, six of them also appear in the 10 most common reasons for equipment-related stops, while two also appear in the list of most common reasons for moving stops.
 
 ```{r}
 ##Filter TV to only included non-moving stops##
