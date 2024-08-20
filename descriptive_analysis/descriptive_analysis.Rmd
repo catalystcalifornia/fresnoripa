@@ -663,7 +663,7 @@ arrange(-rate)
 
 # graph
 
-ggplot(df_race, aes(x = Race, y = rate))+
+ggplot(df_race, aes(x = reorder(Race, rate), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
           position = position_stack(vjust=0.5), #center percentage within the bar
@@ -684,7 +684,8 @@ ggplot(df_race, aes(x = Race, y = rate))+
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-panel.background = element_blank())
+panel.background = element_blank())+ 
+  coord_flip()
 
     
 #  Analyze and visualize race+gender cut-----------------------------
@@ -856,9 +857,9 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```{r}
 
-df<-traffic%>%
+df0<-traffic%>%
   left_join(race)%>%
-  group_by(rfs_traffic_violation_code)%>%
+  group_by(nh_race)%>%
   mutate(total=n())%>%
   group_by(rfs_traffic_violation_code,nh_race)%>%
   mutate(count=n(),
@@ -887,9 +888,31 @@ df<-traffic%>%
   left_join(codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)
   
+## ggplot-----------
+  
 
-
-
+ggplot(df0, aes(x = statute_literal_25, y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .1))+
+  labs(title = str_wrap("Top Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      # legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=8, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+  facet_wrap(. ~ Race, ncol=4, scales = 'free') 
 
 ```
 
@@ -909,7 +932,6 @@ noDL_count <- tv_reason %>%
   summarise(count = n())
 print(noDL_count)
 
-###NOTE to include cut by race/gender####
 
 ```
 
@@ -935,7 +957,7 @@ df<-traffic%>%
   group_by(traffic_violation_type)%>%
    slice(1:3)
 
-## ggplot?-----------
+## ggplot-----------
   
 
 ggplot(df, aes(x = stop_result_simple, y = rate))+
@@ -963,18 +985,7 @@ panel.background = element_blank())+
   facet_grid(. ~ traffic_violation_type)
 
 
-#create and style flextable-----------
 
-# names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
-# 
-#   flextable(df) %>%
-# colformat_double(j = c("Rate"), digits = 1)%>%
-#   set_caption('Top 3 Results of Officer-Initiated Traffic Stops by Traffic Stop Type') %>%
-#   theme_vanilla() %>%
-#   width(j=2,2,unit="in")
-#   
-
-  
 
 ```
 
@@ -1028,7 +1039,106 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ### Traffic stops resulting in citations by race and gender
 
+People perceived as Latinx are stopped in traffic and given a citation as a result at the highest rates compared to all other groups. However, __people perceived as Black are disproportionately stopped in traffic and given a citation relative to how many Black people live in Fresno city__. Out of all people stopped in traffic and given a citation, 11.4% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
+
+The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top 3 traffic citation results for perceived race. 
+
 ```{r}
+
+## First analyze just traffic stops resulting in a citation by race to see generally which peceived race is receiving the most traffic citations
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(race)
+
+# analyze
+
+# race cut
+
+df_nh<-df%>%
+group_by(nh_race)%>%
+summarise(count=n(),.groups='drop')%>%
+mutate(rate=count/sum(count)*100)%>%
+  arrange(nh_race, -rate)
+
+# race/gender cut: I don't think there is a glaring gender disparity here
+df_gender<-df%>%
+group_by(nh_race, g_full)%>%
+summarise(count=n(),.groups='drop')%>%
+mutate(rate=count/sum(count)*100)%>%
+  arrange(nh_race, -rate)
+
+```
+
+```{r}
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(race)%>%
+  group_by(nh_race)%>%
+  mutate(total=n())%>%
+  group_by(offense_code,nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+   mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+  select(offense_code, Race, total, count,rate)%>%
+  group_by(Race)%>%
+    arrange(Race, -count)%>%
+   slice(1:3)%>%
+  left_join(codes, by=c("offense_code"="offense_code"))%>%
+  select(Race, offense_code, statute_literal_25, total, count, rate)
+
+
+
+df_qa<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(race)%>%
+  group_by(offense_code,nh_race)%>%
+summarise(count=n(),.groups='drop')%>%
+mutate(percent=count/sum(count))
+
+
+## ggplot-----------
+  
+
+ggplot(df0, aes(x = statute_literal_25, y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .1))+
+  labs(title = str_wrap("Top 3 Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      # legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=8, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+  facet_wrap(. ~ Race, ncol=4, scales = 'free') 
+
+
+
 
 
 ```
@@ -1037,10 +1147,77 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ### Traffic stops resulting in driving without license citation
 
+Across all officer-initiated traffic stops, __non-moving traffic stops__ have the highest rates of stops that result in a citation for driving without a license. 
+
 ```{r}
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(codes, by=c("offense_code"="offense_code"))%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  filter(offense_statute=="12500(A)" |
+          offense_statute=="12500(B)" |
+           offense_statute=="12500(C)" |
+           offense_statute=="12500(D)")%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(traffic_violation_type, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+# create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+df<-df%>%
+  rename("Statute"="Statute Literal 25")
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Traffic Stops Resulting in Driving without License Citation by Stop Type') %>%
+  theme_vanilla() %>%
+  width(j=2,2,unit="in")
 
 ```
 
+People Fresno PD perceive as Latinx and Black are stopped in traffic and given a citation for driving without a license at higher rates than other groups. The percentage of people Fresno perceived as Black who were stopped and given a citation for driving without a license is disproportionately relative to the percentage of Black people who live in Fresno city. 
+
+```{r}
+
+
+df<-traffic%>%
+  left_join(citation_result%>%
+              mutate(person_number=as.character(person_number)))%>%
+  left_join(codes, by=c("offense_code"="offense_code"))%>%
+   filter(offense_statute=="12500(A)" |
+          offense_statute=="12500(B)" |
+           offense_statute=="12500(C)" |
+           offense_statute=="12500(D)")%>%
+  mutate(total=n())%>%
+  left_join(race)%>%
+  group_by(nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  select(nh_race, offense_statute, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+# make table 
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+df<-df%>%
+  rename("Statute"="Statute Literal 25")
+
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Traffic Stops Resulting in Driving without License Citation by Perceived Race') %>%
+  theme_vanilla() %>%
+  width(j=3,2,unit="in")
+
+```
 
 # Stop Results 
 
@@ -1048,11 +1225,23 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```{r}
 
-# Total count and rates of officer-initiated stops by stop result Use officer-initiated stops is the denominator. For this use tables: rel_stops & rel_stops_result
+df<-stops%>%
+  left_join(results)%>%
+  filter(call_for_service==0)%>%
+  group_by(stop_result_simple)%>%
+summarise(count=n(),.groups='drop')%>%
+mutate(rate=count/sum(count)*100)%>%
+  arrange(-rate)
 
-# Feel free to visualize as a bar graph, table, or whatever you think works best!
+# make table 
 
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
+  flextable(df) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Officer-Initiated Stops by Stop Result') %>%
+  theme_vanilla() %>%
+  width(j=1, width=3, unit="in")
 
 ```
 
