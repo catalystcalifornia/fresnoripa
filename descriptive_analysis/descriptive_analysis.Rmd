@@ -6,7 +6,7 @@ output:
   html_document:
     css: "W:\\RDA Team\\R\\cc_brandguide.css"
     toc: yes
-    toc_depth: 2
+    toc_depth: 3
     toc_float: yes
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
@@ -75,7 +75,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 # Stops overview 
 
-## Total number and rate of officer-initiated stops
+## Officer-initiated stops versus calls for service
 
 In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
 
@@ -149,7 +149,7 @@ panel.background = element_blank())
 ```
 
 
-## Total number of people stopped for officer-initiated stops
+## People stopped for officer-initiated stops
 
 In 2022, Fresno PD stopped a total of __5,060 people__ through officer-initiated stops.
 
@@ -609,14 +609,14 @@ count_ois_reason <- ois_reason %>%
 
 # Traffic Stops {#traffic}
 
-## Traffic stops by race and gender
+## Over-all traffic stops by race and gender
 
 ```{r}
 
 
 ```
 
-## Count and rate of traffic stops by stop-type
+## Traffic stops by stop-type
 
 Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
@@ -684,17 +684,9 @@ panel.background = element_blank()) +
 
 ```
 
-### By race and gender
+## Traffic stops by stop reason 
 
-```{r}
-
-
-
-```
-
-## Stop reasons for equipment/non-moving traffic stops
-
-Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
+This analysis focuses the stop reasons specifically for __equipment/non-moving traffic stops__. Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
 
 ```{r}
 
@@ -744,11 +736,31 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```
 
-### By race and gender
+### Traffic stop reasons by race and gender
 
 ```{r}
 
 
+
+```
+
+
+### Traffic stops made for driving without license citation
+
+The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+
+```{r}
+
+# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
+
+##Get count for how many citations there were for driving w/o license##
+noDL_count <- tv_reason %>%
+  filter(                         #All citation codes for driving w/o license
+    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  summarise(count = n())
+print(noDL_count)
+
+###NOTE to include cut by race/gender####
 
 ```
 
@@ -824,7 +836,7 @@ flextable(tv_NMonly_flex) %>%
 
 ```
 
-## Stop reasons for moving traffic stops
+### Stop reasons for moving traffic stops
 
 Of the 3,876 moving vehicles stopped for suspected traffic violations by Fresno PD in 2022, __over three-quarters were stopped for speeding__.
 
@@ -861,7 +873,7 @@ flextable(tv_move_flex) %>%
 
 ```
 
-## Count and rate of traffic stops by result of stop
+## Traffic stops by result of stop
 
 Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
@@ -929,7 +941,6 @@ panel.background = element_blank())+
 ### Most common citations that resulted from traffic stop
 
 ```{r}
-
 # Total count/rate of each citation out of all traffic stops
 
 # read in traffic citations table at person level
@@ -975,16 +986,6 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-#### By race and gender
-
-```{r}
-
-
-
-```
-
-## Traffic stops that result in a citation for driving without a license
-
 The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
 ```{r}
@@ -997,20 +998,27 @@ noDL_count <- tv_reason %>%
     rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
   summarise(count = n())
 #print(noDL_count) #count is 9
-
 ```
 
-### By race and gender
+### Traffic stops resulting in citations by race and gender
 
 ```{r}
 
 
+```
+
+
+
+### Traffic stops resulting in driving without license citation
+
+```{r}
 
 ```
 
+
 # Stop Results 
 
-## Over-all rate and count of stops by stop result
+## Officer-initiated stops by stop result
 
 ```{r}
 
@@ -1026,6 +1034,9 @@ noDL_count <- tv_reason %>%
 ## Stops resulting in use of force
 
 Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
+
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
+
 
 ```{r}
 
@@ -1064,10 +1075,6 @@ df<-uof%>%
 
 
 ```
-
-### By race and gender
-
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
 
 ```{r}
 
@@ -1131,6 +1138,8 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 Two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed. A total of __four people__ were stopped and given FI cards during an officer-initiated stop. All four FI cards were given to people during __traffic stops__. 
 
+Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as __Black or Latinx__. Officers also perceived three of these individuals as male and one as female.
+
 ```{r, include=FALSE}
 
 ##Create df of all officer-initiated stops w/ stop result variables##
@@ -1174,10 +1183,6 @@ fi_stop_reason <- left_join(ois_result, reason, by = "stop_id") %>%
 
 ```
 
-### By race and gender
-
-Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as __Black or Latinx__. Officers also perceived three of these individuals as male and one as female.
-
 ```{r, include=FALSE}
 
 ##Merge age_race_gender with FI card df##
@@ -1190,6 +1195,9 @@ fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop
 ## Stops resulting in referral to US Department of Homeland Security ICE
 
 Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
+
+The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as __a Latinx male__.
+
 
 ```{r, include=FALSE}
 
@@ -1207,10 +1215,6 @@ ice_reason <- left_join(ois_result, reason, by = "stop_id") %>%
 
 ```
 
-### By race and gender
-
-The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as __a Latinx male__.
-
 ```{r, include=FALSE}
 
 ##Merge in race and gender variables for one observation##
@@ -1219,9 +1223,6 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 ```
 
 ## Stops that resulted in a search that resulted in no contraband
-
-### By race and gender
-
 
 # Time spent
 
