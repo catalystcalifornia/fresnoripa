@@ -67,7 +67,7 @@ race<-dbGetQuery(con, "SELECT * FROM rel_races_recode")
 person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
-
+offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 ```
 
@@ -706,7 +706,7 @@ Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD 
 tv_nonmove_reason <- tv_reason %>%
   filter(traffic_violation_type != "Moving")
 
-##Create data frame with counts/rates for 50 most frequent citations##
+##Create data frame with counts/rates for most frequent citations##
 tv_citation_count <- tv_nonmove_reason %>% 
   group_by(rfs_traffic_violation_code) %>%
   summarise(Count = n(), .groups = 'drop') %>%
@@ -752,6 +752,114 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```
 
+### Equipment stops only - reasons
+
+```{r}
+##Filter all non-Equipment traffic stops from data set##
+tv_equip_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Equipment")
+
+##Create data frame with counts/rates for most frequent stop reasons and join data with offense code data to add statute description##
+tv_equip_count <- tv_equip_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_equip_flex <- tv_equip_count[1:10, ] %>%
+  rename(
+    `% of Total Equipment Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Equipment Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_equip_flex) %>% 
+  set_caption('Reasons for Equipment Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
+
+### Non-moving stops only - reasons
+
+There is heavy inconsistencies in Fresno PD's classification of traffic stops as "non-moving." Of the 10 most common offenses reported as reasons for non-moving traffic stops, six of them also appear in the 10 most common reasons for equipment-related stops, while two also appear in the list of most common reasons for moving stops.
+
+```{r}
+##Filter TV to only included non-moving stops##
+tv_NMonly_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Non-moving")
+
+##Create data frame with counts/rates for most frequent stop reasons and join data with offense code data to add statute description##
+tv_NMonly_count <- tv_NMonly_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_NMonly_flex <- tv_NMonly_count[1:10, ] %>%
+  rename(
+    `% of Total Non-moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_NMonly_flex) %>% 
+  set_caption('Reasons for Non-moving Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
+
+## Stop reasons for moving traffic stops
+
+Of the 3,876 moving vehicles stopped for suspected traffic violations by Fresno PD in 2022, __over three-quarters were stopped for speeding__.
+
+```{r}
+##Filter TV data to only include moving stops##
+tv_move_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Moving")
+
+##Create data frame with counts/rates for most frequent stop reasons##
+tv_move_count <- tv_move_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_move_flex <- tv_move_count[1:10, ] %>%
+  rename(
+    `% of Total Moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Moving Traffic Stops` = sprintf("%.2f%%", `% of Total Moving Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_move_flex) %>% 
+  set_caption('Reasons for Moving Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
 
 ## Count and rate of traffic stops by result of stop
 
