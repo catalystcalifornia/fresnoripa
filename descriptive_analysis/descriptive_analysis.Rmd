@@ -73,7 +73,24 @@ offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 ```
 
-Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basis tallies on each of the following:
+Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
+
+* [Overview of officer-initiated stops and calls for service(#overview)
+* [Demographics of people stopped by Fresno PD](#demographics)
+* [A deep dive into traffic stops](#traffic)
+    + [Over-all traffic stops by race and gender](#traffic-demo)
+    + [Traffic stops by stop-type](#traffic-type)
+    + [raffic stops by stop reason](#traffic-reason)
+    + [Traffic stops by stop reason](#traffic-result)
+* [Results of officer-initiated stops](#results)
+    + [Stops resulting in use of force](#useofforce)
+    + [Stops resulting in a field interview (FI) card](#ficard)
+    + [Stops resulting in referral to US Department of Homeland Security ICE](#ice)
+    + [Stops that resulted in a search that resulted in no contraband](#contraband)
+* [Time spent on different types of stops](#time)
+    + [Time spent on stops by stop reason](#time-reason)
+    + [Time spent on traffic stops by stop result](#time-result)
+    + [Time Spent on traffic stops by race](#time-race)
 
 # Stops overview 
 
@@ -170,7 +187,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ```
 
-# Demographics 
+# Demographics{#demographics}
 
 ## Perceived race of people stopped
 
@@ -611,7 +628,27 @@ count_ois_reason <- ois_reason %>%
 
 # Traffic Stops {#traffic}
 
-## Over-all traffic stops by race and gender
+## Over-all traffic stops by race and gender {#traffic-demo}
+
+```{r}
+
+# JZ code chunk for prep
+
+### Create traffic violation universe at person level
+
+traffic<-person%>%
+  mutate(person_number=as.character(person_number))%>%
+  left_join(stops)%>%
+  left_join(person_reason, by =c("stop_id","person_number"))%>%
+  filter(call_for_service==0 & reason=='Traffic violation')%>% # keep only officer-initiated stops and traffic violations
+  select(stop_id, person_number, reason, g_full, reason, traffic_violation_type, rfs_traffic_violation_type.x, rfs_traffic_violation_code.x )
+ 
+# remove the .x from colunm names
+
+names(traffic) <- gsub(x = names(traffic), pattern = "\\.x", replacement = "")  
+
+```
+
 
 ```{r}
 
@@ -729,32 +766,9 @@ gender<-df%>%
 
 ```
 
-## Traffic stops by stop-type
+## Traffic stops by stop-type {#traffic-type}
 
 Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
-
-```{r}
-
-# JZ code chunk for prep
-
-### Create traffic violation universe at person level
-
-traffic<-person%>%
-  mutate(person_number=as.character(person_number))%>%
-  left_join(stops)%>%
-  left_join(person_reason, by =c("stop_id","person_number"))%>%
-  filter(call_for_service==0 & reason=='Traffic violation')%>% # keep only officer-initiated stops and traffic violations
-  select(stop_id, person_number, reason, g_full, reason, traffic_violation_type, rfs_traffic_violation_type.x, rfs_traffic_violation_code.x )
- 
-# remove the .x from colunm names
-
-names(traffic) <- gsub(x = names(traffic), pattern = "\\.x", replacement = "")  
-
-```
-
-## Traffic stops by stop-type
-
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
 
 ```{r}
 
@@ -1044,8 +1058,8 @@ flextable(tv_move_flex) %>%
     align(j = 3, align = "right", part = "header")
 
 ```
-
-## Traffic stops by result of stop
+ {#traffic-reason}
+## Traffic stops by result of stop {traffic-result}
 
 Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
@@ -1333,7 +1347,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-# Stop Results 
+# Stop Results  {#results}
 
 ## Officer-initiated stops by stop result
 
@@ -1360,7 +1374,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-## Stops resulting in use of force
+## Stops resulting in use of force {#useofforce}
 
 Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (17 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
 
@@ -1400,7 +1414,7 @@ df0<-uof%>%
   slice(1)%>%
   select(use_of_force, reason, rfs_traffic_violation_code.x, Total, Count, Rate)%>%
   arrange(-Count)%>%
-  left_join(codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
   ungroup()%>%
   select(reason, rfs_traffic_violation_code.x, statute_literal_25, Total, Count, Rate)%>%
   rename("Traffic reason offense code"='rfs_traffic_violation_code.x',
@@ -1468,7 +1482,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-## Stops resulting in a field interview (FI) card
+## Stops resulting in a field interview (FI) card {#ficard}
 
 Two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed. A total of __four people__ were stopped and given FI cards during an officer-initiated stop. All four FI cards were given to people during __traffic stops__. 
 
@@ -1526,7 +1540,7 @@ fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop
 
 ```
 
-## Stops resulting in referral to US Department of Homeland Security ICE
+## Stops resulting in referral to US Department of Homeland Security ICE {#ice}
 
 Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
 
@@ -1556,13 +1570,13 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ```
 
-## Stops that resulted in a search that resulted in no contraband
+## Stops that resulted in a search that resulted in no contraband {#contraband}
 
-# Time spent
+# Time spent {#time}
 
 The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about __74.1% of their stop time on officer-initiated stops__ though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
 
-## Time spent on stops by stop reason
+## Time spent on stops by stop reason {#time-reason}
 
 In 2022, Fresno PD spent nearly 98% of their stop time on stops originally made for traffic violations. While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
 
@@ -1602,7 +1616,8 @@ names(time_reason_ois)<-tools::toTitleCase(gsub("_"," ",names(time_reason_ois)))
 
 
 ```
-## Time spent on traffic stops by stop result
+
+## Time spent on traffic stops by stop result {#time-result}
 
 The large majority of time spent on traffic stops is spent on stops only resulting in a citation for infraction. Nearly 73% of minutes Fresno PD spent on traffic stops were on stops resulting in a citation for infraction. On average, each of these stops only takes 8 minutes.
 
@@ -1636,7 +1651,7 @@ names(time_result_ois)<-tools::toTitleCase(gsub("_"," ",names(time_result_ois)))
 
 ```
 
-## Time Spent on traffic stops by race
+## Time Spent on traffic stops by race {#time-race}
 
 On average, Fresno PD spent slightly longer on traffic stops of Black and Latinx people (about 1 minute longer looking at the median time or quartile 3 time). Quartile 1 represents the 25th percentile of stop duration, meaning that 25% stops in that racial group took less than that specified time. Quartile 3 represents the 75th percentile of stop duration, meaning that 75% stops in that racial group took less than that specified time.
 
