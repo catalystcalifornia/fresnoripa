@@ -1215,10 +1215,133 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 # Time spent
 
+The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about __74.1% of their stop time on officer-initiated stops__ though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
+
 ## Time spent on stops by stop reason
 
-## Time spent on traffic stops resulting in a citation
+In 2022, Fresno PD spent nearly 98% of their stop time on stops originally made for traffic violations. While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
+
+```{r, include=FALSE}
+
+# join data frames
+time_reason_df<-stops%>%left_join(reason)
+
+# get quick tallies of OIS vs. cfs
+time_ois<-time_reason_df%>%group_by(call_for_service)%>%
+  summarise(count_time=sum(stop_duration),
+            avg_time=mean(stop_duration),
+            median_time=median(stop_duration),
+            .groups='drop')%>%
+           mutate(percent_time=count_time/sum(count_time))
+
+# time spent on stop reason for ois
+time_reason_ois<-time_reason_df%>%filter(call_for_service==0)%>%
+  group_by(stop_reason_simple)%>%
+  summarise(total_time=sum(stop_duration),
+            average_time=round(mean(stop_duration),1),
+            median_time=median(stop_duration),
+            .groups='drop')%>%
+           mutate(percent_time=round(total_time/sum(total_time)*100,1))%>%
+  arrange(desc(percent_time))%>%
+  rename(stop_reason=stop_reason_simple)
 
 
+#create and style flextable
+names(time_reason_ois)<-tools::toTitleCase(gsub("_"," ",names(time_reason_ois))) # clean up column names for table
+
+  flextable(time_reason_ois) %>%
+# colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Time Spent in Minutes on Officer-initiated Stops by Stop Reason') %>%
+  theme_vanilla() 
+
+
+
+```
+## Time spent on traffic stops by stop result
+
+The large majority of time spent on traffic stops is spent on stops only resulting in a citation for infraction. Nearly 73% of minutes Fresno PD spent on traffic stops were on stops resulting in a citation for infraction. On average, each of these stops only takes 8 minutes.
+
+```{r, include=FALSE}
+
+# join data frames
+time_result_df<-time_reason_df%>%left_join(results)
+
+# time spent by result for ois and traffic
+time_result_ois<-time_result_df%>%filter(call_for_service==0 & stop_reason_simple=='Traffic violation')%>%
+  group_by(stop_result_simple)%>%
+  summarise(total_time=sum(stop_duration),
+            average_time=round(mean(stop_duration),1),
+            median_time=median(stop_duration),
+            .groups='drop')%>%
+           mutate(percent_time=round(total_time/sum(total_time)*100,1))%>%
+  arrange(desc(percent_time))%>%
+  rename(stop_result=stop_result_simple)%>%
+  mutate(stop_result=tools::toTitleCase(stop_result))
+
+#create and style flextable
+names(time_result_ois)<-tools::toTitleCase(gsub("_"," ",names(time_result_ois))) # clean up column names for table
+
+  flextable(time_result_ois) %>%
+# colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Time Spent in Minutes on Traffic Stops by Stop Result') %>%
+  theme_vanilla()%>%   
+    width(width=2,unit="in")
+
+
+
+```
+
+## Time Spent on traffic stops by race
+
+On average, Fresno PD spent slightly longer on traffic stops of Black and Latinx people (about 1 minute longer looking at the median time or quartile 3 time). Quartile 1 represents the 25th percentile of stop duration, meaning that 25% stops in that racial group took less than that specified time. Quartile 3 represents the 75th percentile of stop duration, meaning that 75% stops in that racial group took less than that specified time.
+
+Stops of White individuals in Fresno only took 1 in 4 minutes of Fresno PD's stop time on traffic violations.
+
+```{r, include=FALSE}
+
+# join data frames
+time_race_df<-time_result_df%>%left_join(race)
+
+# time spent by race for traffic
+time_race_traffic<-time_race_df%>%filter(call_for_service==0 & stop_reason_simple=='Traffic violation')%>%
+  group_by(nh_race)%>%
+  summarise(total_time=sum(stop_duration),
+            average_time=round(mean(stop_duration),1),
+            median_time=median(stop_duration),
+            count=n(),
+            quartile_1_time=quantile(stop_duration,probs=c(.25)),
+           quartile_3_time=quantile(stop_duration,probs=c(.75)),
+            .groups='drop')%>%
+           mutate(percent_time=round(total_time/sum(total_time)*100,1))%>%
+  arrange(desc(percent_time))
+
+# clean up 
+time_race_traffic_df<-time_race_traffic%>%
+ mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'aian' ~ 'AIAN',
+    nh_race == 'nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+  filter(count>5)%>%
+  select(-count,-nh_race)%>%
+  select(Race,total_time,percent_time,everything())
+    
+#create and style flextable
+names(time_race_traffic_df)<-tools::toTitleCase(gsub("_"," ",names(time_race_traffic_df))) # clean up column names for table
+
+  flextable(time_race_traffic_df) %>%
+# colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Time Spent in Minutes on Traffic Stops by Race') %>%
+  theme_vanilla() 
+    # width(width=2,unit="in")
+
+
+
+```
 
 
