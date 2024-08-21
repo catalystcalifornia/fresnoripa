@@ -744,10 +744,9 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```
 
-
 ### Traffic stops made for driving without license citation
 
-The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
 ```{r}
 
@@ -755,13 +754,10 @@ The Fresno Police Department only stopped 8 people in 2022 for driving without a
 
 ##Get count for how many citations there were for driving w/o license##
 noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license
-    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
+    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
   summarise(count = n())
-print(noDL_count)
-
-###NOTE to include cut by race/gender####
-
+#print(noDL_count) #count is 9
 ```
 
 ### Equipment stops only - reasons
@@ -986,19 +982,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
-```{r}
-
-# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
-
-##Get count for how many citations there were for driving w/o license##
-noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
-    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
-  summarise(count = n())
-#print(noDL_count) #count is 9
-```
 
 ### Traffic stops resulting in citations by race and gender
 
