@@ -889,6 +889,8 @@ df0<-traffic%>%
   select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)
   
 ## ggplot-----------
+
+### do we want to filter out multiracial people?
   
 
 ggplot(df0, aes(x = statute_literal_25, y = rate))+
@@ -940,6 +942,8 @@ print(noDL_count)
 
 Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
+--JZ NOTE: look AT ^ by race
+
 ```{r}
 
 # join to person-level traffic universe and analyze
@@ -988,7 +992,6 @@ panel.background = element_blank())+
 
 
 ```
-
 
 ### Most common citations that resulted from traffic stop
 
