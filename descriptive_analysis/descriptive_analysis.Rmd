@@ -67,7 +67,7 @@ race<-dbGetQuery(con, "SELECT * FROM rel_races_recode")
 person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
-
+offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 ```
 
@@ -594,9 +594,9 @@ count_ois_reason <- ois_reason %>%
   mutate(Percent = Count/sum(Count) * 100) %>%
     arrange(desc(Count)) %>%               # Change column names and value                                                 displays for more legible table
   rename('Reported Stop Reason' = reason, 
-         '# of Stops' = Count, 
-         '% of All Stops' = Percent) %>%
-     mutate(`% of All Stops` = sprintf("%.2f%%", `% of All Stops`))
+         '# of People Stopped' = Count, 
+         '% of All People Stopped' = Percent) %>%
+     mutate(`% of All People Stopped` = sprintf("%.2f%%", `% of All People Stopped`))
 
 ##Flextable for counts and rates of stop reasons##
   flextable(count_ois_reason) %>% 
@@ -618,7 +618,7 @@ count_ois_reason <- ois_reason %>%
 
 ## Traffic stops by stop-type
 
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations.
+Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
 ```{r}
 
@@ -663,32 +663,30 @@ mutate(Percent = Count/sum(Count) * 100)
 ##Create bar chart to visualize counts and rates##
 ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traffic_violation_type)) +
   geom_bar(stat = "identity", color = "black") +
-  scale_fill_manual(values = c("#1B4F72", "#21618C", "#2874A6")) +
-  geom_text(
-    aes(label = case_when(
-      traffic_violation_type == "Equipment" ~ paste(Count, "stops (15%)"),
-      traffic_violation_type == "Moving" ~ paste(Count, "stops (77%)"),
-      traffic_violation_type == "Non-moving" ~ paste(Count, "stops (8%)")
-    )),
+  scale_fill_manual(values = c("#362178", "#362178", "#362178")) +
+  geom_text(aes(label = paste0(Count," people (",round(Percent,1),'%)')),
     vjust = 1.2, color = "white", size = 4) +
   labs(
     title = "Fresno PD Traffic Violation Stops by Type (2022)",
     x = "Traffic Violation Type",
-    y = "% of All Stops for Traffic Violations") +
-  theme_classic() +
-  theme(plot.title = element_text(hjust = 0.5),
+    y = "% of All People Stopped for Traffic Violations") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
     axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
                                size = 12,
                                margin = margin(t = 2)),
-    axis.text.y = element_text(size = 12),
-    legend.position = "none") +
+     axis.text.y = element_text(size = 12),
+    legend.position = "none",
+    panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank()) +
   scale_y_continuous(limits = c(0, 100))
 
 ```
 
 ## Traffic stops by stop reason 
 
-This analysis focuses the stop reasons specifically for __equipment/non-moving traffic stops__. Over 50% of the non-moving or equipment-related traffic citations issued by Fresno PD in 2022 were for vehicles with obstructed windows or improper registration.
+This analysis focuses the stop reasons specifically for __equipment/non-moving traffic stops__. Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
 
 ```{r}
 
@@ -700,7 +698,7 @@ This analysis focuses the stop reasons specifically for __equipment/non-moving t
 tv_nonmove_reason <- tv_reason %>%
   filter(traffic_violation_type != "Moving")
 
-##Create data frame with counts/rates for 50 most frequent citations##
+##Create data frame with counts/rates for most frequent citations##
 tv_citation_count <- tv_nonmove_reason %>% 
   group_by(rfs_traffic_violation_code) %>%
   summarise(Count = n(), .groups = 'drop') %>%
@@ -722,14 +720,14 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
     rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
   select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
   rename(
-    `% of Total Equipment/Non-moving Traffic Violations` = Percent,
-    `# of Times Cited` = Count) %>% # Renaming columns to serve as better table headers
-  mutate(`% of Total Equipment/Non-moving Traffic Violations` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Violations`)) %>% #Improving display of percentages for table
+    `% of Total Equipment/Non-moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Equipment/Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
   select(2:4) # Hiding citation codes for table
   
 ##Create Flex table##
   flextable(tv_citation_flex) %>% 
-  set_caption('Fresno PD Equipment and Non-moving Traffic Citations Issued (2022)') %>% 
+  set_caption('Reasons for Equipment and Non-moving Traffic Stops by Fresno PD (2022)') %>% 
   theme_vanilla() %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
@@ -766,6 +764,114 @@ print(noDL_count)
 
 ```
 
+### Equipment stops only - reasons
+
+```{r}
+##Filter all non-Equipment traffic stops from data set##
+tv_equip_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Equipment")
+
+##Create data frame with counts/rates for most frequent stop reasons and join data with offense code data to add statute description##
+tv_equip_count <- tv_equip_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_equip_flex <- tv_equip_count[1:10, ] %>%
+  rename(
+    `% of Total Equipment Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Equipment Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_equip_flex) %>% 
+  set_caption('Reasons for Equipment Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
+
+### Non-moving stops only - reasons
+
+There are heavy inconsistencies in Fresno PD's classification of traffic stops as "non-moving." Of the 10 most common offenses reported as reasons for non-moving traffic stops, six of them also appear in the 10 most common reasons for equipment-related stops, while two also appear in the list of most common reasons for moving stops.
+
+```{r}
+##Filter TV to only included non-moving stops##
+tv_NMonly_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Non-moving")
+
+##Create data frame with counts/rates for most frequent stop reasons and join data with offense code data to add statute description##
+tv_NMonly_count <- tv_NMonly_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_NMonly_flex <- tv_NMonly_count[1:10, ] %>%
+  rename(
+    `% of Total Non-moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_NMonly_flex) %>% 
+  set_caption('Reasons for Non-moving Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
+
+### Stop reasons for moving traffic stops
+
+Of the 3,876 moving vehicles stopped for suspected traffic violations by Fresno PD in 2022, __over three-quarters were stopped for speeding__.
+
+```{r}
+##Filter TV data to only include moving stops##
+tv_move_reason <- tv_reason %>%
+  filter(traffic_violation_type == "Moving")
+
+##Create data frame with counts/rates for most frequent stop reasons##
+tv_move_count <- tv_move_reason %>% 
+  group_by(rfs_traffic_violation_code) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  mutate(Percent = Count/sum(Count) * 100) %>%
+  arrange(desc(Count)) %>%
+  left_join(offense_codes, by =c("rfs_traffic_violation_code" = "offense_code")) %>%
+  select(rfs_traffic_violation_code, statute_literal_25, Count, Percent, everything())
+
+##Create df for table visualization of top 10 stop reasons##
+tv_move_flex <- tv_move_count[1:10, ] %>%
+  rename(
+    `% of Total Moving Traffic Stops` = Percent,
+    `# of Times Recorded` = Count,
+    `Traffic Violation` = statute_literal_25) %>% # Renaming columns to serve as better table headers
+  mutate(`% of Total Moving Traffic Stops` = sprintf("%.2f%%", `% of Total Moving Traffic Stops`)) %>% #Improving display of percentages for table
+  select(2:4) # Selecting columns to appear in table
+
+##Create Flextable##
+flextable(tv_move_flex) %>% 
+  set_caption('Reasons for Moving Traffic Stops by Fresno PD (2022)') %>% 
+  theme_vanilla() %>%
+  width(width=2,unit="in") %>%
+    align(j = 3, align = "right", part = "body") %>%
+    align(j = 3, align = "right", part = "header")
+
+```
 
 ## Traffic stops by result of stop
 
@@ -880,6 +986,19 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
+The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
+
+```{r}
+
+# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
+
+##Get count for how many citations there were for driving w/o license##
+noDL_count <- tv_reason %>%
+  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
+    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
+  summarise(count = n())
+#print(noDL_count) #count is 9
+```
 
 ### Traffic stops resulting in citations by race and gender
 
