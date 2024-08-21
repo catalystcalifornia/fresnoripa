@@ -744,10 +744,9 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ```
 
-
 ### Traffic stops made for driving without license citation
 
-The Fresno Police Department only stopped 8 people in 2022 for driving without a license.
+The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
 ```{r}
 
@@ -755,13 +754,10 @@ The Fresno Police Department only stopped 8 people in 2022 for driving without a
 
 ##Get count for how many citations there were for driving w/o license##
 noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license
-    rfs_traffic_violation_code %in% c(42127, 54107, 54113, 54396, 54458)) %>%
+  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
+    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
   summarise(count = n())
-print(noDL_count)
-
-###NOTE to include cut by race/gender####
-
+#print(noDL_count) #count is 9
 ```
 
 ### Equipment stops only - reasons
@@ -986,19 +982,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
 
-```{r}
-
-# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
-
-##Get count for how many citations there were for driving w/o license##
-noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
-    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
-  summarise(count = n())
-#print(noDL_count) #count is 9
-```
 
 ### Traffic stops resulting in citations by race and gender
 
@@ -1033,10 +1017,7 @@ noDL_count <- tv_reason %>%
 
 ## Stops resulting in use of force
 
-Out of all officer-initiated stops made by Fresno PD in 2022, 99.7% of stops were indicated as having no instance of any use of force (5,043 total stops) while 0.33% of stops were indicated in the data as having instances of use of force (17 stops). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
-
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. 
-
+Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (17 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
 
 ```{r}
 
@@ -1062,45 +1043,52 @@ df<-uof%>%
 
 ```{r}
 
-df<-uof%>%
-  left_join(reason)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(use_of_force, stop_reason_simple)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
+uof[,1:149] <- sapply(uof[,1:149],as.character) # convert all columns to varchar for joining
+
+df0<-uof%>%
+  filter(use_of_force==1)%>%
+  left_join(person_reason, by =c("stop_id","person_number"))%>%
+    mutate(Total=n())%>%
+  group_by(reason, rfs_traffic_violation_code.x)%>%
+  mutate(Count=n(),
+         Rate=Count/Total*100)%>%
   slice(1)%>%
-  select(use_of_force, stop_reason_simple, total, count, rate)
+  select(use_of_force, reason, rfs_traffic_violation_code.x, Total, Count, Rate)%>%
+  arrange(-Count)%>%
+  left_join(codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
+  ungroup()%>%
+  select(reason, rfs_traffic_violation_code.x, statute_literal_25, Total, Count, Rate)%>%
+  rename("Traffic reason offense code"='rfs_traffic_violation_code.x',
+         "Statute"="statute_literal_25")
+
+#create and style flextable
+
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+# Create table so we can look at the traffic citation reasons for UoF
+
+  flextable(df0) %>%
+colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Use of Force by Stop Reason') %>%
+  theme_vanilla() %>%
+  width(j=3,2.5,unit="in")
 
 
 
 ```
 
+
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Additionally, __18% of use of force incidents were towards people perceived as Asian__ despite Asian people only making up __~13% of Fresno's total population__. 
+
 ```{r}
 
-df_nh<-uof%>%
-  left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  filter(use_of_force==1)%>%
-  select(nh_race, use_of_force, total, count, rate)%>%
-  arrange(-rate)
-
 df_gender<-uof%>%
-    left_join(race)%>%
-  group_by(use_of_force)%>%
-    mutate(total=n())%>%
-  group_by(nh_race, g_full, use_of_force)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
+left_join(race)%>%
   filter(use_of_force==1)%>%
-  select(nh_race, g_full, use_of_force, total, count, rate)%>%
-  arrange(nh_race, -rate)
+group_by(nh_race, g_full)%>%
+summarise(count=n(),.groups='drop')%>%
+mutate(rate=count/sum(count))
+
 
 # Format the gender table for visualizing 
 
@@ -1115,14 +1103,15 @@ df<-df_gender%>%
   rename("Perceived Gender"="g_full",
          "Perceived Race"="nh_race")%>%
   ungroup()%>%
-  select(-3)
+  select(-3)%>%
+  arrange("Perceived Race", -rate)
 
 #create and style flextable
 
 names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
-
-  flextable(df) %>%
+  
+flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Use of Force by Perceived Race and Gender') %>%
   theme_vanilla() %>%
