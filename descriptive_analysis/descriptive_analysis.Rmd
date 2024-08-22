@@ -67,6 +67,8 @@ race<-dbGetQuery(con, "SELECT * FROM rel_races_recode")
 person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
+person_action<-dbGetQuery(con, "SELECT * FROM rel_persons_actions")
+search<-dbGetQuery(con, "SELECT * FROM rel_stops_searches")
 
 # read in offense codes
 offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
@@ -1646,7 +1648,47 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ```
 
-## Stops that resulted in a search that resulted in no contraband {#contraband}
+## Stops that resulted in a search that yielded no contraband {#contraband}
+
+In 2022, Fresno PD conducted 90 searches, and searched a total of 106 people. Out of those 90 searches, 62 did not yield any contraband, or 68.9%, while __only 28 searches yielded any contraband, or 31.1% of searches__. 
+
+```{r}
+
+df<-person_action%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  filter(ads_search_person==1)%>%
+  left_join(race%>%mutate(person_number=as.numeric(person_number)))
+
+# quick tabulation to see searches by race
+df_search_race <- df %>%
+	  group_by(nh_race) %>%
+	  summarise(Count = n(), .groups = 'drop') %>%
+	  mutate(Percent = Count/sum(Count) * 100)
+
+# explore stops resulting in a search for some general counts
+
+df<-search%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  group_by(search)%>%
+  summarise(Count = n(),
+             person_count=sum(persons_count),
+            .groups = 'drop') 
+
+# explore stops resulting in a search and contraband
+
+df_contra<-search%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  group_by(search,contraband_found)%>%
+  summarise(Count = n(),
+             person_count=sum(persons_count),
+            .groups = 'drop') 
+
+
+
+```
 
 # Time spent {#time}
 
