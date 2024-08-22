@@ -67,6 +67,8 @@ race<-dbGetQuery(con, "SELECT * FROM rel_races_recode")
 person_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
 actions<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
+person_action<-dbGetQuery(con, "SELECT * FROM rel_persons_actions")
+search<-dbGetQuery(con, "SELECT * FROM rel_stops_searches")
 
 # read in offense codes
 offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
@@ -1646,7 +1648,134 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ```
 
-## Stops that resulted in a search that resulted in no contraband {#contraband}
+## Stops that resulted in a search that yielded no contraband {#contraband}
+
+In 2022, Fresno PD conducted 90 officer-initiated searches. Out of those 90 searches, 62 did not yield any contraband, or 68.9%, while __only 28 searches yielded any contraband, or 31.1% of searches__.
+
+```{r}
+
+df<-person_action%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  filter(ads_search_person==1)%>%
+  left_join(race%>%mutate(person_number=as.numeric(person_number)))
+
+# quick tabulation to see searches by race
+df_search_race <- df %>%
+	  group_by(nh_race) %>%
+	  summarise(Count = n(), .groups = 'drop') %>%
+	  mutate(Percent = Count/sum(Count) * 100)
+
+# explore stops resulting in a search for some general counts
+
+df<-search%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  group_by(search)%>%
+  summarise(Count = n(),
+            .groups = 'drop')%>%
+  mutate(percent=Count/sum(Count)*100)
+
+# explore stops resulting in a search and contraband
+
+df_contra<-search%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  group_by(search,contraband_found)%>%
+  summarise(Count = n(),
+            .groups = 'drop')
+
+
+
+```
+
+A total of 80 people were searched by Fresno PD in 2022. Of those 80 people searched by Fresno PD, __16 people searched were perceived as Black by officers, or 20% of all searches.__ More than half of all searches made by Fresno PD were of people perceived as Latinx.
+
+```{r}
+
+# read in raw data from postgres:
+
+person_search<-dbGetQuery(con, "SELECT * FROM  cadoj_ripa_fresno_2022
+WHERE ads_search_person	= 1 AND call_for_service=0")%>%
+  rename("stop_id"="doj_record_id")
+
+# analyze just searches by race -------------
+
+df<-person_search%>%
+  left_join(race%>%mutate(person_number=as.numeric(person_number)),
+            by=c("stop_id", "person_number"))%>%
+  mutate(Total=n())%>%
+  group_by(nh_race)%>%
+  mutate(Count=n(),
+         Rate=Count/Total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'aian' ~ 'AIAN',
+    nh_race == 'nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+  select(Race, Total, Count, Rate)%>%
+  arrange(-Rate)
+
+# create table of just searches by race------------
+
+#create and style flextable
+names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
+
+
+  flextable(df) %>%
+ colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Fresno PD Searches by Perceived Race') %>%
+  theme_vanilla() 
+
+```
+
+Despite Fresno PD disproportionately stopping and searching people perceived as Latinx and Black, these groups also have the highest rates of searches that yield no contraband. In contrast, out of all the searches Fresno PD conducted towards people perceived as White, only 3 of those searches yielded no contraband. In other words, __the majority of searches of people that yield contraband is of people perceived as White.__ 
+
+```{r}
+
+
+# analyze searches that yielded no contraband-------------------------  
+
+df_contra_person<-person_search%>%
+  left_join(race%>%mutate(person_number=as.numeric(person_number)),
+            by=c("stop_id", "person_number"))%>%
+  filter(ced_none_contraband==0)%>%
+   mutate(Total=n())%>%
+  group_by(nh_race)%>%
+  mutate(Count=n(),
+         Rate=Count/Total*100)%>%
+  slice(1)%>%
+    ungroup()%>%
+    mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'aian' ~ 'AIAN',
+    nh_race == 'nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+  select(Race, Total, Count, Rate)%>%
+  arrange(-Rate)
+  
+  #create and style flextable
+names(df_contra_person)<-tools::toTitleCase(gsub("_"," ",names(df_contra_person))) # clean up column names for table
+
+  flextable(df_contra_person) %>%
+ colformat_double(j = c("Rate"), digits = 1)%>%
+  set_caption('Fresno PD Searches Yielding No Contraband by Perceived Race') %>%
+  theme_vanilla() 
+
+
+```
 
 # Time spent {#time}
 
