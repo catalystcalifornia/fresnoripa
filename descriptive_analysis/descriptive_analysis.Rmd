@@ -262,8 +262,6 @@ final_race <- final_race %>%
      nh_race == 'sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(nh_race)))
     
-                      
-
 ##ADDING TOTAL NUMBER TO LABEL##
 
 final_race <- final_race%>%
@@ -350,7 +348,6 @@ panel.background = element_blank())
 
 ## Perceived gender of people stopped 
 
-
 In 2022, people identified as men (males) accounted for __nearly 57%__ of officer-initiated stops by Fresno PD.
 
 ```{r}
@@ -409,7 +406,6 @@ panel.background = element_blank())
 ## Perceived race and age group
 
 In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. __In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.__
-
 
 In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops by Fresno PD. White individuals may make up a higher share of the population in these age groups in Fresno. Generally, White individuals make up 25.4% of the Fresno population.
 
@@ -1658,7 +1654,7 @@ The following analyzes the total and percent of time Fresno PD spent on certain 
 
 ## Time spent on stops by stop reason {#time-reason}
 
-In 2022, Fresno PD spent nearly 98% of their stop time on stops originally made for traffic violations. While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
+In 2022, Fresno PD spent nearly __98% of their stop time on stops originally made for traffic violations.__ While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
 
 ```{r, include=FALSE}
 
