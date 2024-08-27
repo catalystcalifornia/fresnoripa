@@ -1650,26 +1650,26 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ## Stops that resulted in a search that yielded no contraband {#contraband}
 
-In 2022, Fresno PD conducted 90 officer-initiated searches. Out of those 90 searches, 62 did not yield any contraband, or 68.9%, while __only 28 searches yielded any contraband, or 31.1% of searches__.
+In 2022, Fresno PD made 68 searches during officer-initiated traffic stops and searched 59 people. Of the 59 people Fresno PD searched in traffic, 32 people were perceived as Latinx and 9 people were perceived as Black.  
+
+Out of the 68 searches made in traffic, 50 of those searches did not yield any contraband. In other words, 73.5% searches made in traffic did not prevent any crime.
 
 ```{r}
 
 df<-person_action%>%
+  left_join(person_reason%>%
+              mutate(person_number=as.numeric(person_number)))%>%
   left_join(stops)%>%
   filter(call_for_service==0)%>%
-  filter(ads_search_person==1)%>%
+  filter(ads_search_person==1 & reason == "Traffic violation")%>%
   left_join(race%>%mutate(person_number=as.numeric(person_number)))
-
-# quick tabulation to see searches by race
-df_search_race <- df %>%
-	  group_by(nh_race) %>%
-	  summarise(Count = n(), .groups = 'drop') %>%
-	  mutate(Percent = Count/sum(Count) * 100)
 
 # explore stops resulting in a search for some general counts
 
 df<-search%>%
   left_join(stops)%>%
+  left_join(reason)%>%
+  filter(stop_reason_simple=="Traffic violation")%>%
   filter(call_for_service==0)%>%
   group_by(search)%>%
   summarise(Count = n(),
@@ -1680,6 +1680,8 @@ df<-search%>%
 
 df_contra<-search%>%
   left_join(stops)%>%
+  left_join(reason)%>%
+  filter(stop_reason_simple=="Traffic violation")%>%
   filter(call_for_service==0)%>%
   group_by(search,contraband_found)%>%
   summarise(Count = n(),
@@ -1702,8 +1704,12 @@ WHERE ads_search_person	= 1 AND call_for_service=0")%>%
 # analyze just searches by race -------------
 
 df<-person_search%>%
+  left_join(person_reason%>%
+              mutate(person_number=as.numeric(person_number)),
+             by=c("stop_id", "person_number"))%>%
   left_join(race%>%mutate(person_number=as.numeric(person_number)),
             by=c("stop_id", "person_number"))%>%
+  filter(reason == "Traffic violation")%>%
   mutate(Total=n())%>%
   group_by(nh_race)%>%
   mutate(Count=n(),
@@ -1736,19 +1742,22 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 
 ```
 
-Despite Fresno PD disproportionately stopping and searching people perceived as Latinx and Black, these groups also have the highest rates of searches that yield no contraband. In contrast, out of all the searches Fresno PD conducted towards people perceived as White, only 3 of those searches yielded no contraband. In other words, __the majority of searches of people that yield contraband is of people perceived as White.__ 
+Despite Fresno PD disproportionately stopping and searching people perceived as Black and Latinx in traffic stops, these groups also have the highest rates of searches that yield no contraband (also known as hit rates). In contrast, out of all the searches Fresno PD conducted towards people perceived as White during traffic stops, only 2 of those searches yielded no contraband. In other words, __the majority of searches of people that yield contraband during traffic stops is of people perceived as White.__ 
 
 ```{r}
 
-
-# analyze searches that yielded no contraband-------------------------  
+# analyze HIT RATES by race:  searches that yielded no contraband--------------------
 
 df_contra_person<-person_search%>%
+  left_join(person_reason%>%
+              mutate(person_number=as.numeric(person_number)),
+             by=c("stop_id", "person_number"))%>%
   left_join(race%>%mutate(person_number=as.numeric(person_number)),
             by=c("stop_id", "person_number"))%>%
-  filter(ced_none_contraband==0)%>%
-   mutate(Total=n())%>%
+  filter(reason == "Traffic violation")%>%
   group_by(nh_race)%>%
+  mutate(Total=n())%>%
+  filter(ced_none_contraband==0)%>%
   mutate(Count=n(),
          Rate=Count/Total*100)%>%
   slice(1)%>%
