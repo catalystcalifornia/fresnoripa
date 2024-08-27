@@ -1655,6 +1655,16 @@ In 2022, Fresno PD made 68 searches during officer-initiated traffic stops and s
 Out of the 68 searches made in traffic, 50 of those searches did not yield any contraband. In other words, 73.5% searches made in traffic did not prevent any crime.
 
 ```{r}
+
+df<-person_action%>%
+  left_join(person_reason%>%
+              mutate(person_number=as.numeric(person_number)))%>%
+  left_join(stops)%>%
+  filter(call_for_service==0)%>%
+  filter(ads_search_person==1 & reason == "Traffic violation")%>%
+  left_join(race%>%mutate(person_number=as.numeric(person_number)))
+
+>>>>>>> ef0697534eb84c3dbe3b926af4394eb5d26fb9c1
 # explore stops resulting in a search for some general counts
 
 df<-search%>%
