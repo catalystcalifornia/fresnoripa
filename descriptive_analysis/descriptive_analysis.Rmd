@@ -778,7 +778,7 @@ panel.background = element_blank())+
 
 ## Traffic stops by stop-type {#traffic-type}
 
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
+Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. That means the remaining 25% of all traffic stops were made for equipment and non-moving traffic stops. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
 ```{r}
 
@@ -1076,7 +1076,7 @@ flextable(tv_move_flex) %>%
 ```
  
 
-## Traffic stops by result of stop {traffic-result}
+## Traffic stops by result of stop {#traffic-result}
 
 Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
 
