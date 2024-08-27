@@ -1664,12 +1664,6 @@ df<-person_action%>%
   filter(ads_search_person==1 & reason == "Traffic violation")%>%
   left_join(race%>%mutate(person_number=as.numeric(person_number)))
 
-# quick tabulation to see searches by race
-df_search_race <- df %>%
-	  group_by(nh_race) %>%
-	  summarise(Count = n(), .groups = 'drop') %>%
-	  mutate(Percent = Count/sum(Count) * 100)
-
 # explore stops resulting in a search for some general counts
 
 df<-search%>%
@@ -1751,7 +1745,6 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 Despite Fresno PD disproportionately stopping and searching people perceived as Black and Latinx in traffic stops, these groups also have the highest rates of searches that yield no contraband (also known as hit rates). In contrast, out of all the searches Fresno PD conducted towards people perceived as White during traffic stops, only 2 of those searches yielded no contraband. In other words, __the majority of searches of people that yield contraband during traffic stops is of people perceived as White.__ 
 
 ```{r}
-
 
 # analyze HIT RATES by race:  searches that yielded no contraband--------------------
 
