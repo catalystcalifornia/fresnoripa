@@ -75,14 +75,14 @@ offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
 ```
 
-Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
+Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno Police Department (PD) RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
 
 * [Overview of officer-initiated stops and calls for service](#overview)
 * [Demographics of people stopped by Fresno PD](#demographics)
 * [A deep dive into traffic stops](#traffic)
     + [Over-all traffic stops by race and gender](#traffic-demo)
     + [Traffic stops by stop-type](#traffic-type)
-    + [raffic stops by stop reason](#traffic-reason)
+    + [Traffic stops by stop reason](#traffic-reason)
     + [Traffic stops by stop reason](#traffic-result)
 * [Results of officer-initiated stops](#results)
     + [Stops resulting in use of force](#useofforce)
@@ -100,7 +100,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 In 2022, there were a total of 5,317 police stops made by Fresno PD. Of those stops, 5,028 were officer-initiated stops and 289 were calls for service.
 
-In 2022, 94.6% of Fresno Police Department stops were officer initiated stops while only 5.4% of stops were calls for service.
+In 2022, 94.6% of Fresno PD stops were officer initiated stops while only 5.4% of stops were calls for service.
 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
@@ -193,7 +193,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Perceived race of people stopped
 
-Fresno PD mostly stops people they perceive Latinx during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, 11.3% of people they stopped Fresno PD perceived as Black while the Fresno City's population only comprises of 6.2% Black people.
+Over half of the people Fresno PD stopped were people they perceived as Latinx. For reference, about 50.5% of Fresno City's total population is Latinx. As a comparison, 11.3% of people that Fresno PD stopped were people officers perceived as Black, while only 6.2% of Fresno City's total population is Black.
 
 ```{r}
 
@@ -350,7 +350,7 @@ panel.background = element_blank())
 
 ## Perceived gender of people stopped 
 
-In 2022, people identified as men (males) accounted for nearly 57% of officer-initiated stops by Fresno PD.
+In 2022, people perceived by Fresno PD as men (males) accounted for nearly 57% of all officer-initiated stops.
 
 ```{r}
 
@@ -407,9 +407,9 @@ panel.background = element_blank())
 
 ## Perceived race and age group
 
-In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.
+In all age groups under 55 years old, individuals Fresno PD perceived as Latinx made up nearly 50% or more of total officer-initiated stops. For reference, 50.5% of the total population in Fresno City is Latinx. By comparison, 6.2% of the total population in Fresno City is Black, and 6.1% of the total population is SWANA/SA. In most age groups, individuals perceived by Fresno PD as Black made up a higher percent of Fresno PD's officer-initiated stops, exceeding their proportion relative to Fresno's general population.
 
-In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops by Fresno PD. White individuals may make up a higher share of the population in these age groups in Fresno. Generally, White individuals make up 25.4% of the Fresno population.
+In 2022, individuals perceived as White within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops. White individuals may make up a higher share of the total population in these age groups in Fresno. White individuals make up 25.4% of Freno City's population.
 
 ```{r}
 
@@ -573,13 +573,13 @@ ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       plot.title = element_text(hjust=0.5),
       plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust=0.5, size=6), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())+
-     facet_wrap(. ~ `Age Group`,nrow=4,scales='free_x')    
+     facet_wrap(. ~ `Age Group`,nrow=4,scales='free')    
 
 ```
 
@@ -591,7 +591,7 @@ The following explores the most common reasons for officer-initiated stops in 20
 
 ## Officer-initiated stops by stop reason
 
-The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, Over 99% of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
+Fresno PD makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, Over 99% of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
 
 ```{r}
 
@@ -949,7 +949,7 @@ panel.background = element_blank())+
 
 ### Traffic stops made for driving without license citation
 
-The Fresno Police Department only stopped 9 people in 2022 for driving without a license.
+The Fresno PD only stopped 9 people in 2022 for driving without a license.
 
 ```{r}
 
