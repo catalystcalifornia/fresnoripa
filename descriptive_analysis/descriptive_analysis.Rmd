@@ -98,9 +98,9 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 ## Officer-initiated stops versus calls for service
 
-In 2022, there were a __total of 5,317 police stops__ made by Fresno PD. Of those stops, __5,028 were officer-initiated stops__ and __289 were calls for service.__
+In 2022, there were a total of 5,317 police stops made by Fresno PD. Of those stops, 5,028 were officer-initiated stops and 289 were calls for service.
 
-In 2022, __94.6%__ of Fresno Police Department stops were officer initiated stops while __only 5.4%__ of stops were calls for service.
+In 2022, 94.6% of Fresno Police Department stops were officer initiated stops while only 5.4% of stops were calls for service.
 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
@@ -172,7 +172,7 @@ panel.background = element_blank())
 
 ## People stopped for officer-initiated stops
 
-In 2022, Fresno PD stopped a total of __5,060 people__ through officer-initiated stops.
+In 2022, Fresno PD stopped a total of 5,060 people through officer-initiated stops.
 
 ```{r}
 
@@ -193,7 +193,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Perceived race of people stopped
 
-Fresno PD __mostly stops people they perceive Latinx__ during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, __11.3%__ of people they stopped Fresno PD __perceived as Black__ while the __Fresno City's population only comprises of 6.2% Black people__.
+Fresno PD mostly stops people they perceive Latinx during officer-initiated stops. Over half of people stopped during these encounters are Latinx. For reference, about 50.5% of Fresno City's population is Latinx. As a comparison, 11.3% of people they stopped Fresno PD perceived as Black while the Fresno City's population only comprises of 6.2% Black people.
 
 ```{r}
 
@@ -302,7 +302,7 @@ panel.background = element_blank())
 
 ## Perceived age of people stopped 
 
-Individuals __aged 25-34__ experienced the highest numbers of officer-initiated stops by Fresno PD in the year 2022.
+Individuals aged 25-34 experienced the highest numbers of officer-initiated stops by Fresno PD in the year 2022.
 
 ```{r}
 
@@ -350,7 +350,7 @@ panel.background = element_blank())
 
 ## Perceived gender of people stopped 
 
-In 2022, people identified as men (males) accounted for __nearly 57%__ of officer-initiated stops by Fresno PD.
+In 2022, people identified as men (males) accounted for nearly 57% of officer-initiated stops by Fresno PD.
 
 ```{r}
 
@@ -407,7 +407,7 @@ panel.background = element_blank())
 
 ## Perceived race and age group
 
-In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. __In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.__
+In all age groups except for 55-64 and 65 and older, Latinx individuals make up nearly 50% or more of the officer-initiated stops by Fresno PD. For reference, generally Latinx individuals make up 50.5% of the Fresno population. By comparison, Black individuals make up 6.2% of the Fresno population and SWANA/SA individuals 6.1%. In most age groups, Black individuals make up a higher percent of Fresno PD's officer-initiated stops, beyond their general share of the Fresno population.
 
 In 2022, White individuals within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops by Fresno PD. White individuals may make up a higher share of the population in these age groups in Fresno. Generally, White individuals make up 25.4% of the Fresno population.
 
@@ -487,9 +487,9 @@ panel.background = element_blank())+
 
 ## Perceived age by race and gender
 
-In 2022, __people perceived as men (males) were the most frequently stopped group across most age and race combinations__. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
+In 2022, people perceived as men (males) were the most frequently stopped group across most age and race combinations. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
 
-In 2022, __Latinx men ages 17 and under comprised more than 40% of people stopped under the age of 17__. Similarly, Latinx men ages 18-24 made up about 37% of people stopped between the ages of 18-24.
+In 2022, Latinx men ages 17 and under comprised more than 40% of people stopped under the age of 17. Similarly, Latinx men ages 18-24 made up about 37% of people stopped between the ages of 18-24.
 
 ```{r}
 
@@ -586,12 +586,12 @@ panel.background = element_blank())+
 
 # Stop Reasons
 
-The following explores the most common reasons for officer-initiated stops in 2022. __Traffic violations__ are the overwhelming majority of officer-initiated stops that Fresno PD made in 2022, exceeding more than what is seen in other police jurisdictions in California. For this reason, we explore [traffic stops](#traffic) more in depth as its own section. 
+The following explores the most common reasons for officer-initiated stops in 2022. Traffic violations are the overwhelming majority of officer-initiated stops that Fresno PD made in 2022, exceeding more than what is seen in other police jurisdictions in California. For this reason, we explore [traffic stops](#traffic) more in depth as its own section. 
 
 
 ## Officer-initiated stops by stop reason
 
-The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, __Over 99%__ of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
+The Fresno Police Department makes an overwhelming majority of their officer-initiated stops for traffic violations. In 2022, Over 99% of people stopped by Fresno PD officers were stopped due to a perceived traffic violation.
 
 ```{r}
 
@@ -710,7 +710,7 @@ panel.background = element_blank())+
 
 ```
 
-Within traffic stops of each perceived racial group, those who Fresno PD perceived as male are stopped in traffic at higher rates than those Fresno PD perceived as female across all BIPOC groups. __The gender disparity in traffic stops is highest for individuals perceived SWANA/SA,__ with individuals perceived as male and SWANA/SA being stopped a much higher rate than individuals perceived as female and SWANA/SA. 
+Within traffic stops of each perceived racial group, those who Fresno PD perceived as male are stopped in traffic at higher rates than those Fresno PD perceived as female across all BIPOC groups. The gender disparity in traffic stops is highest for individuals perceived SWANA/SA, with individuals perceived as male and SWANA/SA being stopped a much higher rate than individuals perceived as female and SWANA/SA. 
 
 Note that the graph below filters for perceived racial groups that had 10 or more people stopped for an officer-initiated traffic stop in 2022. 
 
@@ -778,7 +778,7 @@ panel.background = element_blank())+
 
 ## Traffic stops by stop-type {#traffic-type}
 
-Fresno PD made close to __4,000 traffic stops of moving vehicles in 2022__, which represented more than three-quarters of their total stops for traffic violations. That means the remaining 25% of all traffic stops were made for equipment and non-moving traffic stops. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
+Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations. That means the remaining 25% of all traffic stops were made for equipment and non-moving traffic stops. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
 ```{r}
 
@@ -827,7 +827,7 @@ panel.background = element_blank()) +
 
 ## Traffic stops by stop reason {#traffic-reason}
 
-This analysis focuses the stop reasons specifically for __equipment/non-moving traffic stops__. Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
+This analysis focuses the stop reasons specifically for equipment/non-moving traffic stops. Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
 
 ```{r}
 
@@ -879,7 +879,7 @@ tv_citation_flex <- tv_citation_count[1:10, ] %>%
 
 ### Traffic stop reasons by race and gender
 
-Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffoc for a reason of __'No vehicle registration'__ at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
+Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffoc for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
 
 Note that the graphs below filter out perceived racial groups where less than 10 people wree stopped in traffic by Fresno PD in 2022. 
 
@@ -1040,7 +1040,7 @@ flextable(tv_NMonly_flex) %>%
 
 ### Moving traffic stop reasons
 
-Of the 3,876 moving vehicles stopped for suspected traffic violations by Fresno PD in 2022, __over three-quarters were stopped for speeding__.
+Of the 3,876 moving vehicles stopped for suspected traffic violations by Fresno PD in 2022, over three-quarters were stopped for speeding.
 
 ```{r}
 ##Filter TV data to only include moving stops##
@@ -1078,7 +1078,7 @@ flextable(tv_move_flex) %>%
 
 ## Traffic stops by result of stop {#traffic-result}
 
-Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a __citation for infraction__ is the most common stop result, while a __Warning verbal or written__ is within the top three most common stop results across all traffic stops. 
+Across all three types of officer-initiated traffic stops (Equipment, Moving, Non-moving), a citation for infraction is the most common stop result, while a Warning verbal or written is within the top three most common stop results across all traffic stops. 
 
 ```{r}
 
@@ -1133,7 +1133,7 @@ The graph below shows, across all traffic stop types (moving, equipment, non-mov
 
 Note that the graphs filter out perceived racial groups where less than 10 people were stopped in traffic in 2022. 
 
-Despite being stopped at higher rates than over perceived groups, people Fresno PD perceives as __Latinx and Black__ are stopped in traffic resulting only in a __warning verbal or written__ at higher rates than people perceived as White. 
+Despite being stopped at higher rates than over perceived groups, people Fresno PD perceives as Latinx and Black are stopped in traffic resulting only in a warning verbal or written at higher rates than people perceived as White. 
 
 ```{r}
 
@@ -1242,7 +1242,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ### Traffic stops resulting in citations by race and gender
 
-People perceived as Latinx are stopped in traffic and given a citation as a result at the highest rates compared to all other groups. However, __people perceived as Black are disproportionately stopped in traffic and given a citation relative to how many Black people live in Fresno city__. Out of all people stopped in traffic and given a citation, 11.4% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
+People perceived as Latinx are stopped in traffic and given a citation as a result at the highest rates compared to all other groups. However, people perceived as Black are disproportionately stopped in traffic and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic and given a citation, 11.4% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
 
 The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top 3 traffic citation results for perceived race. 
 
@@ -1341,7 +1341,7 @@ panel.background = element_blank())+
 
 ### Traffic stops resulting in driving without license citation
 
-Across all officer-initiated traffic stops, __non-moving traffic stops__ have the highest rates of stops that result in a citation for driving without a license. 
+Across all officer-initiated traffic stops, non-moving traffic stops have the highest rates of stops that result in a citation for driving without a license. 
 
 ```{r}
 
@@ -1454,7 +1454,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ## Stops resulting in use of force {#useofforce}
 
-Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (17 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during __traffic stops__. 
+Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (17 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
 
 ```{r}
 
@@ -1515,7 +1515,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Additionally, __18% of use of force incidents were towards people perceived as Asian__ despite Asian people only making up __~13% of Fresno's total population__. 
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Additionally, 18% of use of force incidents were towards people perceived as Asian despite Asian people only making up ~13% of Fresno's total population. 
 
 ```{r}
 
@@ -1562,9 +1562,9 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ## Stops resulting in a field interview (FI) card {#ficard}
 
-Two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed. A total of __four people__ were stopped and given FI cards during an officer-initiated stop. All four FI cards were given to people during __traffic stops__. 
+Two officer-initiated stops by Fresno PD in 2022 resulted solely in a field interview card being completed. A total of four people were stopped and given FI cards during an officer-initiated stop. All four FI cards were given to people during traffic stops. 
 
-Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as __Black or Latinx__. Officers also perceived three of these individuals as male and one as female.
+Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as Black or Latinx. Officers also perceived three of these individuals as male and one as female.
 
 ```{r, include=FALSE}
 
@@ -1622,7 +1622,7 @@ fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop
 
 Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
 
-The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as __a Latinx male__.
+The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as a Latinx male.
 
 
 ```{r, include=FALSE}
@@ -1692,7 +1692,7 @@ df_contra<-search%>%
 
 ```
 
-A total of 80 people were searched by Fresno PD in 2022. Of those 80 people searched by Fresno PD, __16 people searched were perceived as Black by officers, or 20% of all searches.__ More than half of all searches made by Fresno PD were of people perceived as Latinx.
+A total of 80 people were searched by Fresno PD in 2022. Of those 80 people searched by Fresno PD, 16 people searched were perceived as Black by officers, or 20% of all searches. More than half of all searches made by Fresno PD were of people perceived as Latinx.
 
 ```{r}
 
@@ -1743,7 +1743,7 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 
 ```
 
-Despite Fresno PD disproportionately stopping and searching people perceived as Black and Latinx in traffic stops, these groups also have the highest rates of searches that yield no contraband (also known as hit rates). In contrast, out of all the searches Fresno PD conducted towards people perceived as White during traffic stops, only 2 of those searches yielded no contraband. In other words, __the majority of searches of people that yield contraband during traffic stops is of people perceived as White.__ 
+Despite Fresno PD disproportionately stopping and searching people perceived as Black and Latinx in traffic stops, these groups also have the highest rates of searches that yield no contraband (also known as hit rates). In contrast, out of all the searches Fresno PD conducted towards people perceived as White during traffic stops, only 2 of those searches yielded no contraband. In other words, the majority of searches of people that yield contraband during traffic stops is of people perceived as White. 
 
 ```{r}
 
@@ -1789,11 +1789,11 @@ names(df_contra_person)<-tools::toTitleCase(gsub("_"," ",names(df_contra_person)
 
 # Time spent {#time}
 
-The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about __74.1% of their stop time on officer-initiated stops__ though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
+The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about 74.1% of their stop time on officer-initiated stops though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
 
 ## Time spent on stops by stop reason {#time-reason}
 
-In 2022, Fresno PD spent nearly __98% of their stop time on stops originally made for traffic violations.__ While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
+In 2022, Fresno PD spent nearly 98% of their stop time on stops originally made for traffic violations. While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
 
 ```{r, include=FALSE}
 
