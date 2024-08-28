@@ -1795,7 +1795,7 @@ The following analyzes the total and percent of time Fresno PD spent on certain 
 
 In 2022, Fresno PD spent nearly 98% of their stop time on stops originally made for traffic violations. While each of these stops took less time on average compared to other stop types, they made up the largest share of Fresno PD's time.
 
-```{r, include=FALSE}
+```{r}
 
 # join data frames
 time_reason_df<-stops%>%left_join(reason)
@@ -1836,7 +1836,7 @@ names(time_reason_ois)<-tools::toTitleCase(gsub("_"," ",names(time_reason_ois)))
 
 The large majority of time spent on traffic stops is spent on stops only resulting in a citation for infraction. Nearly 73% of minutes Fresno PD spent on traffic stops were on stops resulting in a citation for infraction. On average, each of these stops only takes 8 minutes.
 
-```{r, include=FALSE}
+```{r}
 
 # join data frames
 time_result_df<-time_reason_df%>%left_join(results)
@@ -1868,11 +1868,11 @@ names(time_result_ois)<-tools::toTitleCase(gsub("_"," ",names(time_result_ois)))
 
 ## Time spent on traffic stops by race {#time-race}
 
-On average, Fresno PD spent slightly longer on traffic stops of Black and Latinx people (about 1 minute longer looking at the median time or quartile 3 time). Quartile 1 represents the 25th percentile of stop duration, meaning that 25% stops in that racial group took less than that specified time. Quartile 3 represents the 75th percentile of stop duration, meaning that 75% stops in that racial group took less than that specified time.
+On average, Fresno PD spent slightly longer on traffic stops of individuals perceived as Black and Latinx (about 1 minute longer looking at the median time or quartile 3 time). Quartile 1 represents the 25th percentile of stop duration, meaning that 25% stops in that racial group took less than that specified time. Quartile 3 represents the 75th percentile of stop duration, meaning that 75% stops in that racial group took less than that specified time.
 
-Stops of White individuals in Fresno only took 1 in 4 minutes of Fresno PD's stop time on traffic violations.
+Stops of individuals perceived as White in Fresno only took 1 in 4 minutes of Fresno PD's stop time on traffic violations.
 
-```{r, include=FALSE}
+```{r}
 
 # join data frames
 time_race_df<-time_result_df%>%left_join(race)
