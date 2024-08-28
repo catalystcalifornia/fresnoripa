@@ -1,8 +1,7 @@
 ---
-title: "Fresno RIPA Project"
+title: "Fresno RIPA Data Project"
 subtitle: "Stop Duration Outlier Analysis"
 author: "Catalyst California"
-date: "2024-08-28"
 output:
   html_document:
     css: "W:\\RDA Team\\R\\cc_brandguide.css"
@@ -13,7 +12,7 @@ output:
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-The SD Pillars project includes an analysis of how long SDPD officers are spending on different types of police stops. This requires a separate stop duration outlier analysis in order to control for stop duration times that are clear outliers in the data. These outliers can be due to data entry error or an officer forgetting to input a stop time and allowing the timer to run on after the stop has concluded. 
+Part of the analysis of RIPA data from the Fresno Police Department for this project is to examine how long Fresno PD officers are spending on different types of police stops. This requires a separate stop duration outlier analysis in order to control for stop duration times that are clear outliers in the data. These outliers can be due to data entry error or an officer forgetting to input a stop time and allowing the timer to run on after the stop has concluded. 
 
 The goal of this outlier analysis is to identify which stops have stop duration times that are outliers, and then cap those stop duration times appropriately. We do this using a regression model that controls for various factors that influence a stop duration time. 
 
@@ -59,7 +58,7 @@ library(sp)
 
 source("W:\\RDA Team\\R\\credentials_source.R")
 
-con <- connect_to_db("rjs_pillars")
+con <- connect_to_db("eci_fresno_ripa")
 
 # pull in tables from postgres that we need
 
@@ -69,127 +68,71 @@ race<-dbGetQuery(con, "SELECT * FROM rel_stops_race") #stop-level
 reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 action<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
+action_person <- dbGetQuery(con, "SELECT * FROM rel_persons_actions")
 contra<-dbGetQuery(con, "SELECT * FROM rel_stops_searches")
-property<-dbGetQuery(con, "SELECT * FROM rel_propertyseized")
+age<-dbGetQuery(con, "SELECT * FROM rel_age")
 
-div<-dbGetQuery(con, "SELECT * FROM sangis_sdpd_divisions_2023")%>%
-  select(-geom)
-beats<-st_read(con, query = "SELECT * FROM sangis_sdpd_beats_2023")%>%
-  mutate(beat=as.character(beat))
-
-#### Prep person-level count data ####
-
-# We want to create a continuous variable for total number of people in a stop 
-
-num_person_stopped<-persons%>%
-  group_by(stop_id)%>%
-  mutate(num_persons_stop=n())%>%
-  slice(1)%>%
-  select(stop_id, num_persons_stop)
+# #### Prep person-level count data ####
+# 
+# # We want to create a continuous variable for total number of people in a stop 
+# 
+# num_person_stopped<-persons%>%
+#   group_by(stop_id)%>%
+#   mutate(num_persons_stop=n())%>%
+#   slice(1)%>%
+#   select(stop_id, num_persons_stop)
 
 #### Prep age-data ####
 
 # We are first going to prep an age-table that makes age a continuous variable. 
 # We are doing this by taking the age table and for stops with multiple people, taking the average age of all persons stopped
 
-age<-persons%>%
-  group_by(stop_id)%>%
-  mutate(age_avg=mean(perceived_age))%>%
-  slice(1)%>%
+age_stop <- age %>%
+  group_by(stop_id) %>%
+  mutate(age_avg = mean(age) )%>%
+  slice(1) %>%
   select(stop_id, age_avg)
 
 # now we have a stops-level age table
 
-#### Prep sdpd divisions data ####
+### Prep stop-level actions data ###
 
-# Now lets attach sdpd divisions to the stops data so we can use divisions in the model
+# Need to add more dummy variables for different actions to stop-level actions data
 
-# Prep beats and stop crosswalk
+  ## Group by stop_id and slice to remove duplicate stop data
+  ## Ensure every dummy action variable takes on value of 1 if action was taken for any of the people
+    ### Filtered for stop # U1005220184CFBA61E85 (3 persons stopped) to ensure all values were correctly  assigned
+  ## Select to remove variable already in stop-level data set
 
-# join divisions to the beats table just to get the full division name
+action_more <- action_person %>%
+  group_by(stop_id) %>%
+  mutate(across(everything(), max, na.rm = TRUE)) %>%
+  slice(1) %>%
+  select(-person_number, -actions_count, -action_taken,
+         -removed_from_vehicle, -handcuffed, -detained, -use_of_force)
+  
+### Prep stop-level gender data ###
 
-beats_div<-beats%>%
-  left_join(div%>%select(div_num, div_name), by=c("div"="div_num"))%>%
-  select(beat, name, div, div_name)%>%
-    as.data.frame()%>%
-  select(-geom)%>%
-  rename('beat_name' = 'name')%>%
-  group_by(beat)%>%
-  slice(1)%>%
-  mutate(beat_name=ifelse(beat %in% "511", 'BARRIO LOGAN', beat_name))%>% # there was a data entry error where beat=511 showed up twice, once with the beat_name included, and once where beat_name was NA. So I manually re-added the beat_name
-  ungroup()
+gender <- persons %>%
+  group_by(stop_id) %>%
+  mutate(across(everything(), max, na.rm = TRUE)) %>%
+  slice(1) %>%
+  select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
+         g_gender_nonconforming, g_multigender)
 
-# join updated beats-div crosswalk to stops data
-
-stops<-stops%>%
-  left_join(beats_div%>%select(beat, div, div_name), by=c("beat"="beat"))%>%
-  mutate(div=ifelse(beat_name %in% 'La Jolla Village 125', 1, div))%>%
-  mutate(div_name=ifelse(beat_name %in% 'La Jolla Village 125', "NORTHERN", div_name))
-
-
-#### Prep property seized data ####
-
-# deduplicate the data
-
-# focus first on isolating stop_ids where property was seized, then unduplicating that data (since people with more than 1 property seized will show up multiple times in the data). Then slicing so only 1 stop_id remains even if more than 1 person in the stop had property seized. 
-
-property_yes<-property%>%
-  mutate_all(na_if,"")%>%
-  filter(!is.na(type_of_property_seized))%>%
-  group_by(stop_id,person_id)%>%
-  summarise(type_of_property_seized=n())%>%
-  group_by(stop_id)%>%
-  slice(1)
-
-stopid_yes<-property_yes$stop_id #extract the stop_ids that had property seized regardless of count
-
-# then isolate only stops where there was NO property seized
-
-property_none<-property%>%
-mutate_all(na_if,"")%>%
-filter(!stop_id %in% stopid_yes)%>%
-  group_by(stop_id)%>%
-  slice(1)%>%
-  mutate(type_of_property_seized=as.numeric(type_of_property_seized))
-
-# final combine: should have a df where each stop is 1 row, and create a binary 1/0 column for if any property was seized at all during that stop (1) or no property was seized at all in that stop (0)
-
-property_final<-rbind(property_yes, property_none)%>%
-  mutate(property=ifelse(is.na(type_of_property_seized), 0, 1))%>%
-  select(stop_id, property)
-
-# test there are no duplicate stop_ids remaining in the table
-# property_final[duplicated(property_final$stop_id),]
-
-# test stop_id: 100427
-
-#### Join all stops-level data ####
-
-# Add column just for year of stop to stops table
-stops$year = substr(stops$date_stop, 1, 4)
-
-# create stops table that is just for year 2022
-
-stops<-stops%>%
-  filter(year==2022)
-
-# Join the number_people_stops to stop table
-
-stops<-stops%>%
-  left_join(num_person_stopped)
-
-# Join stops table to reasons,results,action, contraband, property seized,age and race tables
+### Join all stops-level data ###
 
 stops<-stops%>%
   left_join(reason)%>%
   left_join(result)%>%
   left_join(action)%>%
   left_join(race)%>%
-  left_join(age)%>%
-  left_join(property_final)%>%
-  left_join(contra) # we should end up with 86632 obs which is how many unique stops there are 
+  left_join(age_stop)%>%
+  left_join(action_more)%>%
+  left_join(contra) %>%
+  left_join(gender) # we should end up with 5317 obs which is how many unique stops there are 
 
-# Select all columns we need
+# Remove columns not needed for analysis
 
 stops<-stops%>%
   select(stop_id, stopduration, stop_in_response_to_cfs, beat, beat_name, div, div_name, num_persons_stop, stop_reason_simple, stop_reason_list, stop_result_simple, stop_result_list, actions_count, action_taken, handcuffed, removed_from_vehicle, detained, use_of_force, search, property, contraband, contraband_count, stop_nh_race, race_count, aian_flag, nhpi_flag, sswana_flag,age_avg)
@@ -319,9 +262,11 @@ Variable | Type of variable
 ------------- | -------------
 Stop duration | Dependent variable
 Stop action | Independent variable
+Number of Actions taken during stop | Independent variable (continuous)
 Stop in response to call for service | Independent variable
 Age of person stopped | Independent variable
 Race of person stopped | Independent variable (categorical)
+Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
@@ -331,7 +276,6 @@ Use of force | Independent variable (categorical)
 Person handcuffed | Independent variable (categorical)
 Search took place | Independent variable
 Property or Contraband seized | Independent variable (categorical)
-Officer division | Independent variable (categorical)
 
 The following are the categorical variables that are not already dummy variables (1/0) and require establishing a reference group.
 
@@ -340,7 +284,7 @@ Categorical Variable | Reference group
 Stop reason | Traffic violation
 Stop result | No action
 Race of person stopped | NH White
-Officer division | Southeastern
+Gender of person stopped | Male
 
 ```{r}
 model<-lm(log(stopduration) ~ 
