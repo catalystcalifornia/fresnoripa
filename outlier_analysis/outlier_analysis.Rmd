@@ -236,8 +236,10 @@ Person remove from vehicle | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
 Person handcuffed | Independent variable (categorical)
-Search took place | Independent variable
-Property or Contraband seized | Independent variable (categorical)
+Search took place | Independent variable (categorical)
+Firearm pointed | Independent variable (categorical)
+Sobriety test conducted | Independent variable (categorical)
+Removed from vehicle without force | Independent variable (categorical)
 
 The following are the categorical variables that are not already dummy variables (1/0) and require establishing a reference group.
 
@@ -249,52 +251,45 @@ Race of person stopped | NH White
 Gender of person stopped | Cis-gender Male
 
 ```{r}
-model<-lm(log(stopduration) ~ 
+model<-lm(log(stop_duration) ~ 
             
-stop_in_response_to_cfs+
-  num_persons_stop+
+call_for_service+
+  persons_count+
    actions_count+
   
-# action_taken+ 
+#action_taken+ 
   handcuffed+
 removed_from_vehicle+
 detained+
 use_of_force+
-    # property+
-  contraband+
+    ads_prop_seize+
+  contraband_found+
    search+
-  # contraband_count
-  
-   # aian_flag+ 
-   # nhpi_flag+ # note that this had a VIF of '6.229575' which is too high so removing this from the model
-   # sswana_flag+ # note that this had a VIF of '17.96978';' which is way too high so removing this from the model
+  contraband_count+
+  ads_sobriety_test+
+  ads_firearm_point+
+  ads_removed_vehicle_order+
   
   age_avg+
-  
-  div_name_central+
-  div_name_eastern+
-  div_name_midcity+
-div_name_northeastern+
-  div_name_northern+
-  div_name_northwestern+
-  div_name_southern+
-div_name_western+
-  div_name_unknown+
+    
+g_female+
+    g_transgender_man+
+    g_transgender_woman+
+    g_multigender+
+    g_gender_nonconforming+
 
-  
 stop_nh_race_latinx +
 stop_nh_race_nh_aian+
 stop_nh_race_nh_asian+
 stop_nh_race_nh_black+
 stop_nh_race_nh_multi_race+
+  stop_nh_race_nh_multiracial+
 stop_nh_race_nh_nhpi+
- stop_nh_race_nh_sswana+ 
-stop_nh_race_nh_twoormor+ 
+ stop_nh_race_nh_sswana+
 
   
 
 stop_reason_simple_consent_search+
-stop_reason_simple_school_policy+
 stop_reason_simple_truant+
 stop_reason_simple_warrant+
 stop_reason_simple_parole+
@@ -413,7 +408,7 @@ stops<-stops%>%
 # select columns of interest
 
 final_cap<-stops%>%
-select(c("stop_id", "stopduration", "pv", "lwr", "upr", "pv_log", "upr_log", "lwr_log"))
+select(c("stop_id", "stop_duration", "pv", "lwr", "upr", "pv_log", "upr_log", "lwr_log"))
 
 #### Determine outlier based off lwr and upr prediction value intervals ####
 
