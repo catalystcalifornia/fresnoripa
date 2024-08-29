@@ -741,9 +741,9 @@ arrange(-rate)
 ggplot(df_race, aes(x = reorder(Race, rate), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
+       vjust=1, hjust=-0.1, #center percentage within the bar
           size = 3,
-          color = "white")+ 
+          color = "black")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
   labs(title = str_wrap("Half of the People Fresno PD Stops for Traffic Stops are People Perceived as Latinx", 55), 
        subtitle = "Perceived race of people stopped for traffic stops by Fresno PD",
@@ -1046,7 +1046,7 @@ flextable(tv_move_flex) %>%
  
 
 
-## Traffic stop reasons by race and gender
+## Traffic stop reasons by race
 
 Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffic for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
 
