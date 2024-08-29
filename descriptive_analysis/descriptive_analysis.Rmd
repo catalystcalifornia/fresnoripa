@@ -151,7 +151,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
           size = 3,
           color = "white")+ 
   labs(title = "Nearly 95% of All Stops Fresno PD Makes Are Not Responding to Community Calls", 
-       subtitle = "Percentage of Police Stops by Stop-Type Made by Fresno PD in 2022",
+       subtitle = "Percentage of police stops by stop-type made by Fresno PD in 2022",
        x = "", #labels to visual
        y = "") +
   scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
@@ -226,7 +226,7 @@ ggplot(df, aes(x = reorder(Race, rate), y = rate))+
           size = 2.5,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
-  labs(title = "Half of the people living in Fresno City are Latinx", 
+  labs(title = "Half of the People Living in Fresno City are Latinx", 
        subtitle = "Population in Fresno City by race",
        x = "", #labels to visual
        y = "") +
@@ -333,7 +333,7 @@ ggplot(final_race, aes(x = reorder(Race, -Percent), y = Percent, fill = Race))+
           size =3,
           color = "white")+ 
   labs(title = "Latinx Individuals Make Up Half of Officer-Initiated Stops by Fresno PD",
-       subtitle = "Percentage of People Stopped During Officer-Initiated Stops by Perceived Race",
+       subtitle = "Percentage of people stopped during officer-initiated stops by perceived race",
        x = "",
        y = "") +
   scale_fill_manual(values = c("#362178", "#362178", "#362178", "#362178", "#362178", "#362178", "#362178","#362178"))+
@@ -385,12 +385,12 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
             color = "white",
              fontface = "bold")+
     labs(title = "People Ages 25-34 Account for Nearly 35% of Officer-Initiated Stops by Fresno PD",
-         subtitle= "Percentage of People Stopped During Officer-Initiated Stops by Perceived Age",
+         subtitle= "Percentage of people stopped during officer-initiated stops by perceived age",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-    theme(plot.title = element_text(hjust =0.5, size = 11.5, face="bold"),
+    theme(plot.title = element_text(hjust =0.5, size = 11.5),
           plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
@@ -443,7 +443,7 @@ ggplot(gender_ois, aes(x= reorder(Gender, -Percent), y= Percent, fill = Gender))
             color = "white",
              fontface = "bold")+
     labs(title = "Males Account for Nearly 57% of Officer-Initiated Stops",
-         subtitle = "Officer-Initiated Stops by Perceived Gender in 2022",
+         subtitle = "Officer-initiated stops by perceived gender in 2022",
       x = "", #labels
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
@@ -521,8 +521,8 @@ ggplot(race_age_ois, aes(x = Race, y = Percent))+
           # vjust = "outward",
           size = 3)+
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title = "Latinx People Make Up Most Stops by Age, but Black People Are Overrepresented", 
-       subtitle = "Officer-Initiated Stops in 2022 by Race and Age",
+  labs(title = "Latinx People Make Up Most Stops by Age, but Black People are Overrepresented", 
+       subtitle = "Officer-initiated Stops in 2022 by race and age",
        x = "", #labels to visual
        y = "Percent of Age Group") +
   theme_bw()+
@@ -621,7 +621,7 @@ ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
   #         size = 3)+
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
   labs(title = "Men Account for Most Stops Across Age and Race Groups", 
-       subtitle = "Officer-Initiated Stops in 2022 by Age, Race, and Gender",
+       subtitle = "Officer-initiated stops in 2022 by age, race, and gender",
        x = "", #labels to visual
        y = "Percent of Age Group") +
   theme_bw()+
@@ -745,7 +745,7 @@ ggplot(df_race, aes(x = reorder(Race, rate), y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
-  labs(title = "Half of the people Fresno PD stops for traffic stops are people perceived as Latinx", 
+  labs(title = str_wrap("Half of the People Fresno PD Stops for Traffic Stops are People Perceived as Latinx", 55), 
        subtitle = "Perceived race of people stopped for traffic stops by Fresno PD",
        x = "", #labels to visual
        y = "") +
@@ -863,7 +863,8 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
   geom_text(aes(label = paste0(Count," people (",round(Percent,1),'%)')),
     vjust = 1.2, color = "white", size = 4) +
   labs(
-    title = "Fresno PD Traffic Violation Stops by Type (2022)",
+    title="The Majority of Traffic Stops made by Fresno PD are Moving Stops",
+    subtitle = "Fresno PD traffic violation stops by type",
     x = "Traffic Violation Type",
     y = "% of All People Stopped for Traffic Violations") +
   theme_bw() +
@@ -1047,9 +1048,9 @@ flextable(tv_move_flex) %>%
 
 ## Traffic stop reasons by race and gender
 
-Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffoc for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
+Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffic for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
 
-Note that the graphs below filter out perceived racial groups where less than 10 people wree stopped in traffic stops by Fresno PD in 2022. 
+Note that the graphs below filter out perceived racial groups where less than 10 people were stopped in traffic stops by Fresno PD in 2022. 
 
 ```{r}
 
@@ -1097,7 +1098,8 @@ ggplot(df0, aes(x = statute_literal_25, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), .01))+
-  labs(title = str_wrap("Top Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
+  labs(title=str_wrap("People perceived as Black and Latinx are Stopped for Reasons Not Related to Traffic Safety",70),
+    subtitle = str_wrap("Top traffic citation reasons by perceived race of person stopped",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1190,7 +1192,7 @@ The graph below shows, across all traffic stop types (moving, equipment, non-mov
 
 Note that the graphs filter out perceived racial groups where less than 10 people were stopped in traffic stops in 2022. 
 
-Despite being stopped at higher rates than over perceived groups, people Fresno PD perceives as Latinx and Black are stopped for traffic stops resulting only in a warning verbal or written at higher rates than people perceived as White. 
+Despite being stopped at higher rates than other perceived groups, people Fresno PD perceived as Latinx and Black are stopped for traffic stops resulting only in a warning verbal or written at higher rates than people perceived as White. 
 
 ```{r}
 
@@ -1231,7 +1233,8 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title = "Rate of traffic stops by stop result and perceived race",
+  labs(title=str_wrap("People Percevied as White are given Citations at Higher Rates than Other Groups", 90),
+         subtitle = "Rate of traffic stops by stop result and perceived race",
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1301,7 +1304,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 People perceived as Latinx are stopped for traffic stops and given a citation as a result at the highest rates compared to all other groups. However, people perceived as Black are disproportionately stopped in traffic stops and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic stops and given a citation, 11.4% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
 
-The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top 3 traffic citation results for perceived race. 
+The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top three traffic citation results for each perceived race. 
 
 ```{r}
 
@@ -1372,7 +1375,8 @@ ggplot(df, aes(x = statute_literal_25, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), .1))+
-  labs(title = str_wrap("Top 3 Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
+  labs(title=str_wrap("Stops of People Perceived as Latinx and Black More Likely to Result in Citation for Driving Without License",90),
+       subtitle = str_wrap("Top three traffic citation results by perceived race of person stopped",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1556,7 +1560,7 @@ df0<-uof%>%
   arrange(-Count)%>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
   ungroup()%>%
-  select(reason, rfs_traffic_violation_code.x, statute_literal_25, Total, Count, Rate)%>%
+  select(rfs_traffic_violation_code.x, statute_literal_25, Count, Rate)%>%
   rename("Traffic reason offense code"='rfs_traffic_violation_code.x',
          "Statute"="statute_literal_25")
 
@@ -1570,7 +1574,7 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Use of Force by Stop Reason') %>%
   theme_vanilla() %>%
-  width(j=3,2.5,unit="in")
+  width(j=2,2.5,unit="in")
 
 
 
@@ -1614,7 +1618,8 @@ flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Use of Force by Perceived Race and Gender') %>%
   theme_vanilla() %>%
-  width(j=3,2.5,unit="in")
+   width(width = 1.5)
+  
 
 
   
@@ -1800,7 +1805,8 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
   flextable(df) %>%
  colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Fresno PD Searches by Perceived Race') %>%
-  theme_vanilla() 
+  theme_vanilla()%>%
+       width(width = 1.1)
 
 ```
 
@@ -1843,7 +1849,8 @@ names(df_contra_person)<-tools::toTitleCase(gsub("_"," ",names(df_contra_person)
   flextable(df_contra_person) %>%
  colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Fresno PD Searches Yielding No Contraband by Perceived Race') %>%
-  theme_vanilla() 
+  theme_vanilla()%>%
+       width(width = 1.1)
 
 
 ```
@@ -1887,7 +1894,8 @@ names(time_reason_ois)<-tools::toTitleCase(gsub("_"," ",names(time_reason_ois)))
   flextable(time_reason_ois) %>%
 # colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Time Spent in Minutes on Officer-initiated Stops by Stop Reason') %>%
-  theme_vanilla() 
+  theme_vanilla()%>%
+    width(j=1, width=2,unit="in")
 
 
 
@@ -1921,7 +1929,7 @@ names(time_result_ois)<-tools::toTitleCase(gsub("_"," ",names(time_result_ois)))
 # colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Time Spent in Minutes on Traffic Stops by Stop Result') %>%
   theme_vanilla()%>%   
-    width(width=2,unit="in")
+    width(j=1, width=2,unit="in")
 
 
 
