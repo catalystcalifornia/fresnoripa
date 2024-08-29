@@ -73,6 +73,8 @@ search<-dbGetQuery(con, "SELECT * FROM rel_stops_searches")
 # read in offense codes
 offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
+pop<-dbGetQuery(con, "SELECT * from population_race_fresno_city")
+
 ```
 
 Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno Police Department (PD) RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
@@ -83,7 +85,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
     + [Over-all traffic stops by race and gender](#traffic-demo)
     + [Traffic stops by stop-type](#traffic-type)
     + [Traffic stops by stop reason](#traffic-reason)
-    + [Traffic stops by stop reason](#traffic-result)
+    + [Traffic stops by stop result](#traffic-result)
 * [Results of officer-initiated stops](#results)
     + [Stops resulting in use of force](#useofforce)
     + [Stops resulting in a field interview (FI) card](#ficard)
@@ -190,6 +192,59 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 ```
 
 # Demographics {#demographics}
+
+## Fresno City population demographics
+
+The majority of people living in Fresno City are Latinx. However, there is also a diverse Southeast Asian communtiy that resides in Fresno. Unfortunately, due to the lack of available disaggregated data, it is difficult to discern the population of the Southeast Asian community in Fresno as their data is grouped into a larger 'Asian' category in the census.
+
+```{r}
+# create ggplot graph of race population in Fresno
+
+# mutate race labels for graph
+
+df <- pop %>%
+  mutate(Race = case_when(
+    race == 'latinx' ~ "Latinx", 
+    race =='nh_white' ~ 'White',
+    race =='nh_black' ~ 'Black',
+    race == 'nh_asian' ~ 'Asian',
+    race == 'aian' ~ 'AIAN',
+    race == 'nhpi' ~ 'NHPI',
+    race == 'nh_twoormor' ~ 'Multiracial',
+     race == 'sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(race)))%>%
+  filter(grepl("Latinx|White|Black|Asian|AIAN|NHPI|SWANA/SA|Multiracial", Race))%>%
+  mutate(rate=rate*100)
+    
+
+#graph
+
+ggplot(df, aes(x = reorder(Race, rate), y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 2.5,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
+  labs(title = "Half of the people living in Fresno City are Latinx", 
+       subtitle = "Population in Fresno City by race",
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+ 
+  coord_flip()
+
+
+```
 
 ## Perceived race of people stopped
 
@@ -712,7 +767,7 @@ panel.background = element_blank())+
 
 Within traffic stops of each perceived racial group, those who Fresno PD perceived as male are stopped at higher rates than those Fresno PD perceived as female across all BIPOC groups. The gender disparity in traffic stops is highest for individuals perceived SWANA/SA, with individuals perceived as male and SWANA/SA being stopped a much higher rate than individuals perceived as female and SWANA/SA. 
 
-Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, or at least a 1% rate for officer-initiated traffic stops in 2022. 
+Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, and at least a 1% rate for officer-initiated traffic stops in 2022. 
 
 ```{r}
 
@@ -825,9 +880,9 @@ panel.background = element_blank()) +
 
 ```
 
-## Traffic stops by stop reason {#traffic-reason}
+## Traffic stops by stop reason {.tabset}
 
-This analysis focuses the stop reasons specifically for equipment/non-moving traffic stops. Over 50% of the non-moving or equipment-related traffic stops made by Fresno PD in 2022 were initiated for vehicles with obstructed windows or improper registration.
+The analyses below show the top stop reasons for each of the three different types of traffic stops: equipment traffic stops, non-moving traffic stops, and moving traffic stops.
 
 ```{r}
 
@@ -847,124 +902,37 @@ tv_citation_count <- tv_nonmove_reason %>%
   arrange(desc(Count))
 
 ##Create data frame for table visualization with top 10 citations##
-tv_citation_flex <- tv_citation_count[1:10, ] %>%
-  mutate('Traffic Violation' = case_when(
-    rfs_traffic_violation_code == "54571" ~ "Obstructed window/mirrors", 
-    rfs_traffic_violation_code == "54657" ~ "Unregistered vehicle",
-    rfs_traffic_violation_code == "54644" ~ "License plates improperly displayed",
-    rfs_traffic_violation_code == "54099" ~ "Unregistered vehicle in public parking facility",
-    rfs_traffic_violation_code == "54109" ~ "Improper vehicle lighting",
-    rfs_traffic_violation_code == "54168" ~ "Expired registration",
-    rfs_traffic_violation_code == "54116" ~ "Inadequate mufflers",
-    rfs_traffic_violation_code == "54141" ~ "Improper bicycle lighting",
-    rfs_traffic_violation_code == "54110" ~ "License plate not illuminated",
-    rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
-  select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
-  rename(
-    `% of Total Equipment/Non-moving Traffic Stops` = Percent,
-    `# of Times Recorded` = Count) %>% # Renaming columns to serve as better table headers
-  mutate(`% of Total Equipment/Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
-  select(2:4) # Hiding citation codes for table
-  
-##Create Flex table##
-  flextable(tv_citation_flex) %>% 
-  set_caption('Reasons for Equipment and Non-moving Traffic Stops by Fresno PD (2022)') %>% 
-  theme_vanilla() %>%
-  width(width=2,unit="in") %>%
-    align(j = 3, align = "right", part = "body") %>%
-    align(j = 3, align = "right", part = "header")
-  
+# tv_citation_flex <- tv_citation_count[1:10, ] %>%
+#   mutate('Traffic Violation' = case_when(
+#     rfs_traffic_violation_code == "54571" ~ "Obstructed window/mirrors", 
+#     rfs_traffic_violation_code == "54657" ~ "Unregistered vehicle",
+#     rfs_traffic_violation_code == "54644" ~ "License plates improperly displayed",
+#     rfs_traffic_violation_code == "54099" ~ "Unregistered vehicle in public parking facility",
+#     rfs_traffic_violation_code == "54109" ~ "Improper vehicle lighting",
+#     rfs_traffic_violation_code == "54168" ~ "Expired registration",
+#     rfs_traffic_violation_code == "54116" ~ "Inadequate mufflers",
+#     rfs_traffic_violation_code == "54141" ~ "Improper bicycle lighting",
+#     rfs_traffic_violation_code == "54110" ~ "License plate not illuminated",
+#     rfs_traffic_violation_code == "54191" ~ "Driving without headlights",)) %>% #Adding descriptions of violation indicated by citation code 
+#   select(rfs_traffic_violation_code, 'Traffic Violation', Count, Percent) %>% #Re-ordering columns
+#   rename(
+#     `% of Total Equipment/Non-moving Traffic Stops` = Percent,
+#     `# of Times Recorded` = Count) %>% # Renaming columns to serve as better table headers
+#   mutate(`% of Total Equipment/Non-moving Traffic Stops` = sprintf("%.2f%%", `% of Total Equipment/Non-moving Traffic Stops`)) %>% #Improving display of percentages for table
+#   select(2:4) # Hiding citation codes for table
+#   
+# ##Create Flex table##
+#   flextable(tv_citation_flex) %>% 
+#   set_caption('Reasons for Equipment and Non-moving Traffic Stops by Fresno PD (2022)') %>% 
+#   theme_vanilla() %>%
+#   width(width=2,unit="in") %>%
+#     align(j = 3, align = "right", part = "body") %>%
+#     align(j = 3, align = "right", part = "header")
+#   
 
 ```
 
-### Traffic stop reasons by race and gender
-
-Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffoc for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
-
-Note that the graphs below filter out perceived racial groups where less than 10 people wree stopped in traffic stops by Fresno PD in 2022. 
-
-```{r}
-
-df0<-traffic%>%
-  left_join(race)%>%
-  group_by(nh_race)%>%
-  mutate(total=n())%>%
-  group_by(rfs_traffic_violation_code,nh_race)%>%
-  mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-   mutate(Race = case_when(
-    nh_race == 'latinx' ~ "Latinx", 
-    nh_race =='nh_white' ~ 'White',
-    nh_race =='nh_black' ~ 'Black',
-    nh_race == 'nh_asian' ~ 'Asian',
-    nh_race == 'nh_aian' ~ 'AIAN',
-    nh_race == 'nh_nhpi' ~ 'NHPI',
-    nh_race == 'nh_multiracial' ~ 'Multiracial',
-     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
-    TRUE ~ as.character(nh_race)))%>%
-    # mutate(Gender = recode(g_full,
-    #                      '1'= 'Male',
-    #                      '2' = 'Female',
-    #                      '3' = "Transgender Man/Boy",
-    #                      '4' = 'Transgender Woman/Girl',
-    #                      '5' = 'Gender Nonconforming'))%>%
-  select(rfs_traffic_violation_code, Race, total, count,rate)%>%
-  group_by(Race)%>%
-    arrange(Race, -count)%>%
-   slice(1:3)%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
-  select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
-  filter(count>=10) ### Filter total number of people to be a least 10
-  
-## ggplot-----------
-
-
-  
-
-ggplot(df0, aes(x = statute_literal_25, y = rate))+
-  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
-  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 3,
-          color = "white")+ 
-  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .01))+
-  labs(title = str_wrap("Top Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
-       x = "", #labels to visual
-       y = "") +
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
-      # legend.position ="none", #removes legend
-      plot.title = element_text(hjust=0.5),
-      plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
-        strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=8, face="bold"),
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(),
-panel.background = element_blank())+
-  facet_wrap(. ~ Race, ncol=3, scales = 'free') 
-
-```
-
-### Traffic stops made for driving without license citation
-
-The Fresno PD only stopped 9 people in 2022 for driving without a license.
-
-```{r}
-
-# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
-
-##Get count for how many citations there were for driving w/o license##
-noDL_count <- tv_reason %>%
-  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
-    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
-  summarise(count = n())
-
-#print(noDL_count) #count is 9
-```
-
-### Equipment traffic stop reasons 
+### Equipment traffic stop reasons {#traffic-reason}
 
 The table below shows the ten most common stop reasons for equipment traffic stops.
 
@@ -1075,6 +1043,95 @@ flextable(tv_move_flex) %>%
 
 ```
  
+
+
+## Traffic stop reasons by race and gender
+
+Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Black and Latinx are stopped in traffoc for a reason of 'No vehicle registration' at higher rates compared to other groups. This is noteworthy as vehicle registration, or lacktherof, does not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
+
+Note that the graphs below filter out perceived racial groups where less than 10 people wree stopped in traffic stops by Fresno PD in 2022. 
+
+```{r}
+
+df0<-traffic%>%
+  left_join(race)%>%
+  group_by(nh_race)%>%
+  mutate(total=n())%>%
+  group_by(rfs_traffic_violation_code,nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+   mutate(Race = case_when(
+    nh_race == 'latinx' ~ "Latinx", 
+    nh_race =='nh_white' ~ 'White',
+    nh_race =='nh_black' ~ 'Black',
+    nh_race == 'nh_asian' ~ 'Asian',
+    nh_race == 'nh_aian' ~ 'AIAN',
+    nh_race == 'nh_nhpi' ~ 'NHPI',
+    nh_race == 'nh_multiracial' ~ 'Multiracial',
+     nh_race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(nh_race)))%>%
+    # mutate(Gender = recode(g_full,
+    #                      '1'= 'Male',
+    #                      '2' = 'Female',
+    #                      '3' = "Transgender Man/Boy",
+    #                      '4' = 'Transgender Woman/Girl',
+    #                      '5' = 'Gender Nonconforming'))%>%
+  select(rfs_traffic_violation_code, Race, total, count,rate)%>%
+  group_by(Race)%>%
+    arrange(Race, -count)%>%
+   slice(1:3)%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  filter(count>=10) ### Filter total number of people to be a least 10
+  
+## ggplot-----------
+
+
+  
+
+ggplot(df0, aes(x = statute_literal_25, y = rate))+
+  geom_bar(stat = "identity", fill = "#362178") + #to create barplot
+  geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
+          position = position_stack(vjust=0.5), #center percentage within the bar
+          size = 3,
+          color = "white")+ 
+  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .01))+
+  labs(title = str_wrap("Top Traffic Citation Reasons by Perceived Race of Person Stopped",110), 
+       x = "", #labels to visual
+       y = "") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+      # legend.position ="none", #removes legend
+      plot.title = element_text(hjust=0.5),
+      plot.subtitle = element_text(hjust=0.5))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
+        strip.background = element_rect(fill = "#362178"),
+        strip.text = element_text(color = "white", size=8, face="bold"),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+panel.background = element_blank())+
+  facet_wrap(. ~ Race, ncol=3, scales = 'free') 
+
+```
+
+### Traffic stops made for driving without license citation
+
+The Fresno PD only stopped 9 people in 2022 for driving without a license.
+
+```{r}
+
+# Calculate count of traffic stops that result with a citation for driving without a license. You can look up the citation codes here: "W:\Project\ECI\Fresno RIPA\Data\sdcs-look-up-table-2023.v2.xlsx"
+
+##Get count for how many citations there were for driving w/o license##
+noDL_count <- tv_reason %>%
+  filter(                         #All citation codes for driving w/o license, using statute VC 12500 (a-d) and VC 1291(a-b)
+    rfs_traffic_violation_code %in% c(42127, 54107, 54140, 54113, 54396, 54458, 48106)) %>%
+  summarise(count = n())
+
+#print(noDL_count) #count is 9
+```
+
 
 ## Traffic stops by result of stop {#traffic-result}
 
