@@ -16,6 +16,7 @@ Part of the analysis of RIPA data from the Fresno Police Department for this pro
 
 The goal of this outlier analysis is to identify which stops have stop duration times that are outliers, and then cap those stop duration times appropriately. We do this using a regression model that controls for various factors that influence a stop duration time. 
 
+# Load in data and create stop-level data set
 
 ```{r setup, include=FALSE}
 
@@ -129,7 +130,7 @@ stops<-stops%>%
 # Remove columns not needed for analysis
 
 stops<-stops%>%
-  select(-agency_ori, -agency_name, -school_code, -school_name)
+  select(-agency_ori, -agency_name, -school_code, -school_name, -closest_city)
 
 #### Recode NAs ####
 
@@ -139,6 +140,8 @@ sum(is.na(stops)) #0 NAs
 
 ```
 
+# Creating dummy version of stop-level data
+
 ```{r}
 
 #### Create dummy version of stop table  ####
@@ -146,7 +149,7 @@ sum(is.na(stops)) #0 NAs
 # Categorical variables need to become separate 1/0 dummy columns for the model
 
 stops_d<-stops%>%
-  dummy_cols(select_columns = c("div_name","stop_nh_race","stop_reason_simple", "stop_result_simple"))
+  dummy_cols(select_columns = c("stop_nh_race","stop_reason_simple", "stop_result_simple"))
 
 # clean up the column names remaining
 
@@ -164,7 +167,7 @@ vars_d<-as.data.frame(colnames(stops_d))
 
 # extract dummy columns we are not keeping: these are the reference groups within each larger category (division, race, stop reason, stop result)
 
-vars_remove<-grep("div_name_southeastern|stop_nh_race_nh_white|stop_reason_simple_traffic_violation|stop_result_simple_no_action",  colnames(stops_d))
+vars_remove<-grep("stop_nh_race_nh_white|stop_reason_simple_traffic_violation|stop_result_simple_no_action|g_male",  colnames(stops_d))
 
 
 # then remove the selected dummy variables we are not keeping 
@@ -181,27 +184,26 @@ stops_d<-stops_d%>%
   
   ### stop reason cols
   
-  rename("stop_reason_simple_consent_search"="stop_reason_simple_consensual_encounter_resulting_in_a_search")%>%
-    rename("stop_reason_simple_school_policy"="stop_reason_simple_determine_whether_the_student_violated_school_policy")%>%
-    rename("stop_reason_simple_truant"="stop_reason_simple_investigation_to_determine_whether_the_person_was_truant")%>%
-    rename("stop_reason_simple_warrant"="stop_reason_simple_knowledge_of_outstanding_arrest_warrant/wanted_person")%>%
-      rename("stop_reason_simple_parole"="stop_reason_simple_known_to_be_on_parole_/_probation_/_prcs_/_mandatory_supervision")%>%
+  rename("stop_reason_simple_consent_search"="stop_reason_simple_consensual_encounter_resulting_in_search")%>%
+    rename("stop_reason_simple_truant"="stop_reason_simple_investigation_to_determine_whether_person_was_truant")%>%
+    rename("stop_reason_simple_warrant"="stop_reason_simple_knowledge_of_outstanding_arrest/wanted_person")%>%
+      rename("stop_reason_simple_parole"="stop_reason_simple_parole/probation/prcs/_mandatory_supervision")%>%
         rename("stop_reason_simple_reasonable_suspicion"="stop_reason_simple_reasonable_suspicion")%>%
           rename("stop_reason_simple_twoormore"="stop_reason_simple_two_or_more_reasons")%>%
   
   ### stop result cols
   
     rename("stop_result_simple_citation"="stop_result_simple_citation_for_infraction")%>%
-   rename("stop_result_simple_guardian"="stop_result_simple_contacted_parent/legal_guardian_or_other_person_responsible_for_the_minor")%>%
+   rename("stop_result_simple_guardian"="stop_result_simple_contacted_parent/legal_guardian_or_other_person_responsible_for_minor")%>%
     rename("stop_result_simple_arrest_warrant"="stop_result_simple_custodial_arrest_pursuant_to_outstanding_warrant")%>%
       rename("stop_result_simple_arrest_nowarrant"="stop_result_simple_custodial_arrest_without_warrant")%>%
       rename("stop_result_simple_fieldinterviewcard"="stop_result_simple_field_interview_card_completed")%>%
-      rename("stop_result_simple_citerelease"="stop_result_simple_infield_cite_and_release")%>%
+      rename("stop_result_simple_citerelease"="stop_result_simple_in_field_cite_and_release")%>%
     rename("stop_result_simple_transport"="stop_result_simple_noncriminal_transport_or_caretaking_transport")%>%
       rename("stop_result_simple_psychiatric"="stop_result_simple_psychiatric_hold")%>%
   rename("stop_result_simple_schooladmin"="stop_result_simple_referral_to_school_administrator")%>%
       rename("stop_result_simple_twoormore"="stop_result_simple_two_or_more_results")%>%
-    rename("stop_result_simple_warning"="stop_result_simple_warning_(verbal_or_written)")
+    rename("stop_result_simple_warning"="stop_result_simple_warning_verbal_or_written")
 
 # make sure no trailing or empty spaces in colnames
 
@@ -216,20 +218,20 @@ vars_d<-as.data.frame(colnames(stops_d))
 
 # Create and run model
 
-Below is a list of the variables we used in this model. Note that most of the variables match what we used in the LB RIPA outlier analysis. The exception to this is 1) Age of person stopped, 2) Officer assignment and 3) Officer division. 
+Below is a list of the variables we used in this model. Most match the variables used in RIPA outlier analysis for the SD Pillars project. The exception is the removal of officer divisions and beat variables, and the addition of gender action-count-by-stop variables. 
 
 Variable | Type of variable
 ------------- | -------------
 Stop duration | Dependent variable
 Stop action | Independent variable
-Number of Actions taken during stop | Independent variable (continuous)
 Stop in response to call for service | Independent variable
-Age of person stopped | Independent variable
+Age of person stopped | Independent variable (continuous)
 Race of person stopped | Independent variable (categorical)
 Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
+Number of Actions taken during stop | Independent variable (continuous)
 Person remove from vehicle | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
@@ -244,7 +246,7 @@ Categorical Variable | Reference group
 Stop reason | Traffic violation
 Stop result | No action
 Race of person stopped | NH White
-Gender of person stopped | Male
+Gender of person stopped | Cis-gender Male
 
 ```{r}
 model<-lm(log(stopduration) ~ 
