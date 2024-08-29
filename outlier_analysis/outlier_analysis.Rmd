@@ -54,13 +54,13 @@ library(flextable)
 library(sf)
 library(sp)
 
-#connect to postgres
+#Connect to postgres
 
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
 
-# pull in tables from postgres that we need
+# Pull in tables from postgres that we need
 
 stops<-dbGetQuery(con, "SELECT * FROM rel_stops")
 persons<-dbGetQuery(con, "SELECT * FROM rel_persons") #person-level, has age
@@ -70,26 +70,20 @@ result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 action<-dbGetQuery(con, "SELECT * FROM rel_stops_actions")
 action_person <- dbGetQuery(con, "SELECT * FROM rel_persons_actions")
 contra<-dbGetQuery(con, "SELECT * FROM rel_stops_searches")
-age<-dbGetQuery(con, "SELECT * FROM rel_age")
-
-# #### Prep person-level count data ####
-# 
-# # We want to create a continuous variable for total number of people in a stop 
-# 
-# num_person_stopped<-persons%>%
-#   group_by(stop_id)%>%
-#   mutate(num_persons_stop=n())%>%
-#   slice(1)%>%
-#   select(stop_id, num_persons_stop)
+age_df<-dbGetQuery(con, "SELECT * FROM rel_age")
 
 #### Prep age-data ####
 
-# We are first going to prep an age-table that makes age a continuous variable. 
-# We are doing this by taking the age table and for stops with multiple people, taking the average age of all persons stopped
+# Make age a continuous variable. 
 
-age_stop <- age %>%
+age_df$age <- as.numeric(age_df$age)
+
+# Then take the age table and for stops with multiple people, taking the average age of all persons stopped
+  ### Filtered for stop # U1005220184CFBA61E85 (3 persons stopped) in both person-level age df and stop-level df to ensure correct mean age values
+
+age_stop <- age_df %>%
   group_by(stop_id) %>%
-  mutate(age_avg = mean(age) )%>%
+  mutate(age_avg = mean(age)) %>%
   slice(1) %>%
   select(stop_id, age_avg)
 
@@ -135,47 +129,13 @@ stops<-stops%>%
 # Remove columns not needed for analysis
 
 stops<-stops%>%
-  select(stop_id, stopduration, stop_in_response_to_cfs, beat, beat_name, div, div_name, num_persons_stop, stop_reason_simple, stop_reason_list, stop_result_simple, stop_result_list, actions_count, action_taken, handcuffed, removed_from_vehicle, detained, use_of_force, search, property, contraband, contraband_count, stop_nh_race, race_count, aian_flag, nhpi_flag, sswana_flag,age_avg)
+  select(-agency_ori, -agency_name, -school_code, -school_name)
 
 #### Recode NAs ####
 
-# sum(is.na(stops)) #5662 NAs
+# Check for NAs
 
-# sum(is.na(stops$stop_nh_race)) #16 NAs
-
-# sum(is.na(stops$div_name)) #2799 NA div names that we know are from beat=999 or beat=125
-
-# sum(is.na(stops$div)) #2799
-
-# there are 16 rows where stop_nh_race == NA -these are people with 6+ perceived number of races.
-# QA UPDATE 9/22: Lets recode them as 'nh_twoormor'
-
-stops<-stops%>%
-  mutate(stop_nh_race=ifelse(is.na(stop_nh_race), 'nh_twoormor', stop_nh_race))
-
-#lets recode the NA division names as well
-
-stops<-stops%>%
-  mutate(div_name=ifelse(is.na(div_name), 'Unknown', div_name))%>%
-  mutate(div=ifelse(is.na(div), 'Unknown', div))
-
-# test that worked:
-sum(is.na(stops$div)) 
-
-# see what the remaining NAs are
-
-na<-stops[!complete.cases(stops), ]
-
-# need to recode the aian/mesa/nhpi flags too because those were the rows where the number of perceived threshold was met
-
-stops<-stops%>%
-  mutate(aian_flag=ifelse(is.na(aian_flag), 0, aian_flag))%>%
-    mutate(nhpi_flag=ifelse(is.na(nhpi_flag), 0, nhpi_flag))%>%
-      mutate(sswana_flag=ifelse(is.na(sswana_flag), 0, sswana_flag))
-
-#see how many NAs are left
-
-# sum(is.na(stops)) #0 left!
+sum(is.na(stops)) #0 NAs
 
 ```
 
