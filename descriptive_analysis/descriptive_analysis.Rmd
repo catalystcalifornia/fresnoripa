@@ -1989,5 +1989,3 @@ names(time_race_traffic_df)<-tools::toTitleCase(gsub("_"," ",names(time_race_tra
 
 
 ```
-
-
