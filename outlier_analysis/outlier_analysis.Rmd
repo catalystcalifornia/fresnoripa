@@ -255,7 +255,7 @@ model<-lm(log(stop_duration) ~
             
 call_for_service+
   persons_count+
-   actions_count+
+   #actions_count+
   
 #action_taken+ 
   handcuffed+
@@ -263,12 +263,12 @@ removed_from_vehicle+
 detained+
 use_of_force+
     ads_prop_seize+
-  contraband_found+
+  #contraband_found+
    search+
   contraband_count+
   ads_sobriety_test+
   ads_firearm_point+
-  ads_removed_vehicle_order+
+  #ads_removed_vehicle_order+
   
   age_avg+
     
@@ -301,7 +301,7 @@ stop_result_simple_guardian+
 stop_result_simple_arrest_warrant+
 stop_result_simple_arrest_nowarrant+
 stop_result_simple_fieldinterviewcard+
-stop_result_simple_citerelease+
+#stop_result_simple_citerelease+
 stop_result_simple_transport+
 stop_result_simple_psychiatric+
 stop_result_simple_schooladmin+
@@ -323,7 +323,7 @@ Test for multicollinearity among independent variables: calculate Variance Influ
 
 vif_values <- vif(model) 
 
-vif_values # all variables pass the VIF test because none have a vif value of 5< 
+vif_values # removed actions_count, removed_vehicle_order, contraband_found, stop_reason_simple_citerelease, all VIF values now below 5.
 
 ```
 
