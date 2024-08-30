@@ -405,25 +405,27 @@ pv<-pv%>%mutate(pv=exp(pv_log),
 stops<-stops%>%
   left_join(pv, by = c("stop_id" = "stop_id"))
 
+  ## all analysis variables appear with column header .x because they have been duplicated for some reason. If you wish to figure out how to unduplicate, remember to remove the ".x" from the end of each analysis variable in the code below.
+
 # select columns of interest
 
 final_cap<-stops%>%
-select(c("stop_id", "stop_duration", "pv", "lwr", "upr", "pv_log", "upr_log", "lwr_log"))
+select(c("stop_id", "stop_duration", "pv.x", "lwr.x", "upr.x", "pv_log.x", "upr_log.x", "lwr_log.x"))
 
 #### Determine outlier based off lwr and upr prediction value intervals ####
 
 # create column indicating if that row requires a upper or lower cap, then implement cap
 
 final_cap<-final_cap%>%
- mutate(cap_type=ifelse(stopduration>upr, "high",
-                         ifelse(stopduration<lwr, "low", "none")))%>%
-  mutate(stop_duration_capped=ifelse(cap_type=="high", upr,
-                              ifelse(cap_type=="low", lwr,
-                                     stopduration)))
+ mutate(cap_type=ifelse(stop_duration>upr.x, "high",
+                         ifelse(stop_duration<lwr.x, "low", "none")))%>%
+  mutate(stop_duration_capped=ifelse(cap_type=="high", upr.x,
+                              ifelse(cap_type=="low", lwr.x,
+                                     stop_duration)))
 
 # rearrange column order 
 
-col_order <- c("stop_id", "stopduration", "stop_duration_capped", "cap_type",  "pv", "lwr","upr", "pv_log", "lwr_log", "upr_log")
+col_order <- c("stop_id", "stop_duration", "stop_duration_capped", "cap_type",  "pv.x", "lwr.x","upr.x", "pv_log.x", "lwr_log.x", "upr_log.x")
 
 final_cap <- final_cap[, col_order]
 
@@ -445,39 +447,37 @@ low<-final_cap%>%
 
 Take the stop duration capped values created using the Predicted Value Confidence Interval method and run some descriptive stats 
 
-## Original Stop Times: Officer-initiated Stop Counts and Time Stats across All Units
+## Original Stop Times: Officer-initiated Stop Counts and Time Stats for Fresno PD
 
 ```{r}
 
 # prep data 
 
 df<-stops%>%
-  select(stop_id, stop_in_response_to_cfs, stopduration)%>%
-  mutate(Total=sum(stopduration,na.rm=TRUE))%>%
-  group_by(stop_in_response_to_cfs)%>%
-  mutate(Count=sum(stopduration,na.rm=TRUE),
+  select(stop_id, call_for_service, stop_duration)%>%
+  mutate(Total=sum(stop_duration,na.rm=TRUE))%>%
+  group_by(call_for_service)%>%
+  mutate(Count=sum(stop_duration,na.rm=TRUE),
          'Percent Mins'=Count/Total*100,
-         'Average Stop Time (Mins)' = mean(stopduration, na.rm = FALSE),
-            'Median Stop Time (Mins)'=   median(stopduration,na.rm = FALSE),
-             'Min Stop Time (Mins)'=min(stopduration,na.rm = FALSE),
-            'Max Stop Time (Mins)'=max(stopduration,na.rm = FALSE),
+         'Average Stop Time (Mins)' = mean(stop_duration, na.rm = FALSE),
+            'Median Stop Time (Mins)'=   median(stop_duration,na.rm = FALSE),
+             'Min Stop Time (Mins)'=min(stop_duration,na.rm = FALSE),
+            'Max Stop Time (Mins)'=max(stop_duration,na.rm = FALSE),
              'Total Time (Mins)'= Total,
          'Count Mins'=Count
          )%>%
   slice(1)%>%
-  select(-c(stop_id, stopduration,Count,Total))%>%
-  mutate(stop_in_response_to_cfs=ifelse(stop_in_response_to_cfs %in% 0, 'No', 'Yes'))%>%
-  rename('Call for Service'='stop_in_response_to_cfs')%>%
+  select(-c(stop_id, stop_duration,Count,Total))%>%
+  mutate(call_for_service=ifelse(call_for_service %in% 0, 'No', 'Yes'))%>%
+  rename('Call for Service'='call_for_service')%>%
    relocate('Count Mins', .after = 'Call for Service')%>%
-  mutate(Assignment = 'All units')%>%
-   relocate("Assignment", .before = 'Call for Service')
 
 #create and style flextable
 
   flextable(df) %>% 
 colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",'Median Stop Time (Mins)',
                        'Min Stop Time (Mins)','Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1)%>% 
-  set_caption('Original Times: Stop Time by Response to Service Call for All Units in 2022') %>% 
+  set_caption('Original Times: Stop Time by Response to Service Call for Fresno PD (2022)') %>% 
   theme_vanilla() 
 
 ```
@@ -487,10 +487,10 @@ colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",
 ```{r}
 
 df<-stops%>%
-  select(stop_id, stop_in_response_to_cfs, stopduration)%>%
+  select(stop_id, call_for_service, stop_duration)%>%
   left_join(final_cap)%>%
   mutate(Total=sum(stop_duration_capped,na.rm=TRUE))%>%
-  group_by(stop_in_response_to_cfs)%>%
+  group_by(call_for_service)%>%
   mutate(Count=sum(stop_duration_capped,na.rm=TRUE),
          'Percent Mins'=Count/Total*100,
          'Average Stop Time (Mins)' = mean(stop_duration_capped, na.rm = FALSE),
@@ -502,12 +502,9 @@ df<-stops%>%
          )%>%
   slice(1)%>%
   select(2, 14:20)%>%
-  mutate(stop_in_response_to_cfs=ifelse(stop_in_response_to_cfs %in% 0, 'No', 'Yes'))%>%
-    rename('Call for Service'='stop_in_response_to_cfs')%>%
-     relocate('Count Mins', .after = 'Call for Service')%>%
-  mutate(Assignment = 'All units')%>%
-  relocate("Assignment", .before = 'Call for Service')
-
+  mutate(call_for_service=ifelse(call_for_service %in% 0, 'No', 'Yes'))%>%
+    rename('Call for Service'='call_for_service')%>%
+     relocate('Count Mins', .after = 'Call for Service')
 
          
 #create and style flextable
@@ -515,93 +512,13 @@ df<-stops%>%
   flextable(df) %>% 
 colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",'Median Stop Time (Mins)',
                        'Min Stop Time (Mins)','Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1)%>% 
-  set_caption('Capped Times: Stop Time by Response to Service Call for All Units') %>% 
+  set_caption('Capped Times: Stop Time by Response to Service Call, Fresno PD (2022)') %>% 
   theme_vanilla() 
 
 ```
 
 
-## Original Stop Times: Officer-initiated Stop Counts and Time Stats across SDPD Divisions
-
-```{r}
-
-df<-stops%>%
-  select(stop_id, div_name, stop_in_response_to_cfs, stopduration)%>%
-  group_by(div_name)%>%
-  mutate(Total=sum(stopduration,na.rm=TRUE))%>%  
-  mutate(div_name=ifelse(div_name %in% 'Unknown', 'UNKNOWN DIVISION', div_name))%>%
-  group_by(div_name,stop_in_response_to_cfs)%>%
-  mutate(Count=sum(stopduration,na.rm=TRUE),
-         'Percent Mins'=Count/Total*100,
-         'Average Stop Time (Mins)' = mean(stopduration, na.rm = FALSE),
-            'Median Stop Time (Mins)'=   median(stopduration,na.rm = FALSE),
-             'Min Stop Time (Mins)'=min(stopduration,na.rm = FALSE),
-            'Max Stop Time (Mins)'=max(stopduration,na.rm = FALSE),
-            'Total Time (Mins)'= Total,
-         'Count Mins'=Count
-         )%>%
-  slice(1)%>%
-select(-c(stop_id, stopduration,Count,Total))%>%  mutate(stop_in_response_to_cfs=ifelse(stop_in_response_to_cfs %in% 0, 'No', 'Yes'))%>%
-  rename('Call for Service'='stop_in_response_to_cfs')%>%
-  rename('Division Name' = 'div_name')%>%
-      relocate('Count Mins', .after = 'Call for Service')%>%
-  mutate(Assignment = 'All units')%>%
-  relocate("Assignment", .before = 'Call for Service')
-
-
-#create and style flextable
-
-  flextable(df) %>%
-colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",'Median Stop Time (Mins)',
-                       'Min Stop Time (Mins)','Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1)%>%
-  set_caption('Original Times: Stop Counts and Rates by Response to Service Call by Division') %>%
-  theme_vanilla()
-
-```
-
-## With Capped Stop Times: Officer-initiated Stop Counts and Time Stats across SDPD Divisions
-
-```{r}
-
-df<-final_cap%>%
-  left_join(stops%>%
-              select(stop_id, div_name, stop_in_response_to_cfs))%>%
-  group_by(div_name)%>%
-  mutate(Total=sum(stop_duration_capped,na.rm=TRUE))%>%  
-  mutate(div_name=ifelse(div_name %in% 'Unknown', 'UNKNOWN DIVISION', div_name))%>%
-  group_by(div_name,stop_in_response_to_cfs)%>%
-  mutate(Count=sum(stop_duration_capped,na.rm=TRUE),
-         'Percent Mins'=Count/Total*100,
-         'Average Stop Time (Mins)' = mean(stop_duration_capped, na.rm = FALSE),
-            'Median Stop Time (Mins)'=   median(stop_duration_capped,na.rm = FALSE),
-             'Min Stop Time (Mins)'=min(stop_duration_capped,na.rm = FALSE),
-            'Max Stop Time (Mins)'=max(stop_duration_capped,na.rm = FALSE),
-            'Total Time (Mins)'= Total,
-         'Count Mins'=Count
-         )%>%
-  slice(1)%>%
-select(11:13, 15:21)%>%
-  mutate(stop_in_response_to_cfs=ifelse(stop_in_response_to_cfs %in% 0, 'No', 'Yes'))%>%
-  rename('Call for Service'='stop_in_response_to_cfs')%>%
-  rename('Division Name' = 'div_name')%>%
-      relocate('Count Mins', .after = 'Call for Service')%>%
-  mutate(Assignment = 'All units')%>%
-  relocate("Assignment", .before = 'Call for Service')
-
-
-#create and style flextable
-
-  flextable(df) %>%
-colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",'Median Stop Time (Mins)',
-                       'Min Stop Time (Mins)','Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1)%>%
-  set_caption('Capped Times: Stop Counts and Rates by Response to Service Call by Division') %>%
-  theme_vanilla()
-
-
-
-
-```
-
+# Create postgres table
 
 ```{r, include=FALSE, eval=FALSE}
 
@@ -636,27 +553,34 @@ dbWriteTable(con,  "rel_stop_duration_capped", df_final,
 
 # add meta data
 
-table_comment <- paste0("COMMENT ON TABLE rel_stop_duration_capped  IS 'Table by unique stop ID of stops and stop duration times with lower and upper stop duration outliers flagged and capped using upper and lower predicted interval threshold values of stop duration predicted value. All stops are from 2022. Variables that are used to cap the stop duration times are:  Stop action | Independent variable
+table_comment <- paste0("COMMENT ON TABLE rel_stop_duration_capped  IS 'Table by unique stop ID of stops and stop duration times with lower and upper stop duration outliers flagged and capped using upper and lower predicted interval threshold values of stop duration predicted value. All stops are from 2022. Variables that are used to cap the stop duration times are:  
+Variable | Type of variable
+------------- | -------------
+Stop duration | Dependent variable
+Stop action | Independent variable
 Stop in response to call for service | Independent variable
-Age of person stopped | Independent variable
+Age of person stopped | Independent variable (continuous)
 Race of person stopped | Independent variable (categorical)
+Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
-Removed from vehicle | Independent variable (categorical)
+Number of Actions taken during stop | Independent variable (continuous)
+Person remove from vehicle | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
-Handcuffed | Independent variable (categorical)
-Search took place | Independent variable
-Property or Contraband seized | Independent variable (categorical)
-Officer division | Independent variable (categorical)
+Person handcuffed | Independent variable (categorical)
+Search took place | Independent variable (categorical)
+Firearm pointed | Independent variable (categorical)
+Sobriety test conducted | Independent variable (categorical)
+Removed from vehicle without force | Independent variable (categorical)
 
-Full methodology can be found in R script: W:\\Project\\RJS\\Pillars\\R\\Data and Geo Prep\\duration_outlier_analysis.Rmd Or in the RMD HTML page: W:\\Project\\RJS\\Pillars\\R\\Data and Geo Prep\\duration_outlier_analysis.html
+Full methodology can be found in R script: W:\Project\ECI\Fresno RIPA\GitHub\IB\fresnoripa\outlier_analysis\outlier_analysis.rmd
 QA document: 
-W:\\Project\\RJS\\Pillars\\Documentation\\QA_Duration_Outlier_Analysis.docx';
+W:\Project\ECI\Fresno RIPA\Documentation\Qa_outlier_analysis_docx.';
 
 COMMENT ON COLUMN rel_stop_duration_capped.stop_id IS 'Stop ID';
-COMMENT ON COLUMN rel_stop_duration_capped.stopduration IS 'Original stop duration';
+COMMENT ON COLUMN rel_stop_duration_capped.stop_duration IS 'Original stop duration';
 COMMENT ON COLUMN rel_stop_duration_capped.stop_duration_capped IS 'Stop duration where outlier stop durations have either a lower or higher cap implemented. If stop has a stop duration that is not an outlier than the original stop duration is used.';
 COMMENT ON COLUMN rel_stop_duration_capped.cap_type IS 'Flag if stop duration time cap is a upper or lower cap. This only applies to stop durations that were outliers. If the stop duration was an outlier and the stop duration time > predicted value upper predicted interval threshold value, then it is an upper cap type. If the stop duration time < predicted value of the lower predicted interval threshold value, then it is a lower cap type.';
 COMMENT ON COLUMN rel_stop_duration_capped.pv IS 'Predicted Value of the Stop Duration using Logistic Regression Model. Refer to QA doc for full methodology on how model was made. ';
