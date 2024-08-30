@@ -405,27 +405,36 @@ pv<-pv%>%mutate(pv=exp(pv_log),
 stops<-stops%>%
   left_join(pv, by = c("stop_id" = "stop_id"))
 
-  ## all analysis variables appear with column header .x because they have been duplicated for some reason. If you wish to figure out how to unduplicate, remember to remove the ".x" from the end of each analysis variable in the code below.
+  ## all analysis variables appear duplicated with column header ".x" and ".y"
+  # Rename ".x" columns to remove the ".x"
+
+stops <- stops %>%
+  rename("pv" = pv.x,
+         "lwr" = lwr.x, 
+         "upr" = upr.x, 
+         "pv_log" = pv_log.x, 
+         "lwr_log" = lwr_log.x, 
+         "upr_log" = upr_log.x)
 
 # select columns of interest
 
 final_cap<-stops%>%
-select(c("stop_id", "stop_duration", "pv.x", "lwr.x", "upr.x", "pv_log.x", "upr_log.x", "lwr_log.x"))
+select(c("stop_id", "stop_duration", "pv", "lwr", "upr", "pv_log", "upr_log", "lwr_log"))
 
 #### Determine outlier based off lwr and upr prediction value intervals ####
 
 # create column indicating if that row requires a upper or lower cap, then implement cap
 
 final_cap<-final_cap%>%
- mutate(cap_type=ifelse(stop_duration>upr.x, "high",
-                         ifelse(stop_duration<lwr.x, "low", "none")))%>%
-  mutate(stop_duration_capped=ifelse(cap_type=="high", upr.x,
-                              ifelse(cap_type=="low", lwr.x,
+ mutate(cap_type=ifelse(stop_duration>upr, "high",
+                         ifelse(stop_duration<lwr, "low", "none")))%>%
+  mutate(stop_duration_capped=ifelse(cap_type=="high", upr,
+                              ifelse(cap_type=="low", lwr,
                                      stop_duration)))
 
 # rearrange column order 
 
-col_order <- c("stop_id", "stop_duration", "stop_duration_capped", "cap_type",  "pv.x", "lwr.x","upr.x", "pv_log.x", "lwr_log.x", "upr_log.x")
+col_order <- c("stop_id", "stop_duration", "stop_duration_capped", "cap_type",  "pv", "lwr","upr", "pv_log", "lwr_log", "upr_log")
 
 final_cap <- final_cap[, col_order]
 
@@ -453,32 +462,32 @@ Take the stop duration capped values created using the Predicted Value Confidenc
 
 # prep data 
 
-df<-stops%>%
-  select(stop_id, call_for_service, stop_duration)%>%
-  mutate(Total=sum(stop_duration,na.rm=TRUE))%>%
-  group_by(call_for_service)%>%
-  mutate(Count=sum(stop_duration,na.rm=TRUE),
-         'Percent Mins'=Count/Total*100,
+df <- stops %>%
+  select(stop_id, call_for_service, stop_duration) %>%
+  mutate(Total = sum(stop_duration, na.rm = TRUE)) %>%
+  group_by(call_for_service) %>%
+  mutate(Count = sum(stop_duration, na.rm = TRUE),
+         'Percent Mins' = Count/Total*100,
          'Average Stop Time (Mins)' = mean(stop_duration, na.rm = FALSE),
-            'Median Stop Time (Mins)'=   median(stop_duration,na.rm = FALSE),
-             'Min Stop Time (Mins)'=min(stop_duration,na.rm = FALSE),
-            'Max Stop Time (Mins)'=max(stop_duration,na.rm = FALSE),
-             'Total Time (Mins)'= Total,
-         'Count Mins'=Count
-         )%>%
-  slice(1)%>%
-  select(-c(stop_id, stop_duration,Count,Total))%>%
-  mutate(call_for_service=ifelse(call_for_service %in% 0, 'No', 'Yes'))%>%
-  rename('Call for Service'='call_for_service')%>%
-   relocate('Count Mins', .after = 'Call for Service')%>%
+         'Median Stop Time (Mins)' = median(stop_duration, na.rm = FALSE),
+         'Min Stop Time (Mins)' = min(stop_duration, na.rm = FALSE),
+         'Max Stop Time (Mins)' = max(stop_duration, na.rm = FALSE),
+         'Total Time (Mins)' = Total,
+         'Count Mins' = Count
+  ) %>%
+  slice(1) %>%
+  select(-c(stop_id, stop_duration, Count, Total)) %>%
+  mutate(call_for_service = ifelse(call_for_service %in% 0, 'No', 'Yes')) %>%
+  rename('Call for Service' = 'call_for_service') %>%
+  relocate('Count Mins', .after = 'Call for Service')
 
-#create and style flextable
-
-  flextable(df) %>% 
-colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",'Median Stop Time (Mins)',
-                       'Min Stop Time (Mins)','Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1)%>% 
+# Create and style flextable
+df %>% 
+  flextable() %>% 
+  colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)", 'Median Stop Time (Mins)',
+                         'Min Stop Time (Mins)', 'Max Stop Time (Mins)', 'Total Time (Mins)'), digits = 1) %>% 
   set_caption('Original Times: Stop Time by Response to Service Call for Fresno PD (2022)') %>% 
-  theme_vanilla() 
+  theme_vanilla()
 
 ```
 
@@ -547,7 +556,10 @@ names(charvect) <- colnames(df_final)
 
 # push to postgres
 
-dbWriteTable(con,  "rel_stop_duration_capped", df_final, 
+table_name <- "rel_stop_duration_capped"
+schema <- 'data'
+
+dbWriteTable(con, c(schema, table_name), df_final, 
              overwrite = TRUE, row.names = FALSE,
              field.types = charvect)
 
@@ -575,9 +587,9 @@ Firearm pointed | Independent variable (categorical)
 Sobriety test conducted | Independent variable (categorical)
 Removed from vehicle without force | Independent variable (categorical)
 
-Full methodology can be found in R script: W:\Project\ECI\Fresno RIPA\GitHub\IB\fresnoripa\outlier_analysis\outlier_analysis.rmd
+Full methodology can be found in R script: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\IB\\fresnoripa\\outlier_analysis\\outlier_analysis.rmd
 QA document: 
-W:\Project\ECI\Fresno RIPA\Documentation\Qa_outlier_analysis_docx.';
+W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_outlier_analysis_docx.';
 
 COMMENT ON COLUMN rel_stop_duration_capped.stop_id IS 'Stop ID';
 COMMENT ON COLUMN rel_stop_duration_capped.stop_duration IS 'Original stop duration';
@@ -589,7 +601,7 @@ COMMENT ON COLUMN rel_stop_duration_capped.lwr IS 'Predicted value predicted int
 ;")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+dbSendQuery(con = con, table_comment)
 
 # add indices
 
