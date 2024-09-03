@@ -1553,14 +1553,14 @@ uof[,1:149] <- sapply(uof[,1:149],as.character) # convert all columns to varchar
 df0<-uof%>%
   filter(use_of_force==1)%>%
   left_join(person_reason, by =c("stop_id","person_number"))%>%
-    mutate(Total=n())%>%
-  group_by(reason, rfs_traffic_violation_code.x)%>%
+   left_join(offense_codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
+  mutate(Total=n())%>%
+  group_by(reason, rfs_traffic_violation_code.x,statute_literal_25,offense_type_of_charge)%>%
   mutate(Count=n(),
          Rate=Count/Total*100)%>%
   slice(1)%>%
   select(use_of_force, reason, rfs_traffic_violation_code.x, Total, Count, Rate)%>%
   arrange(-Count)%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
   ungroup()%>%
   select(rfs_traffic_violation_code.x, statute_literal_25, Count, Rate)%>%
   rename("Traffic reason offense code"='rfs_traffic_violation_code.x',
@@ -1583,7 +1583,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up 50% of the total population in Fresno City. Additionally, 18% of use of force incidents were towards people perceived as Asian despite Asian people only making up ~13% of Fresno's total population. 
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up 50% of the total population in Fresno City. Additionally, 17.6% of use of force incidents were towards people perceived as Asian males despite Asian people only making up ~13% of Fresno's total population. 
 
 ```{r}
 
@@ -1592,7 +1592,7 @@ left_join(race)%>%
   filter(use_of_force==1)%>%
 group_by(nh_race, g_full)%>%
 summarise(count=n(),.groups='drop')%>%
-mutate(rate=count/sum(count))
+mutate(rate=count/sum(count)*100)
 
 
 # Format the gender table for visualizing 
