@@ -769,7 +769,7 @@ panel.background = element_blank())+
 
 Within traffic stops of each perceived racial group, those who Fresno PD perceived as male are stopped at higher rates than those Fresno PD perceived as female across all BIPOC groups. The gender disparity in traffic stops is highest for individuals perceived SWANA/SA, with individuals perceived as male and SWANA/SA being stopped a much higher rate than individuals perceived as female and SWANA/SA. 
 
-Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, and at least a 1% rate for officer-initiated traffic stops in 2022. 
+Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, and perceived gender groups that had at least a 1% rate for officer-initiated traffic stops in 2022. 
 
 ```{r}
 
@@ -833,7 +833,7 @@ panel.background = element_blank())+
 
 ```
 
-## Traffic stops by stop-type {#traffic-type}
+## Traffic stops by type {#traffic-type}
 
 Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations. That means the remaining 25% of all traffic stops were made for equipment and non-moving traffic stops. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
@@ -1048,7 +1048,7 @@ flextable(tv_move_flex) %>%
  
 ## Traffic stop reasons by race
 
-Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Asian and Latinx are stopped in traffic for a reason of 'No vehicle registration' at higher rates compared to other groups. People perceived as Latinx were stopped because of an obstruction in vehicle window at higher rates than other groups. Traffic stops made for reasons such as vehicle registration, or lacktherof, do not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
+Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Asian or Black are stopped in traffic stops for a reason of 'No vehicle registration' at higher rates compared to other groups. People perceived as Latinx were stopped because of an obstruction in vehicle window at higher rates than other groups. Traffic stops made for reasons such as vehicle registration do not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
 
 Note that the graphs below filter out perceived racial groups where less than 10 people were stopped in traffic stops by Fresno PD in 2022. 
 
@@ -1087,20 +1087,21 @@ library(tidytext)
 ggplot(df0, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          vjust=0, #center percentage within the bar
+          vjust=-.5, #center percentage within the bar
           size = 2.5,
           color = "black")+ 
-  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .01))+
-  labs(title=str_wrap("People perceived as Black and Latinx are Stopped for Reasons Not Related to Traffic Safety",70),
+  scale_x_discrete(labels = wrap_format(3))+
+  labs(title=str_wrap("Two of the top reasons officers use to stop Black and Latinx people do not advance traffic safety",70),
     subtitle = str_wrap("Top traffic citation reasons by perceived race of person stopped",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+  theme(
+    # axis.text.x = element_text(angle = 0, hjust =0.5,size=4), #sets x-axis labels to be horizontal
       # legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5),
       plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust=0.5, size=3.5), #aesthetics of the barchart
+  theme(axis.text.x = element_text(vjust = 0.7, hjust=0.5, size=4), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=8, face="bold"),
         panel.grid.major = element_blank(), 
@@ -1195,9 +1196,6 @@ Individuals Fresno PD perceived as Latinx and Black are stopped for traffic stop
 df<-traffic%>%
   left_join(race)%>%
   left_join(person_result)%>%
-  filter(stop_result_simple=="in field cite and release"|
-          stop_result_simple== "warning verbal or written"|
-           stop_result_simple=="citation for infraction")%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
   group_by(nh_race, stop_result_simple)%>%
@@ -1217,7 +1215,10 @@ df<-traffic%>%
     TRUE ~ as.character(nh_race)))%>%
   select(Race, stop_result_simple, total, count,rate)%>%
   arrange(Race,  -rate)%>%
-  filter(total>=10)
+  filter(total>=10) %>%   
+  filter(stop_result_simple=="in field cite and release"|
+          stop_result_simple== "warning verbal or written"|
+           stop_result_simple=="citation for infraction")
 
 # graph
 
@@ -1229,8 +1230,8 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title=str_wrap("People Percevied as White are given Citations at Higher Rates than Other Groups", 90),
-         subtitle = "Rate of traffic stops by stop result and perceived race",
+  labs(title=str_wrap("People Perceived as SWANA/SA are Given Citations at Higher Rates than Other Groups", 90),
+         subtitle = "Rate of traffic stops by top stop results and perceived race",
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1267,21 +1268,20 @@ df<-traffic%>%
   left_join(citation_result%>%
               mutate(person_number=as.character(person_number)))%>%
   filter(stop_result_simple=="citation for infraction" & 
-           result_category == "Citation for infraction")
+           result_category == "Citation for infraction")%>%
+  left_join(offense_codes)
 
 # analyze
 
 df<-df%>%
-  select(offense_code)%>%
+  select(offense_code,offense_statute,statute_literal_25)%>%
   mutate(total=n())%>%
-  group_by(offense_code)%>%
+  group_by(offense_code,offense_statute,statute_literal_25)%>%
 mutate(count=n(),
        rate=count/total*100)%>%
   slice(1)%>%
   arrange(-rate)%>%
-  head(7)%>%
-  left_join(offense_codes)%>% # join additional info on offense codes
-select(1,6,8,2,3,4)
+  head(7)
 
 
 #create and style flextable
@@ -1293,7 +1293,7 @@ df<-df%>%
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Most Common Citations that resulted from an Officer-Initiated Traffic Stop') %>%
+  set_caption('Most Common Citations that Resulted From an Officer-Initiated Traffic Stop') %>%
   theme_vanilla() %>%
   width(j=3,2.5,unit="in")
 
@@ -1301,24 +1301,21 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-### Traffic stops resulting in citations by race and gender
+### Traffic stops resulting in citations by race
 
-Latinx people are least likely to be given citation for speeding, but are more likely to be charged with driving without a license and window obstruction. People perceived as Black and Latinx by Fresno PD are stopped in traffic stops and given a citation for driving without a license at higher rates than all other groups. 
+Latinx people are least likely to be given a citation for speeding, but are more likely to be charged with driving without a license and window obstruction. People perceived as Black and Latinx by Fresno PD are stopped in traffic stops and given a citation for driving without a license at higher rates than all other groups. 
 
-In general, people perceived as Black are disproportionately stopped in traffic stops and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic stops and given a citation, 11.3% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
+In general, people perceived as Black are disproportionately stopped in traffic stops and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic stops and given a citation, 11.1% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
 
 The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top three traffic citation results for each perceived race. 
 
 ```{r}
 
-## First analyze just traffic stops resulting in a citation by race to see generally which peceived race is receiving the most traffic citations
+## First analyze just traffic stops resulting in a citation by race to see generally which perceived race is receiving the most traffic citations
 
 df<-traffic%>%
   left_join(person_result)%>%
-  left_join(citation_result%>%
-              mutate(person_number=as.character(person_number)))%>%
-  filter(stop_result_simple=="citation for infraction" & 
-           result_category == "Citation for infraction")%>%
+   filter(stop_result_simple=="citation for infraction")%>%
   left_join(race)
 
 # analyze
@@ -1337,6 +1334,9 @@ mutate(rate=count/sum(count)*100)%>%
 ```{r}
 
 df<-df%>%
+   left_join(citation_result%>%
+               filter(result_category=='Citation for infraction')%>%
+   mutate(person_number=as.character(person_number)))%>%
    left_join(offense_codes, by=c("offense_code"="offense_code"))%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
@@ -1373,7 +1373,7 @@ ggplot(df, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
           color = "black")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), .1))+
   labs(title=str_wrap("Stops of People Perceived as Latinx and Black More Likely to Result in Citation for Driving Without License",90),
-       subtitle = str_wrap("Top three traffic citation results by perceived race of person stopped",110), 
+       subtitle = str_wrap("Top three traffic citation results by perceived race",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1399,8 +1399,6 @@ panel.background = element_blank())+
 
 ### Traffic stops resulting in driving without license citation
 
-Across all officer-initiated traffic stops, non-moving traffic stops have the highest rates of stops that result in a citation for driving without a license. 
-
 ```{r}
 
 df<-traffic%>%
@@ -1423,22 +1421,10 @@ df<-traffic%>%
   select(traffic_violation_type, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
-# create and style flextable
-
-names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
-
-df<-df%>%
-  rename("Statute"="Statute Literal 25")
-
-  flextable(df) %>%
-colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Traffic Stops Resulting in Driving without License Citation by Stop Type') %>%
-  theme_vanilla() %>%
-  width(j=2,2,unit="in")
 
 ```
 
-People Fresno PD perceive as Latinx and Black are stopped in traffic stops and given a citation for driving without a license at higher rates than other groups. The percentage of people Fresno perceived as Black who were stopped and given a citation for driving without a license is disproportionately high relative to the percentage of Black people who live in Fresno city. 
+People Fresno PD perceive as Latinx and Black are stopped in traffic stops and given a citation for driving without a license at higher rates than other groups. Of the Latinx people officers stopped and cited, nearly 1 in 10 were given citations for driving without a license. 
 
 ```{r}
 
@@ -1479,8 +1465,7 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 
 df<-df%>%
   ungroup()%>%
-  rename("Statute"="Statute Literal 25")%>%
-  select(Race, "Statute", "Total", "Count", "Rate")
+  select(Race, "Total", "Count", "Rate")
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
