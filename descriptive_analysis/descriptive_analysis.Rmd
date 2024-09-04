@@ -767,7 +767,7 @@ panel.background = element_blank())+
 
 Within traffic stops of each perceived racial group, those who Fresno PD perceived as male are stopped at higher rates than those Fresno PD perceived as female across all BIPOC groups. The gender disparity in traffic stops is highest for individuals perceived SWANA/SA, with individuals perceived as male and SWANA/SA being stopped a much higher rate than individuals perceived as female and SWANA/SA. 
 
-Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, and at least a 1% rate for officer-initiated traffic stops in 2022. 
+Note that the graph below filters for perceived racial groups that had 10 or more people stopped in traffic stops, and perceived gender groups that had at least a 1% rate for officer-initiated traffic stops in 2022. 
 
 ```{r}
 
@@ -831,7 +831,7 @@ panel.background = element_blank())+
 
 ```
 
-## Traffic stops by stop-type {#traffic-type}
+## Traffic stops by type {#traffic-type}
 
 Fresno PD made close to 4,000 traffic stops of moving vehicles in 2022, which represented more than three-quarters of their total stops for traffic violations. That means the remaining 25% of all traffic stops were made for equipment and non-moving traffic stops. Of the other quarter of vehicles that were stopped, 15% were stopped for equipment violations, while 8% were stopped for non-moving violations.
 
@@ -1046,7 +1046,7 @@ flextable(tv_move_flex) %>%
  
 ## Traffic stop reasons by race
 
-Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Asian and Latinx are stopped in traffic for a reason of 'No vehicle registration' at higher rates compared to other groups. People perceived as Latinx were stopped because of an obstruction in vehicle window at higher rates than other groups. Traffic stops made for reasons such as vehicle registration, or lacktherof, do not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
+Within traffic stops that were made by Fresno PD, the most common cited reason is driving at an unsafe speed. However,  people perceived as Asian or Black are stopped in traffic stops for a reason of 'No vehicle registration' at higher rates compared to other groups. People perceived as Latinx were stopped because of an obstruction in vehicle window at higher rates than other groups. Traffic stops made for reasons such as vehicle registration do not advance public safety. Traffic stops made for these type of reasons may indicate that profiling is occurring.
 
 Note that the graphs below filter out perceived racial groups where less than 10 people were stopped in traffic stops by Fresno PD in 2022. 
 
@@ -1085,20 +1085,21 @@ library(tidytext)
 ggplot(df0, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          vjust=0, #center percentage within the bar
+          vjust=-.5, #center percentage within the bar
           size = 2.5,
           color = "black")+ 
-  scale_x_discrete(labels = ~ str_wrap(as.character(.x), .01))+
-  labs(title=str_wrap("People perceived as Black and Latinx are Stopped for Reasons Not Related to Traffic Safety",70),
+  scale_x_discrete(labels = wrap_format(3))+
+  labs(title=str_wrap("Two of the top reasons officers use to stop Black and Latinx people do not advance traffic safety",70),
     subtitle = str_wrap("Top traffic citation reasons by perceived race of person stopped",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
+  theme(
+    # axis.text.x = element_text(angle = 0, hjust =0.5,size=4), #sets x-axis labels to be horizontal
       # legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5),
       plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust=0.5, size=3.5), #aesthetics of the barchart
+  theme(axis.text.x = element_text(vjust = 0.7, hjust=0.5, size=4), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=8, face="bold"),
         panel.grid.major = element_blank(), 
