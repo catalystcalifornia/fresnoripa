@@ -195,7 +195,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Fresno City population demographics
 
-The majority of people living in Fresno City are Latinx. However, there is also a diverse Southeast Asian communtiy that resides in Fresno. Unfortunately, due to the lack of available disaggregated data, it is difficult to discern the population of the Southeast Asian community in Fresno as their data is grouped into a larger 'Asian' category in the census.
+The majority of people living in Fresno City are Latinx. Additionally, one in four people in Fresno are White. RIPA and census data often group all Asian subgroups into a larger ‘Asian’ category. However, there is also a diverse Asian community in Fresno. The largest Asian subgroup in Fresno is Hmong followed by Filipino. Asian Indians also make up one of the largest groups though in RIPA data, South Asians are grouped with SWANA.
 
 ```{r}
 # create ggplot graph of race population in Fresno
@@ -207,11 +207,11 @@ df <- pop %>%
     race == 'latinx' ~ "Latinx", 
     race =='nh_white' ~ 'White',
     race =='nh_black' ~ 'Black',
-    race == 'nh_asian' ~ 'Asian',
     race == 'aian' ~ 'AIAN',
     race == 'nhpi' ~ 'NHPI',
     race == 'nh_twoormor' ~ 'Multiracial',
      race == 'sswana' ~ 'SWANA/SA', 
+    race=='nh_asian_wo_sa' ~ 'Asian',
     TRUE ~ as.character(race)))%>%
   filter(grepl("Latinx|White|Black|Asian|AIAN|NHPI|SWANA/SA|Multiracial", Race))%>%
   mutate(rate=rate*100)
@@ -222,25 +222,27 @@ df <- pop %>%
 ggplot(df, aes(x = reorder(Race, rate), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
-          size = 2.5,
-          color = "white")+ 
+          vjust=1, #center percentage within the bar
+          hjust=-0.2,
+          size = 3,
+          color = "black")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
   labs(title = "Half of the People Living in Fresno City are Latinx", 
        subtitle = "Population in Fresno City by race",
+       caption = "Race note: AIAN=American Indican or Alaska Native; NHPI = Native Hawaiian or Pacific Islander; SWANA/SA=Southwest Asian and North African / South Asian",
        x = "", #labels to visual
        y = "") +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5),
-      plot.subtitle = element_text(hjust=0.5))+
+      plot.subtitle = element_text(hjust=0.5),
+       plot.caption = element_text(hjust = 0))+
   theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
-panel.background = element_blank())+ 
+panel.background = element_blank())+
   coord_flip()
 
 
