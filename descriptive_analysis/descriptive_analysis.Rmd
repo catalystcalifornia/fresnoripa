@@ -1194,9 +1194,6 @@ Individuals Fresno PD perceived as Latinx and Black are stopped for traffic stop
 df<-traffic%>%
   left_join(race)%>%
   left_join(person_result)%>%
-  filter(stop_result_simple=="in field cite and release"|
-          stop_result_simple== "warning verbal or written"|
-           stop_result_simple=="citation for infraction")%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
   group_by(nh_race, stop_result_simple)%>%
@@ -1216,7 +1213,10 @@ df<-traffic%>%
     TRUE ~ as.character(nh_race)))%>%
   select(Race, stop_result_simple, total, count,rate)%>%
   arrange(Race,  -rate)%>%
-  filter(total>=10)
+  filter(total>=10) %>%   
+  filter(stop_result_simple=="in field cite and release"|
+          stop_result_simple== "warning verbal or written"|
+           stop_result_simple=="citation for infraction")
 
 # graph
 
@@ -1228,8 +1228,8 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title=str_wrap("People Percevied as White are given Citations at Higher Rates than Other Groups", 90),
-         subtitle = "Rate of traffic stops by stop result and perceived race",
+  labs(title=str_wrap("People Perceived as SWANA/SA are Given Citations at Higher Rates than Other Groups", 90),
+         subtitle = "Rate of traffic stops by top stop results and perceived race",
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1266,21 +1266,20 @@ df<-traffic%>%
   left_join(citation_result%>%
               mutate(person_number=as.character(person_number)))%>%
   filter(stop_result_simple=="citation for infraction" & 
-           result_category == "Citation for infraction")
+           result_category == "Citation for infraction")%>%
+  left_join(offense_codes)
 
 # analyze
 
 df<-df%>%
-  select(offense_code)%>%
+  select(offense_code,offense_statute,statute_literal_25)%>%
   mutate(total=n())%>%
-  group_by(offense_code)%>%
+  group_by(offense_code,offense_statute,statute_literal_25)%>%
 mutate(count=n(),
        rate=count/total*100)%>%
   slice(1)%>%
   arrange(-rate)%>%
-  head(7)%>%
-  left_join(offense_codes)%>% # join additional info on offense codes
-select(1,6,8,2,3,4)
+  head(7)
 
 
 #create and style flextable
@@ -1292,7 +1291,7 @@ df<-df%>%
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Most Common Citations that resulted from an Officer-Initiated Traffic Stop') %>%
+  set_caption('Most Common Citations that Resulted From an Officer-Initiated Traffic Stop') %>%
   theme_vanilla() %>%
   width(j=3,2.5,unit="in")
 
