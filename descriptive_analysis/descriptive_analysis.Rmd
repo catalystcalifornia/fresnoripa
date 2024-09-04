@@ -1512,7 +1512,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ## Stops resulting in use of force {#useofforce}
 
-Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (17 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (14 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
 
 ```{r}
 
@@ -1520,7 +1520,9 @@ Out of all people stopped during an officer-initiated stop, 99.7% of people stop
 
 uof<-person%>%
   mutate(person_number=as.character(person_number))%>%
-  left_join(stops)%>%left_join(actions)%>%
+  left_join(stops)%>%left_join(person_action%>%
+  mutate(person_number=as.character(person_number)),
+  by=c("stop_id","person_number"))%>%
     filter(call_for_service==0)
 
 # Analysis
