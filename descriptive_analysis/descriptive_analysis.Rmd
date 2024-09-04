@@ -1299,24 +1299,21 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-### Traffic stops resulting in citations by race and gender
+### Traffic stops resulting in citations by race
 
-Latinx people are least likely to be given citation for speeding, but are more likely to be charged with driving without a license and window obstruction. People perceived as Black and Latinx by Fresno PD are stopped in traffic stops and given a citation for driving without a license at higher rates than all other groups. 
+Latinx people are least likely to be given a citation for speeding, but are more likely to be charged with driving without a license and window obstruction. People perceived as Black and Latinx by Fresno PD are stopped in traffic stops and given a citation for driving without a license at higher rates than all other groups. 
 
-In general, people perceived as Black are disproportionately stopped in traffic stops and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic stops and given a citation, 11.3% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
+In general, people perceived as Black are disproportionately stopped in traffic stops and given a citation relative to how many Black people live in Fresno city. Out of all people stopped in traffic stops and given a citation, 11.1% were people Fresno PD perceived as Black, yet Black people make up 6.2% of Fresno city's total population. 
 
 The graph below gives more detail into traffic citations given as a result of a traffic stop. It shows the top three traffic citation results for each perceived race. 
 
 ```{r}
 
-## First analyze just traffic stops resulting in a citation by race to see generally which peceived race is receiving the most traffic citations
+## First analyze just traffic stops resulting in a citation by race to see generally which perceived race is receiving the most traffic citations
 
 df<-traffic%>%
   left_join(person_result)%>%
-  left_join(citation_result%>%
-              mutate(person_number=as.character(person_number)))%>%
-  filter(stop_result_simple=="citation for infraction" & 
-           result_category == "Citation for infraction")%>%
+   filter(stop_result_simple=="citation for infraction")%>%
   left_join(race)
 
 # analyze
@@ -1335,6 +1332,9 @@ mutate(rate=count/sum(count)*100)%>%
 ```{r}
 
 df<-df%>%
+   left_join(citation_result%>%
+               filter(result_category=='Citation for infraction')%>%
+   mutate(person_number=as.character(person_number)))%>%
    left_join(offense_codes, by=c("offense_code"="offense_code"))%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
@@ -1371,7 +1371,7 @@ ggplot(df, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
           color = "black")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), .1))+
   labs(title=str_wrap("Stops of People Perceived as Latinx and Black More Likely to Result in Citation for Driving Without License",90),
-       subtitle = str_wrap("Top three traffic citation results by perceived race of person stopped",110), 
+       subtitle = str_wrap("Top three traffic citation results by perceived race",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
@@ -1397,8 +1397,6 @@ panel.background = element_blank())+
 
 ### Traffic stops resulting in driving without license citation
 
-Across all officer-initiated traffic stops, non-moving traffic stops have the highest rates of stops that result in a citation for driving without a license. 
-
 ```{r}
 
 df<-traffic%>%
@@ -1421,22 +1419,10 @@ df<-traffic%>%
   select(traffic_violation_type, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
-# create and style flextable
-
-names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
-
-df<-df%>%
-  rename("Statute"="Statute Literal 25")
-
-  flextable(df) %>%
-colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Traffic Stops Resulting in Driving without License Citation by Stop Type') %>%
-  theme_vanilla() %>%
-  width(j=2,2,unit="in")
 
 ```
 
-People Fresno PD perceive as Latinx and Black are stopped in traffic stops and given a citation for driving without a license at higher rates than other groups. The percentage of people Fresno perceived as Black who were stopped and given a citation for driving without a license is disproportionately high relative to the percentage of Black people who live in Fresno city. 
+People Fresno PD perceive as Latinx and Black are stopped in traffic stops and given a citation for driving without a license at higher rates than other groups. Of the Latinx people officers stopped and cited, nearly 1 in 10 were given citations for driving without a license. 
 
 ```{r}
 
@@ -1477,8 +1463,7 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 
 df<-df%>%
   ungroup()%>%
-  rename("Statute"="Statute Literal 25")%>%
-  select(Race, "Statute", "Total", "Count", "Rate")
+  select(Race, "Total", "Count", "Rate")
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
