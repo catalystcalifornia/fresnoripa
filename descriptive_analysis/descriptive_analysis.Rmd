@@ -104,7 +104,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
 
 In 2022, there were a total of 5,317 police stops made by Fresno PD. Of those stops, 5,028 were officer-initiated stops and 289 were calls for service.
 
-In 2022, 94.6% of Fresno PD stops were officer initiated stops while only 5.4% of stops were calls for service.
+In other words, 94.6% of Fresno PD stops were officer-initiated stops while only 5.4% of stops were calls for service.
 
 ```{r}
 # Use the 'rel_stops' table to calculate the rate and count of officer initiated stops &  calls for service. 
@@ -153,7 +153,7 @@ ggplot(rate_ois, aes(x = Type, y = percent, fill = Type))+
           size = 3,
           color = "white")+ 
   labs(title = "Nearly 95% of All Stops Fresno PD Makes Are Not Responding to Community Calls", 
-       subtitle = "Percentage of police stops by stop-type made by Fresno PD in 2022",
+       subtitle = "Percentage of stops by stop type in 2022",
        x = "", #labels to visual
        y = "") +
   scale_fill_manual(values = c("Officer-Initiated Stop"="#362178",
@@ -176,20 +176,19 @@ panel.background = element_blank())
 
 ## People stopped for officer-initiated stops
 
-In 2022, Fresno PD stopped a total of 5,060 people through officer-initiated stops.
+In 2022, Fresno PD stopped a total of 5,365 people. Of these people, 94.3% of them, or 5,060 people, were stopped through officer-initiated stops.
 
 ```{r}
 
 # Use the 'rel_persons' AND 'rel_stops' table to calculate total number of people stopped for officer-initiated stops
 
-tot_ois <- left_join(stops, person, by ="stop_id")%>%
-  select(call_for_service)%>%
-  filter(call_for_service ==0)%>%  
-    summarise(count=n())%>%
-     ungroup()%>%
-       mutate(Total=sum(count))%>%
-        rename("Total Number of People Stopped for Officer-Initiated Stops" = count)
 
+tot_cfs_ois <- left_join(stops, person, by ="stop_id")%>%
+  mutate(total=n())%>%
+  group_by(call_for_service)%>%  
+    summarise(count=n(),
+              percent=count/min(total)*100,
+              total=min(total))
 
 ```
 
