@@ -99,7 +99,7 @@ Before engaging in a detailed analysis of the Fresno Police Department's (PD) pa
     + [Time spent on traffic stops by race](#time-race)
 
 
-# Stops overview {#overview}
+# Stops Overview {#overview}
 
 ## Officer-initiated stops versus calls for service
 
@@ -1815,7 +1815,7 @@ names(df_hitrate)<-tools::toTitleCase(gsub("_"," ",names(df_hitrate))) # clean u
 ```
 
 
-# Time spent {#time}
+# Time Spent {#time}
 
 The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about 74.1% of their stop time on officer-initiated stops though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
 
