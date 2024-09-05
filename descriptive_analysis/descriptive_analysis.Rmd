@@ -1756,7 +1756,7 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
 
 ```
 
-The table below shows the rate of searches that yield contraband within each perceived racial group (also known as hit rates). We can see across all perceived racial groups that only a small number of searches yield any contraband. 
+The table below shows the rate of searches that yield contraband during traffic stops within each perceived racial group (also known as hit rates). We can see across all perceived racial groups that only a small number of searches yield any contraband. 
 
 ```{r}
 
@@ -1797,7 +1797,7 @@ names(df_hitrate)<-tools::toTitleCase(gsub("_"," ",names(df_hitrate))) # clean u
 
   flextable(df_hitrate) %>%
  colformat_double(j = c("Rate"), digits = 1)%>%
-  set_caption('Fresno PD Searches Yielding Contraband by Perceived Race') %>%
+  set_caption('Fresno PD Searches During Traffic Stops That Yield Contraband by Perceived Race') %>%
   theme_vanilla()%>%
        width(width = 1.1)
 
