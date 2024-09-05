@@ -197,7 +197,7 @@ tot_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ## Fresno City population demographics
 
-The majority of people living in Fresno City are Latinx. Additionally, one in four people in Fresno are White. RIPA and census data often group all Asian subgroups into a larger ‘Asian’ category. However, there is also a diverse Asian community in Fresno. The largest Asian subgroup in Fresno is Hmong followed by Filipino. Asian Indians also make up one of the largest groups though in RIPA data, South Asians are grouped with SWANA.
+The majority of people living in Fresno City are Latinx. Additionally, one in four people in Fresno are White. RIPA and census data often group all Asian subgroups into a larger ‘Asian’ category. However, there is also a diverse Asian community in Fresno. The largest Asian subgroup in Fresno is Hmong followed by Filipino. Asian Indians also make up one of the largest Asian groups though in RIPA data, South Asians are grouped with SWANA.
 
 ```{r}
 # create ggplot graph of race population in Fresno
@@ -231,7 +231,7 @@ ggplot(df, aes(x = reorder(Race, rate), y = rate))+
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
   labs(title = "Half of the People Living in Fresno City are Latinx", 
        subtitle = "Population in Fresno City by race",
-       caption = "Race note: AIAN=American Indican or Alaska Native; NHPI = Native Hawaiian or Pacific Islander; SWANA/SA=Southwest Asian and North African / South Asian",
+       caption = str_wrap("Race note: AIAN=American Indican or Alaska Native; NHPI = Native Hawaiian or Pacific Islander; SWANA/SA=Southwest Asian and North African / South Asian; Asian excludes South Asian",110),
        x = "", #labels to visual
        y = "") +
   theme_bw()+
