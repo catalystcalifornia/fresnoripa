@@ -1054,14 +1054,14 @@ Within traffic stops that were made by Fresno PD, the most common cited reason i
 
 Note that the graphs below filter out perceived racial groups where less than 10 people were stopped in traffic stops by Fresno PD in 2022. 
 
-```{r}
+```{r,,  fig.width=9, fig.height=9}
 
 df0<-traffic%>%
   left_join(race)%>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
-  group_by(rfs_traffic_violation_code, statute_literal_25, offense_default_type_of_charge, nh_race)%>%
+  group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
   slice(1)%>%
@@ -1076,34 +1076,35 @@ df0<-traffic%>%
      nh_race == 'nh_sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(nh_race)))%>%
   ungroup()%>%
-  select(Race, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  select(Race, statute_literal_25, total, count, rate)%>%
   group_by(Race)%>%
     arrange(Race, -count)%>%
    slice(1:3)%>%
   filter(total>=10) ### Filter total number of people to be a least 10
   
 ## ggplot-----------
+df0$statute_literal_25 = str_wrap(df0$statute_literal_25, width = 3)
 
 ggplot(df0, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
           vjust=-.5, #center percentage within the bar
-          size = 2.5,
+          size = 3,
           color = "black")+ 
-  scale_x_discrete(labels = wrap_format(3))+
+  scale_x_discrete(labels = function(x) str_wrap(x,width=3))+
   labs(title=str_wrap("Two of the top reasons officers use to stop Black and Latinx people do not advance traffic safety",70),
     subtitle = str_wrap("Top traffic citation reasons by perceived race of person stopped",110), 
        x = "", #labels to visual
        y = "") +
   theme_bw()+
   theme(
-    # axis.text.x = element_text(angle = 0, hjust =0.5,size=4), #sets x-axis labels to be horizontal
+    # axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       # legend.position ="none", #removes legend
-      plot.title = element_text(hjust=0.5),
-      plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(vjust = 0.7, hjust=0.5, size=4), #aesthetics of the barchart
+      plot.title = element_text(hjust=0.5,size=16),
+      plot.subtitle = element_text(hjust=0.5,size=14))+
+  theme(axis.text.x = element_text(vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
-        strip.text = element_text(color = "white", size=8, face="bold"),
+        strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
 panel.background = element_blank())+
