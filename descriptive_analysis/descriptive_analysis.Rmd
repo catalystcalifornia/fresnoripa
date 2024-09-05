@@ -1340,7 +1340,7 @@ df<-df%>%
    left_join(offense_codes, by=c("offense_code"="offense_code"))%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
-  group_by(offense_code, statute_literal_25, offense_default_type_of_charge, offense_type_of_charge,nh_race)%>%
+  group_by(statute_literal_25, offense_default_type_of_charge, offense_type_of_charge,nh_race)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
   slice(1)%>%
@@ -1355,7 +1355,7 @@ df<-df%>%
      nh_race == 'nh_sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(nh_race)))%>%
   ungroup()%>%
-  select(Race, offense_code, statute_literal_25, total, count, rate)%>%
+  select(Race, statute_literal_25, total, count, rate)%>%
   group_by(Race)%>%
     arrange(Race, -count)%>%
    slice(1:3)%>%
@@ -1383,7 +1383,7 @@ ggplot(df, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
       # legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5, size=16),
       plot.subtitle = element_text(hjust=0.5, size=14))+
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=10), #aesthetics of the barchart
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         strip.placement = "outside",
