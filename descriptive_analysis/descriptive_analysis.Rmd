@@ -1,6 +1,6 @@
 ---
 title: "Fresno RIPA Data Project"
-subtitle: "Descriptive Analysis"
+subtitle: "Descriptive Analysis for Fresno BHC"
 author: "Catalyst California"
 output:
   html_document:
@@ -79,13 +79,13 @@ pop<-dbGetQuery(con, "SELECT * from population_race_fresno_city")
 
 ```
 
-Before engaging in a detailed analysis of Fresno PD patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in the Fresno Police Department (PD) RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
+Before engaging in a detailed analysis of the Fresno Police Department's (PD) patrol activity as outlined in the research plan, we created this descriptive analysis to explore overall trends in Fresno PD's RIPA data. This helps us determine if our expected findings are likely to show up in the data and allows us to identify any trends we did not expect. We include basic tallies on each of the following:
 
 * [Overview of officer-initiated stops and calls for service](#overview)
 * [Demographics of people stopped by Fresno PD](#demographics)
 * [A deep dive into traffic stops](#traffic)
-    + [Over-all traffic stops by race and gender](#traffic-demo)
-    + [Traffic stops by stop-type](#traffic-type)
+    + [Traffic stops by race and gender](#traffic-demo)
+    + [Traffic stops by type](#traffic-type)
     + [Traffic stops by stop reason](#traffic-reason)
     + [Traffic stops by stop result](#traffic-result)
 * [Results of officer-initiated stops](#results)
@@ -97,6 +97,7 @@ Before engaging in a detailed analysis of Fresno PD patrol activity as outlined 
     + [Time spent on stops by stop reason](#time-reason)
     + [Time spent on traffic stops by stop result](#time-result)
     + [Time spent on traffic stops by race](#time-race)
+
 
 # Stops overview {#overview}
 
@@ -192,6 +193,7 @@ tot_cfs_ois <- left_join(stops, person, by ="stop_id")%>%
 
 ```
 
+
 # Demographics {#demographics}
 
 ## Fresno City population demographics
@@ -223,8 +225,8 @@ df <- pop %>%
 ggplot(df, aes(x = reorder(Race, rate), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          vjust=1, #center percentage within the bar
-          hjust=-0.2,
+          vjust=.5, #center percentage within the bar
+          hjust=0,
           size = 3,
           color = "black")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
@@ -248,6 +250,7 @@ panel.background = element_blank())+
 
 
 ```
+
 
 ## Perceived race of people stopped
 
@@ -393,7 +396,7 @@ ggplot(age_ois, aes(x = Age, y=Percent))+
   y = "")+
     scale_x_discrete(labels = wrap_format(10))+
   theme_bw()+
-    theme(plot.title = element_text(hjust =0.5, size = 11.5),
+    theme(plot.title = element_text(hjust =0.5),
           plot.subtitle = element_text(hjust=0.5),
   axis.text.x = element_text(angle = 00, vjust = 0.5, hjust=0.5, size=10), #for label and axis settings
         strip.background = element_rect(fill = "#362178"),
@@ -408,7 +411,7 @@ panel.background = element_blank())
 
 ## Perceived gender of people stopped 
 
-In 2022, people perceived by Fresno PD as men (males) accounted for nearly 57% of all officer-initiated stops.
+In 2022, people perceived by Fresno PD as men (cisgender males) accounted for nearly 57% of all officer-initiated stops.
 
 ```{r}
 
@@ -469,7 +472,7 @@ In all age groups under 55 years old, individuals Fresno PD perceived as Latinx 
 
 In 2022, individuals perceived as White within the age groups of 55-64 and 65 and older were the most frequently stopped during officer-initiated stops. White individuals may make up a higher share of the total population in these age groups in Fresno. White individuals make up 25.4% of Freno City's population.
 
-```{r}
+```{r, fig.width=9, fig.height=9}
 
 race_age_ois <- left_join(age, stops, by ="stop_id")%>% 
   left_join(race, by =c("stop_id","person_number"))%>%
@@ -501,7 +504,7 @@ race_age_ois <- race_age_ois %>% #Recode for race
     nh_race == 'nh_aian' ~ 'AIAN',
     nh_race == 'nh_nhpi' ~ 'NHPI',
     nh_race == 'nh_multiracial' ~ 'Multiracial',
-      nh_race == 'nh_sswana' ~ 'SSWANA'))
+      nh_race == 'nh_sswana' ~ 'SWANA/SA'))
 
 ####Deleting nh_race columns to make a cleaner flextable####
 race_age_ois <- race_age_ois[, !names(race_age_ois) %in% c("nh_race")]
@@ -543,13 +546,14 @@ panel.background = element_blank())+
 
 ```
 
+
 ## Perceived age by race and gender
 
-In 2022, people perceived as men (males) were the most frequently stopped group across most age and race combinations. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
+In 2022, people perceived as men (cisgender males) were the most frequently stopped group across most age and race combinations. Latinx men ages 18-34, followed by Latinx women ages 25-34, had the highest number of stops by Fresno PD during officer-initiated stops.
 
 In 2022, Latinx men ages 17 and under comprised more than 40% of people stopped under the age of 17. Similarly, Latinx men ages 18-24 made up about 37% of people stopped between the ages of 18-24.
 
-```{r}
+```{r, fig.width=9, fig.height=9}
 
 # Calculate the distribution of perceived gender/age of people stopped within each perceived racial group. 
 
@@ -675,7 +679,7 @@ count_ois_reason <- ois_reason %>%
 
 ##Flextable for counts and rates of stop reasons##
   flextable(count_ois_reason) %>% 
-  set_caption('Reasons for Officer-Initiated Stops by Fresno PD (2022)') %>% 
+  set_caption('Reasons for Officer-Initiated Stops by Fresno PD') %>% 
   theme_vanilla() %>%
   width(width=2,unit="in") %>%
     align(j = 3, align = "right", part = "body") %>%
@@ -688,7 +692,7 @@ This section dives deeper into officer-initiated traffic stops made by Fresno PD
 
 ## Traffic stops by race and gender {#traffic-demo}
 
-People perceived as Black by Fresno PD are stopped for traffic at disproportionately high rates relative to the total Black population in Fresno city. 
+People perceived as Black by Fresno PD are stopped for traffic stops at disproportionately high rates relative to the total Black population in Fresno city. 
 
 ```{r}
 
@@ -810,8 +814,8 @@ gender<-df%>%
 ggplot(gender, aes(x = Gender, y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=1.1), #center percentage within the bar
-          size = 2,
+          position = position_stack(vjust=1.2), #center percentage within the bar
+          size = 3,
           color = "black")+
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
   labs(title = "Fresno PD Disproportionately Stops SWANA/SA Men in Traffic Stops",
@@ -871,7 +875,8 @@ ggplot(count_tv_reason, aes(x = traffic_violation_type, y = Percent, fill = traf
     x = "Traffic Violation Type",
     y = "% of All People Stopped for Traffic Violations") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+  theme(plot.title = element_text(hjust = 0.5),
+          plot.subtitle = element_text(hjust=0.5),
     axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 2,
                                size = 12,
                                margin = margin(t = 2)),
@@ -1114,7 +1119,7 @@ panel.background = element_blank())+
 
 ### Traffic stops made for driving without license citation
 
-The Fresno PD only stopped 9 people in 2022 for driving without a license.
+The Fresno PD only stopped 9 people in 2022 for the original reason of driving without a license.
 
 ```{r}
 
@@ -1189,7 +1194,7 @@ The graph below shows, across all traffic stop types (moving, equipment, non-mov
 
 Note that the graphs filter out perceived racial groups where less than 10 people were stopped in traffic stops in 2022. 
 
-Individuals Fresno PD perceived as Latinx and Black are stopped for traffic stops resulting only in a warning verbal or written at higher rates than individuals Fresno PD perceived as White. 
+Individuals Fresno PD perceived as Latinx and Black are stopped for traffic stops resulting only in a warning verbal or written at higher rates than other groups. 
 
 ```{r}
 
@@ -1230,7 +1235,7 @@ ggplot(df, aes(x = stop_result_simple, y = rate))+
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title=str_wrap("People Perceived as SWANA/SA are Given Citations at Higher Rates than Other Groups", 90),
+  labs(title=str_wrap("People Perceived as SWANA/SA are Given Citations at Higher Rates than Other Groups", 80),
          subtitle = "Rate of traffic stops by top stop results and perceived race",
        x = "", #labels to visual
        y = "") +
@@ -1289,7 +1294,8 @@ mutate(count=n(),
 names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names for table
 
 df<-df%>%
-  rename("Statute"="Statute Literal 25")
+  rename("Statute"="Statute Literal 25",
+         "Type of Charge"="Offense Type of Charge")
 
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
@@ -1478,15 +1484,21 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
+
 # Stop Results  {#results}
+
+This section explores the results of stops, meaning what actions were taken against the person stopped and what happened during the stop, e.g., out of all officer-initiated stops, how many resulted in a citation. In some cases, we focus in on traffic stops.
 
 ## Officer-initiated stops by stop result
 
+Nearly 80% of all officer-initiated stops result in a citation for infraction. About seven percent result in only a warning being given and less than one percent result in no action.
+
 ```{r}
 
-df<-stops%>%
-  left_join(results)%>%
-  filter(call_for_service==0)%>%
+df<-person%>%mutate(person_number=as.character(person_number))%>%
+                      left_join(stops)%>%
+  left_join(person_result)%>%
+  filter(call_for_service==0) %>%
   group_by(stop_result_simple)%>%
 summarise(count=n(),.groups='drop')%>%
 mutate(rate=count/sum(count)*100)%>%
@@ -1574,8 +1586,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
-
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up 50% of the total population in Fresno City. Additionally, 21.4% of use of force incidents were towards people perceived as Asian males despite Asian people only making up about 13% of Fresno's total population. 
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up nearly 51% of the total population in Fresno City, but Latinx men alone made up nearly 50% of all use of force incidents. Additionally, 21.4% of use of force incidents were towards people perceived as Asian males despite Asian people only making up about 13% of Fresno's total population. 
 
 ```{r}
 
@@ -1621,9 +1632,10 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ```
 
+
 ## Stops resulting in a field interview (FI) card {#ficard}
 
-Two officer-initiated stops, with a total of four people stopped, resulted solely in a field interview card being completed. All four FI cards were given to people during traffic stops. 
+Two officer-initiated stops, with a total of four people stopped, resulted solely in a FI card being completed. All four FI cards were given to people during traffic stops. 
 
 Every individual that Fresno PD stopped and completed FI cards for in 2022 was perceived by officers as Black or Latinx. Officers also perceived three of these individuals as male and one as female.
 
@@ -1679,12 +1691,10 @@ fi_stop_race_gender <- left_join(fi_stop_reason, age_race_gender_ois, by = "stop
 
 ```
 
+
 ## Stops resulting in referral to US Department of Homeland Security ICE {#ice}
 
-Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation.
-
-The one individual referred to ICE by Fresno PD in 2022 was perceived by officers as a Latinx male.
-
+Fresno PD reported that only one of their stops in 2022 resulted in a person being referred to the Department of Homeland Security/ICE. The one individual referred to ICE by Fresno PD in 2022 was stopped for a traffic violation. This one individual was perceived by officers as a Latinx male.
 
 ```{r, include=FALSE}
 
@@ -1709,9 +1719,10 @@ ice_race_gender <- left_join(ice_reason, age_race_gender_ois, by = "stop_id")
 
 ```
 
+
 ## Stops that resulted in a search that yielded no contraband {#contraband}
 
-In 2022, Fresno PD searched 74 people in traffic stops. Of the 74 people Fresno PD searched in traffic stops, 41 people were perceived as Latinx and 12 people were perceived as Black.  
+In 2022, Fresno PD searched 74 people in traffic stops. Of the 74 people Fresno PD searched in traffic stops, 41 people were perceived as Latinx and 12 people were perceived as Black.
 
 ```{r}
 
@@ -1804,6 +1815,7 @@ names(df_hitrate)<-tools::toTitleCase(gsub("_"," ",names(df_hitrate))) # clean u
 
 ```
 
+
 # Time spent {#time}
 
 The following analyzes the total and percent of time Fresno PD spent on certain stops to explore potential waste in public resources. We focus on officer-initiated stops. Overall, Fresno PD spent about 74.1% of their stop time on officer-initiated stops though stops for calls for service on average took longer (56 minutes on average per call for service stop compared to 9 minutes on average for officer-initiated).
@@ -1850,9 +1862,11 @@ names(time_reason_ois)<-tools::toTitleCase(gsub("_"," ",names(time_reason_ois)))
 
 ```
 
+
 ## Time spent on traffic stops by stop result {#time-result}
 
 The large majority of time spent on traffic stops is spent on stops only resulting in a citation for infraction. Nearly 73% of minutes Fresno PD spent on traffic stops were on stops resulting in a citation for infraction. On average, each of these stops only takes 8 minutes.
+
 
 ```{r}
 
@@ -1883,6 +1897,7 @@ names(time_result_ois)<-tools::toTitleCase(gsub("_"," ",names(time_result_ois)))
 
 
 ```
+
 
 ## Time spent on traffic stops by race {#time-race}
 
