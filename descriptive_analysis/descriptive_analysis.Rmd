@@ -1512,7 +1512,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 
 ## Stops resulting in use of force {#useofforce}
 
-Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,043 total people) while 0.33% of people stopped were indicated in the data as having instances of use of force used against them (14 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
+Out of all people stopped during an officer-initiated stop, 99.7% of people stopped were indicated as having no instances of any use of force used towards them (5,046 total people) while 0.28% of people stopped were indicated in the data as having instances of use of force used against them (14 people). All officer-initiated incidents of use of force inflicted by Fresno PD in 2022 occurred during traffic stops. 
 
 ```{r}
 
@@ -1547,15 +1547,15 @@ df0<-uof%>%
   left_join(person_reason, by =c("stop_id","person_number"))%>%
    left_join(offense_codes, by=c("rfs_traffic_violation_code.x"="offense_code"))%>%
   mutate(Total=n())%>%
-  group_by(reason, rfs_traffic_violation_code.x,statute_literal_25,offense_type_of_charge)%>%
+  group_by(reason, statute_literal_25,offense_type_of_charge)%>%
   mutate(Count=n(),
          Rate=Count/Total*100)%>%
   slice(1)%>%
-  select(use_of_force, reason, rfs_traffic_violation_code.x, Total, Count, Rate)%>%
+  select(use_of_force, reason, Total, Count, Rate)%>%
   arrange(-Count)%>%
   ungroup()%>%
-  select(rfs_traffic_violation_code.x, statute_literal_25, Count, Rate)%>%
-  rename("Traffic reason offense code"='rfs_traffic_violation_code.x',
+  select(statute_literal_25, Count, Rate)%>%
+  rename(
          "Statute"="statute_literal_25")
 
 #create and style flextable
@@ -1575,7 +1575,7 @@ colformat_double(j = c("Rate"), digits = 1)%>%
 ```
 
 
-Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up 50% of the total population in Fresno City. Additionally, 17.6% of use of force incidents were towards people perceived as Asian males despite Asian people only making up ~13% of Fresno's total population. 
+Fresno PD disproportionately inflicted use of force towards people they perceived as Latinx men in 2022. Latinx people make up 50% of the total population in Fresno City. Additionally, 21.4% of use of force incidents were towards people perceived as Asian males despite Asian people only making up about 13% of Fresno's total population. 
 
 ```{r}
 
@@ -1595,7 +1595,7 @@ df<-df_gender%>%
                               g_full)))%>%
     mutate(nh_race=ifelse(nh_race %in% 'latinx', 'Latinx',
                        ifelse(nh_race %in% 'nh_asian', 'Asian',
-                              ifelse(nh_race %in% 'nh_sswana', 'SSWANA',
+                              ifelse(nh_race %in% 'nh_sswana', 'SWANA/SA',
                               "White"))))%>%
   rename("Perceived Gender"="g_full",
          "Perceived Race"="nh_race")%>%
