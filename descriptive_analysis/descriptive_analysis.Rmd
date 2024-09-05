@@ -1274,15 +1274,15 @@ df<-traffic%>%
 # analyze
 
 df<-df%>%
-  select(offense_code,offense_statute,statute_literal_25)%>%
+  select(offense_code,offense_statute,statute_literal_25,offense_type_of_charge)%>%
   mutate(total=n())%>%
-  group_by(offense_code,offense_statute,statute_literal_25)%>%
+  group_by(offense_type_of_charge,statute_literal_25)%>%
 mutate(count=n(),
        rate=count/total*100)%>%
   slice(1)%>%
   arrange(-rate)%>%
-  head(7)
-
+  head(7)%>%
+  select(-offense_code,-offense_statute)
 
 #create and style flextable
 
