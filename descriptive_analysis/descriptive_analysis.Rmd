@@ -1,7 +1,7 @@
 ---
-title: "Fresno RIPA Data Project"
-subtitle: "Descriptive Analysis for Fresno BHC"
-author: "Catalyst California"
+title: "Fresno RIPA Data Project Descriptive Analysis"
+subtitle: "In Collaboration With Fresno BHC"
+author: "By Catalyst California"
 output:
   html_document:
     css: "W:\\RDA Team\\R\\cc_brandguide.css"
@@ -536,7 +536,7 @@ ggplot(race_age_ois, aes(x = Race, y = Percent))+
       legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5),
       plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=8), #aesthetics of the barchart
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5, size=7), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -581,7 +581,7 @@ age_race_gender_ois_table <- age_race_gender_ois_table %>% #Recode for Race#
     nh_race == 'nh_aian' ~ 'AIAN',
     nh_race == 'nh_nhpi' ~ 'NHPI',
     nh_race == 'nh_multiracial' ~ 'Multiracial',
-      nh_race == 'nh_sswana' ~ 'SSWANA'))
+      nh_race == 'nh_sswana' ~ 'SWANA/SA'))
 
 
 age_race_gender_ois_table <- age_race_gender_ois_table %>% ##Recode for Gender##
@@ -635,7 +635,7 @@ ggplot(age_race_gender_ois_table, aes(x = Race, y = Percent,fill=Gender))+
   theme(axis.text.x = element_text(angle = 0, hjust =0.5), #sets x-axis labels to be horizontal
       plot.title = element_text(hjust=0.5),
       plot.subtitle = element_text(hjust=0.5))+
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust=0.5, size=6), #aesthetics of the barchart
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.7, hjust=0.5, size=7), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -814,9 +814,9 @@ gender<-df%>%
 ggplot(gender, aes(x = Gender, y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=1.2), #center percentage within the bar
+          position = position_stack(vjust=.5), #center percentage within the bar
           size = 3,
-          color = "black")+
+          color = "white")+
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 5))+
   labs(title = "Fresno PD Disproportionately Stops SWANA/SA Men in Traffic Stops",
        subtitle = "Perceived race and gender of people stopped in traffic stops by Fresno PD",
@@ -1106,7 +1106,7 @@ ggplot(df0, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
       # legend.position ="none", #removes legend
       plot.title = element_text(hjust=0.5,size=16),
       plot.subtitle = element_text(hjust=0.5,size=14))+
-  theme(axis.text.x = element_text(vjust = 0.5, hjust=0.5, size=6), #aesthetics of the barchart
+  theme(axis.text.x = element_text(vjust = 0.5, hjust=0.5, size=6.5), #aesthetics of the barchart
         strip.background = element_rect(fill = "#362178"),
         strip.text = element_text(color = "white", size=10, face="bold"),
         panel.grid.major = element_blank(), 
@@ -1231,11 +1231,11 @@ df<-traffic%>%
 ggplot(df, aes(x = stop_result_simple, y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          position = position_stack(vjust=0.5), #center percentage within the bar
+          position =  position_stack(vjust=0.5), #center percentage within the bar
           size = 3,
           color = "white")+ 
   scale_x_discrete(labels = ~ str_wrap(as.character(.x), 10))+
-  labs(title=str_wrap("People Perceived as SWANA/SA are Given Citations at Higher Rates than Other Groups", 80),
+  labs(title="People Perceived as SWANA/SA are Given Citations at Higher Rates",
          subtitle = "Rate of traffic stops by top stop results and perceived race",
        x = "", #labels to visual
        y = "") +
@@ -1300,9 +1300,7 @@ df<-df%>%
   flextable(df) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Most Common Citations that Resulted From an Officer-Initiated Traffic Stop') %>%
-  theme_vanilla() %>%
-  width(j=3,2.5,unit="in")
-
+  theme_vanilla()
 
 ```
 
@@ -1376,9 +1374,10 @@ df$statute_literal_25 = str_wrap(df$statute_literal_25, width = 10)
 ggplot(df, aes(x = reorder_within(statute_literal_25, -rate, Race), y = rate))+
   geom_bar(stat = "identity", fill = "#362178") + #to create barplot
   geom_text(aes(label = paste0(round(rate,1), "%")), #add percentage labels within the bars
-          vjust=0, #center percentage within the bar
-          size = 3.1,
+          vjust=-.3, #center percentage within the bar
+          size = 3,
           color = "black")+ 
+  scale_y_continuous(expand=expansion(add=5))+
   scale_x_discrete(labels = function(x) str_wrap(x, width = 10))+
   labs(title=str_wrap("Stops of People Perceived as Latinx and Black More Likely to Result in Citation for Driving Without License",90),
        subtitle = str_wrap("Top three traffic citation results by perceived race",110), 
@@ -1579,8 +1578,8 @@ names(df)<-tools::toTitleCase(gsub("_"," ",names(df))) # clean up column names f
   flextable(df0) %>%
 colformat_double(j = c("Rate"), digits = 1)%>%
   set_caption('Use of Force by Stop Reason') %>%
-  theme_vanilla() %>%
-  width(j=2,2.5,unit="in")
+  theme_vanilla()  %>%
+  width(j=1,2.5,unit="in")
 
 
 
