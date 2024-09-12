@@ -68,9 +68,9 @@ source <- "See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_r
 Script: W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_persons_searches.R"
 table_comment <- paste0(indicator, source)
 
-# write table
-dbWriteTable(fres, c(schema, table_name), rel_persons_searches,
-             overwrite = FALSE, row.names = FALSE)
+# # write table
+# dbWriteTable(fres, c(schema, table_name), rel_persons_searches,
+#              overwrite = FALSE, row.names = FALSE)
 
 # comment on table and columns
 
@@ -88,4 +88,4 @@ column_comments <- c(
   "0/1 flag for whether consent of search of property was received during the stop"
 )
 
-add_table_comments(fres, schema, table_name, indicator, source, column_names, column_comments)
+# add_table_comments(fres, schema, table_name, indicator, source, column_names, column_comments)
