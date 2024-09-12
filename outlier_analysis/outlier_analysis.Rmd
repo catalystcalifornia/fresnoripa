@@ -99,21 +99,41 @@ age_stop <- age_df %>%
     ### Filtered for stop # U1005220184CFBA61E85 (3 persons stopped) to ensure all values were correctly  assigned
   ## Select to remove variable already in stop-level data set
 
-action_more <- action_person %>%
-  group_by(stop_id) %>%
-  mutate(across(everything(), max, na.rm = TRUE)) %>%
+# action_more <- action_person %>%
+#   group_by(stop_id) %>%
+#   mutate(across(everything(), max, na.rm = TRUE)) %>%
+#   slice(1) %>%
+#   select(-person_number, -actions_count, -action_taken,
+#          -removed_from_vehicle, -handcuffed, -detained, -use_of_force)
+
+# 9/12/24: JZ alternate code for action_more that runs faster ---PLEASE QA
+
+action_more<-action_person %>%
+   group_by(stop_id) %>%
+    mutate(across(removed_from_vehicle:ads_written_statement, max)) %>%  # I use a sum(is.na(person_action)) to make sure there are no NAs in the df and then I remove the na.rm=TRUE arguement for speed. I also specify the columns I am mutating across
   slice(1) %>%
   select(-person_number, -actions_count, -action_taken,
          -removed_from_vehicle, -handcuffed, -detained, -use_of_force)
+
   
 ### Prep stop-level gender data ###
 
+# gender <- persons %>%
+#   group_by(stop_id) %>%
+#   mutate(across(everything(), max, na.rm = TRUE)) %>%
+#   slice(1) %>%
+#   select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
+#          g_gender_nonconforming, g_multigender)
+
+# 9/12/24: JZ alternative code that runs faster---PLEASE QA
+
 gender <- persons %>%
+    select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
+         g_gender_nonconforming, g_multigender)%>%
   group_by(stop_id) %>%
-  mutate(across(everything(), max, na.rm = TRUE)) %>%
-  slice(1) %>%
-  select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
-         g_gender_nonconforming, g_multigender)
+  mutate(across(everything(), max)) %>%
+  slice(1)
+
 
 ### Join all stops-level data ###
 
