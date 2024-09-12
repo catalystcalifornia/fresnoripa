@@ -20,11 +20,10 @@ contraband_list <- setdiff(ced_list, c("ced_none_contraband"))
 
 
 # calculate searches conducted by person -- total searches and whether contraband was found for each person in the stop
-searches<- fresno_ripa%>%
-  rowwise()%>%
+searches <- fresno_ripa %>%
   # subset columns
-  select(doj_record_id,person_number,all_of(search_list),all_of(consent_list),all_of(ced_list)
-  )%>%
+  select(doj_record_id, person_number, all_of(search_list), all_of(consent_list), all_of(ced_list))%>%
+  rowwise() %>%
   # summarise relevant indicators by row or person
   mutate(searches_count=sum(c_across(all_of(search_list)), na.rm = TRUE), # total searches done on person
          contraband_count=sum(c_across(all_of(contraband_list)), na.rm = TRUE), # total contraband found subtracting flag for no contraband
@@ -35,24 +34,13 @@ searches<- fresno_ripa%>%
          consent_search_property=ads_search_prop_consen)  # flag if consent was given
 
 # reduce columns
-searches<-searches%>%
-  select(doj_record_id,person_number,searches_count,contraband_found,contraband_count,search_person,search_property,consent_search_person,consent_search_property)%>%
+searches <- searches%>%
+  select(doj_record_id, person_number, searches_count, contraband_found, contraband_count, 
+         search_person, search_property, consent_search_person, consent_search_property)%>%
   ungroup()
 
-# summarise total searches by unique stop
-rel_stops_searches<-searches%>%select(-person_number)%>%
-  group_by(doj_record_id)%>%
-  summarise_all(sum,na.rm=TRUE)
-
-# summarise with 0/1 variables by unique stop, keep searches total
-rel_stops_searches <- rel_stops_searches %>% rename(stop_id=doj_record_id)%>%
-  mutate(search=ifelse(searches_count>=1,1,0), # 1 means true
-         contraband_found=ifelse(contraband_found>=1,1,0))%>% # 1 means true
-  select(stop_id,search,contraband_found,everything())%>%
-  rename(search_person_count=search_person,
-         search_property_count=search_property,
-         consent_search_person_count=consent_search_person,
-         consent_search_property_count=consent_search_property)
+# create final table
+rel_persons_searches <- searches
 
 # Push to postgres data ----
 # function for adding table and column comments from RC
