@@ -78,7 +78,7 @@ column_names <- colnames(rel_persons_searches) # get column names
 
 column_comments <- c(
   "A unique system-generated incident identification number. Alpha-numeric. previously doj_record_id",
-  "Person ID within a given stop; Create unique person identifier when used with stop_id",
+  "Person ID within a given stop; Creates unique person identifier when used with stop_id",
   "Total searches of person or property done during the stop",
   "0/1 flag for whether any contraband or evidencewas found during the stop",
   "Total contraband or evidence found",
