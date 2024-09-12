@@ -40,7 +40,8 @@ searches <- searches%>%
   ungroup()
 
 # create final table
-rel_persons_searches <- searches
+rel_persons_searches <- searches %>% 
+  rename(stop_id=doj_record_id)
 
 # Push to postgres data ----
 # function for adding table and column comments from RC
@@ -62,14 +63,14 @@ add_table_comments <- function(con, schema, table_name, indicator, source, colum
 table_name <- "rel_persons_searches"
 schema <- 'data'
 
-indicator <- "Searches and contraband/evidence fields summarised for persons in fresno pd stops from 2022. For use in outlier analysis and time spent calcs"
+indicator <- "Searches and contraband/evidence fields summarised for persons in fresno pd stops from 2022."
 source <- "See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_rel_persons_searches.docx
 Script: W:/Project/ECI/Fresno RIPA/GitHub/HK/fresnoripa/Prep/rel_persons_searches.R"
 table_comment <- paste0(indicator, source)
 
 # write table
-# dbWriteTable(fres, c(schema, table_name),rel_stops_searches,
-#              overwrite = FALSE, row.names = FALSE)
+dbWriteTable(fres, c(schema, table_name), rel_persons_searches,
+             overwrite = FALSE, row.names = FALSE)
 
 # comment on table and columns
 
@@ -77,14 +78,14 @@ column_names <- colnames(rel_persons_searches) # get column names
 
 column_comments <- c(
   "A unique system-generated incident identification number. Alpha-numeric. previously doj_record_id",
-  "0/1 flag for whether any search was done during the stop - person or property",
-  "0/1 flag for whether any contraband or evidencewas found during the stop",
+  "Person ID within a given stop; Create unique person identifier when used with stop_id",
   "Total searches of person or property done during the stop",
+  "0/1 flag for whether any contraband or evidencewas found during the stop",
   "Total contraband or evidence found",
-  "Total searches of person done during the stop",
-  "Total searches of property done during the stop",
-  "Total times consent of search of person was received during the stop",
-  "Total times consent of search of property was received during the stop"
+  "0/1 flag for whether search of person was done during the stop",
+  "0/1 flag for whether search of property was done during the stop",
+  "0/1 flag for whether consent of search of person was received during the stop",
+  "0/1 flag for whether consent of search of property was received during the stop"
 )
 
 add_table_comments(fres, schema, table_name, indicator, source, column_names, column_comments)
