@@ -52,36 +52,20 @@ race<-race%>%
                                                     ifelse(rae_white==1 & rae_hispanic_latino==0 & rae_multiracial==0, 'nh_white', 
                                                            ifelse(rae_multiracial==1 & rae_hispanic_latino==0, 'nh_multiracial', 
                                                            'latinx'))))))))%>%
-  mutate(sswana_flag=ifelse(nh_race %in% 'nh_sswana', 1,0),
+  mutate(sswana_flag=ifelse(rae_middle_eastern_south_asian==1, 1,0),
          sswana_label=ifelse(sswana_flag %in% 1, 'sswana', 
                              "not sswana"),
          
-         aian_flag=ifelse(nh_race %in% 'nh_aian', 1,0),
+         aian_flag=ifelse(rae_native_american==1, 1,0),
          aian_label=ifelse(aian_flag %in% 1, 'aian', 
                            "not aian"),
          
-         nhpi_flag=ifelse(nh_race %in% 'nh_nhpi', 1,0),
+         nhpi_flag=ifelse(rae_pacific_islander==1, 1,0),
          nhpi_label=ifelse(nhpi_flag %in% 1, 'nhpi', 
                            "not nhpi")
          
   )
 
-
-
-# Add nhpi and sswana flags for multiracial groups: If any of the multiple races perceived is sswana/nhpi, add a flag. Even if that includes a latinx category with it. 
-
-race<-race%>%
-  mutate(sswana_flag=ifelse(rae_multiracial==1 & rae_middle_eastern_south_asian==1, 1, sswana_flag),
-         sswana_label=ifelse(sswana_flag %in% 1, 'sswana', 
-                             "not sswana"),
-         
-         nhpi_flag=ifelse(rae_multiracial==1 & rae_pacific_islander==1, 1, nhpi_flag),
-         nhpi_label=ifelse(nhpi_flag %in% 1, 'nhpi', 
-                           "not nhpi"),
-         
-         aian_flag=ifelse(rae_multiracial==1 & rae_native_american==1,1,aian_flag),
-         aian_label=ifelse(aian_flag %in% 1, 'aian', 
-                           "not aian"))
 
 # Select final columns of interest
 
