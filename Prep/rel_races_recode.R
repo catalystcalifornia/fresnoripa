@@ -85,34 +85,34 @@ names(charvect) <- colnames(race)
 # dbWriteTable(con,  "rel_races_recode", race,
 #              overwrite = TRUE, row.names = FALSE,
 #              field.types = charvect)
-
-
-# write comment to table, and column metadata
-
-table_comment <- paste0("COMMENT ON TABLE rel_races_recode  IS 'Recoded racial categories from 
-2022 Fresno RIPA data.
-R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\rel_races_recode.R
-QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_rel_races_recode.docx
-NHPI, sswana and AIAN are alone or in combination with Latinx or another race. all nh_race fields are exclusive of Latinx other than the Latinx category.';
-
-COMMENT ON COLUMN rel_races_recode.stop_id IS 'Stop ID';
-COMMENT ON COLUMN rel_races_recode.person_number IS 'Person number';
-COMMENT ON COLUMN rel_races_recode.race_count_re IS 'Number of perceived race(s) of person stopped as indicated by officer based on summing total number of race categories an officer indicated for a person';
-COMMENT ON COLUMN rel_races_recode.nh_race IS 'Recoded non-Hispanic race or Latinx value for stopped person. Those coded as multiracial had 3 races indicated. If a person had 3 races indicated but one of them was latinx they were coded as latinx';
-COMMENT ON COLUMN rel_races_recode.sswana_flag IS 'South Asian, Southwest Asian, or North African Alone or in Combination (yes =1 or no=0)';
-COMMENT ON COLUMN rel_races_recode.sswana_label IS 'South Asian, Southwest Asian, or North African Alone or in Combination label originally in data as Middle Eastern or South Asian';
-COMMENT ON COLUMN rel_races_recode.aian_flag IS 'American Indian/Alaskan Native Alone or in Combination (yes =1 or no=0)';
-COMMENT ON COLUMN rel_races_recode.aian_label IS 'American Indian/Alaskan Native Alone or in Combination label originally in data as Native American';
-COMMENT ON COLUMN rel_races_recode.nhpi_flag IS 'Native Hawaiian/Pacific Islander Alone or in Combination  (yes =1 or no=0)';
-COMMENT ON COLUMN rel_races_recode.nhpi_label IS 'Native Hawaiian/Pacific Islander Alone or in Combination label originally in data as Pacific Islander';")
-
-# send table comment + column metadata
-# dbSendQuery(conn = con, table_comment)
-
-# add indices
-
-# dbSendQuery(con, paste0("create index rel_races_recode_stop_id on data.rel_races_recode (stop_id);
-# create index rel_races_recode_person_number on data.rel_races_recode (person_number);
-#                         create index rel_races_recode_nh_race on data.rel_races_recode (nh_race);"))
-
-
+# 
+# 
+# # write comment to table, and column metadata
+# 
+# table_comment <- paste0("COMMENT ON TABLE rel_races_recode  IS 'Recoded racial categories from 
+# 2022 Fresno RIPA data.
+# R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Prep\\rel_races_recode.R
+# QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_rel_races_recode.docx
+# NHPI, sswana and AIAN are alone or in combination with Latinx or another race. all nh_race fields are exclusive of Latinx other than the Latinx category.';
+# 
+# COMMENT ON COLUMN rel_races_recode.stop_id IS 'Stop ID';
+# COMMENT ON COLUMN rel_races_recode.person_number IS 'Person number';
+# COMMENT ON COLUMN rel_races_recode.race_count_re IS 'Number of perceived race(s) of person stopped as indicated by officer based on summing total number of race categories an officer indicated for a person';
+# COMMENT ON COLUMN rel_races_recode.nh_race IS 'Recoded non-Hispanic race or Latinx value for stopped person. Those coded as multiracial had 3 races indicated. If a person had 3 races indicated but one of them was latinx they were coded as latinx';
+# COMMENT ON COLUMN rel_races_recode.sswana_flag IS 'South Asian, Southwest Asian, or North African Alone or in Combination (yes =1 or no=0)';
+# COMMENT ON COLUMN rel_races_recode.sswana_label IS 'South Asian, Southwest Asian, or North African Alone or in Combination label originally in data as Middle Eastern or South Asian';
+# COMMENT ON COLUMN rel_races_recode.aian_flag IS 'American Indian/Alaskan Native Alone or in Combination (yes =1 or no=0)';
+# COMMENT ON COLUMN rel_races_recode.aian_label IS 'American Indian/Alaskan Native Alone or in Combination label originally in data as Native American';
+# COMMENT ON COLUMN rel_races_recode.nhpi_flag IS 'Native Hawaiian/Pacific Islander Alone or in Combination  (yes =1 or no=0)';
+# COMMENT ON COLUMN rel_races_recode.nhpi_label IS 'Native Hawaiian/Pacific Islander Alone or in Combination label originally in data as Pacific Islander';")
+# 
+# # send table comment + column metadata
+#  dbSendQuery(conn = con, table_comment)
+# 
+# # add indices
+# 
+#  dbSendQuery(con, paste0("create index rel_races_recode_stop_id on data.rel_races_recode (stop_id);
+#  create index rel_races_recode_person_number on data.rel_races_recode (person_number);
+#                          create index rel_races_recode_nh_race on data.rel_races_recode (nh_race);"))
+# 
+# 
