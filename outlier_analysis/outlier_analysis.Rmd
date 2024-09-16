@@ -321,7 +321,7 @@ stop_result_simple_guardian+
 stop_result_simple_arrest_warrant+
 stop_result_simple_arrest_nowarrant+
 stop_result_simple_fieldinterviewcard+
-#stop_result_simple_citerelease+
+# stop_result_simple_citerelease+
 stop_result_simple_transport+
 stop_result_simple_psychiatric+
 stop_result_simple_schooladmin+
@@ -351,9 +351,7 @@ vif_values # removed actions_count, removed_vehicle_order, contraband_found, sto
 
 The regression summary table shows us the p values for all our independent variables. Note some have high p values (>.10) and are therefore not statistically significant at a 90% confidence interval. This could be because these variables have a small n, or these variables do not occur often. 
 
-The current model has a R^2 of 52% which is a good indication that our model is robust. This means that 52% of variance in stop duration times is explained by our model. 
-
-Also note that the current model has 0 NA or missing values. This is the result of data cleaning and recoding done prior running the model. Specifically, NA values from people who were preceived as 6 or more races, and NA values from unknow SDPD divisions were all recoded accordingly to avoid NA values in the model. 
+The current model has a R^2 of 54% which is a good indication that our model is robust. This means that 52% of variance in stop duration times is explained by our model. 
 
 The diagnostic plots give us a sense of how robust our working model is and if any adjustments are needed. See this [reference link for understanding diagnostic plots](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials/#:~:text=Regression%20diagnostics%20plots%20can%20be,creates%20a%20ggplot2%2Dbased%20graphics.&text=The%20diagnostic%20plots%20show%20residuals,check%20the%20linear%20relationship%20assumptions.) and what we want them to look like in order to feel confident about our model.
 
@@ -428,13 +426,17 @@ stops<-stops%>%
   ## all analysis variables appear duplicated with column header ".x" and ".y"
   # Rename ".x" columns to remove the ".x"
 
-stops <- stops %>%
-  rename("pv" = pv.x,
-         "lwr" = lwr.x, 
-         "upr" = upr.x, 
-         "pv_log" = pv_log.x, 
-         "lwr_log" = lwr_log.x, 
-         "upr_log" = upr_log.x)
+## JZ commenting out code. Don't need the renaming. I don't see the .x in the column names when I run Isaac's
+## original code. 
+
+
+# stops <- stops %>%
+#   rename("pv" = pv.x,
+#          "lwr" = lwr.x, 
+#          "upr" = upr.x, 
+#          "pv_log" = pv_log.x, 
+#          "lwr_log" = lwr_log.x, 
+#          "upr_log" = upr_log.x)
 
 # select columns of interest
 
