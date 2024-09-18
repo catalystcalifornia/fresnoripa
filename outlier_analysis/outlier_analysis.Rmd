@@ -99,9 +99,9 @@ age_stop <- age_df %>%
     ### Filtered for stop # U1005220184CFBA61E85 (3 persons stopped) to ensure all values were correctly  assigned
   ## Select to remove variable already in stop-level data set
 
-action_more <- action_person %>%
-  group_by(stop_id) %>%
-  mutate(across(everything(), max, na.rm = TRUE)) %>%
+action_more<-action_person %>%
+   group_by(stop_id) %>%
+    mutate(across(removed_from_vehicle:ads_written_statement, max)) %>%
   slice(1) %>%
   select(-person_number, -actions_count, -action_taken,
          -removed_from_vehicle, -handcuffed, -detained, -use_of_force)
@@ -109,11 +109,11 @@ action_more <- action_person %>%
 ### Prep stop-level gender data ###
 
 gender <- persons %>%
+      select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
+         g_gender_nonconforming, g_multigender)%>%
   group_by(stop_id) %>%
-  mutate(across(everything(), max, na.rm = TRUE)) %>%
-  slice(1) %>%
-  select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
-         g_gender_nonconforming, g_multigender)
+  mutate(across(everything(), max)) %>%
+  slice(1)
 
 ### Join all stops-level data ###
 
@@ -167,7 +167,7 @@ vars_d<-as.data.frame(colnames(stops_d))
 
 # extract dummy columns we are not keeping: these are the reference groups within each larger category (division, race, stop reason, stop result)
 
-vars_remove<-grep("stop_nh_race_nh_white|stop_reason_simple_traffic_violation|stop_result_simple_no_action|g_male",  colnames(stops_d))
+vars_remove<-grep("stop_nh_race_nh_white|stop_reason_simple_traffic_violation|stop_result_simple_citation|g_male",  colnames(stops_d))
 
 
 # then remove the selected dummy variables we are not keeping 
@@ -193,7 +193,7 @@ stops_d<-stops_d%>%
   
   ### stop result cols
   
-    rename("stop_result_simple_citation"="stop_result_simple_citation_for_infraction")%>%
+    # rename("stop_result_simple_citation"="stop_result_simple_citation_for_infraction")%>%
    rename("stop_result_simple_guardian"="stop_result_simple_contacted_parent/legal_guardian_or_other_person_responsible_for_minor")%>%
     rename("stop_result_simple_arrest_warrant"="stop_result_simple_custodial_arrest_pursuant_to_outstanding_warrant")%>%
       rename("stop_result_simple_arrest_nowarrant"="stop_result_simple_custodial_arrest_without_warrant")%>%
@@ -255,20 +255,20 @@ model<-lm(log(stop_duration) ~
             
 call_for_service+
   persons_count+
-   #actions_count+
+   # actions_count+
   
-#action_taken+ 
+action_taken+
   handcuffed+
 removed_from_vehicle+
 detained+
 use_of_force+
     ads_prop_seize+
-  #contraband_found+
+  contraband_found+
    search+
-  contraband_count+
+  # contraband_count+
   ads_sobriety_test+
-  ads_firearm_point+
-  #ads_removed_vehicle_order+
+  # ads_firearm_point+
+  # ads_removed_vehicle_order+
   
   age_avg+
     
@@ -296,12 +296,13 @@ stop_reason_simple_parole+
  stop_reason_simple_reasonable_suspicion+
 stop_reason_simple_twoormore+
 
-  stop_result_simple_citation+
+  # stop_result_simple_citation+
+stop_result_simple_no_action+
 stop_result_simple_guardian+
 stop_result_simple_arrest_warrant+
 stop_result_simple_arrest_nowarrant+
 stop_result_simple_fieldinterviewcard+
-#stop_result_simple_citerelease+
+stop_result_simple_citerelease+
 stop_result_simple_transport+
 stop_result_simple_psychiatric+
 stop_result_simple_schooladmin+
@@ -323,7 +324,16 @@ Test for multicollinearity among independent variables: calculate Variance Influ
 
 vif_values <- vif(model) 
 
-vif_values # removed actions_count, removed_vehicle_order, contraband_found, stop_reason_simple_citerelease, all VIF values now below 5.
+vif_values 
+
+# revisions
+
+# actions_count--captured in action_taken, 
+# ads_removed_vehicle_order--captured in removed_from_vehicle
+# stop_result_simple_citation--make reference because it's a larger category
+# ads_firearm_point--captured in use of force
+# contraband_count--captured in contraband found
+# ads_prop_seize--captured in contraband_found
 
 ```
 
@@ -408,13 +418,13 @@ stops<-stops%>%
   ## all analysis variables appear duplicated with column header ".x" and ".y"
   # Rename ".x" columns to remove the ".x"
 
-stops <- stops %>%
-  rename("pv" = pv.x,
-         "lwr" = lwr.x, 
-         "upr" = upr.x, 
-         "pv_log" = pv_log.x, 
-         "lwr_log" = lwr_log.x, 
-         "upr_log" = upr_log.x)
+# stops <- stops %>%
+#   rename("pv" = pv.x,
+#          "lwr" = lwr.x, 
+#          "upr" = upr.x, 
+#          "pv_log" = pv_log.x, 
+#          "lwr_log" = lwr_log.x, 
+#          "upr_log" = upr_log.x)
 
 # select columns of interest
 
