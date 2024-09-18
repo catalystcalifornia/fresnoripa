@@ -112,7 +112,6 @@ df1<-rbind(df1, df1_aian, df1_nhpi, df1_sswana)%>%
 
 ###### NH ######
 
-
 df2<-df%>%
   filter(reason=='Traffic violation')%>%
   group_by(stop_result_simple)%>%
@@ -197,7 +196,8 @@ df3<-df%>%
   denom="population"
   )%>%
   slice(1)%>%
-  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)%>%
+  filter(!grepl("nh_aian|nh_nhpi|nh_sswana", nh_race))
 
 ###### SWANA ######
 
@@ -206,7 +206,7 @@ df3_sswana<-df%>%
   left_join(pop, by=c("sswana_label"="race"))%>%
   rename("pop_total"="count")%>%
   filter(reason=="Traffic violation")%>%
-  group_by(sswana_flag, stop_result_simple)%>%
+  group_by(stop_result_simple)%>%
   mutate(count=n(),
          rate_per_1k=count/pop_total*1000,
          denom="population",
@@ -250,12 +250,11 @@ df3_nhpi<-df%>%
 # Combine all tables together
 
 df3<-rbind(df3, df3_aian, df3_nhpi, df3_sswana)%>%
-  remame("race"="nh_race")
+  rename("race"="nh_race")
 
 # Final combination of all analysis tables -----------------------------------
 
-df<-rbind(df1, df2, df3)%>%
-  remame("race"="nh_race")
+df<-rbind(df1, df2, df3)
 
 # Push table to postgres-----------------------------------------
 
@@ -267,22 +266,24 @@ charvect <- replace(charvect, c(3,4,5), c("numeric"))
 
 names(charvect) <- colnames(df)
 
-dbWriteTable(con,  "report_traffic_result_stop", df,
+dbWriteTable(con,  "report_traffic_result_race_person", df,
              overwrite = TRUE, row.names = FALSE,
              field.types = charvect)
 
 
 # # write comment to table, and column metadata
 
-table_comment <- paste0("COMMENT ON TABLE report_traffic_result_stop  IS 'Analyzing officer-initiated traffic stops by simple stop result.
-R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_stop.R
-QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_stop.docx';
+table_comment <- paste0("COMMENT ON TABLE report_traffic_result_race_person  IS 'Analyzing officer-initiated traffic stops by simple stop result by race. This table includes rates using three different denominators 1) out of all traffic stops witin each racial group 2) out of all traffic stop results 3) per 1k of the population of each racial group in Fresno city.
+The denominator is indicated by the denom column in the table. 
+R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_race_person.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_race_person.docx';
 
-COMMENT ON COLUMN report_traffic_result_stop.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
-COMMENT ON COLUMN report_traffic_result_stop.stop_result_simple IS 'Simple reason for stop';
-COMMENT ON COLUMN report_traffic_result_stop.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated traffic stops by stop result';
+COMMENT ON COLUMN report_traffic_result_race_person.race IS 'Race';
+COMMENT ON COLUMN report_traffic_result_race_person.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
+COMMENT ON COLUMN report_traffic_result_race_person.stop_result_simple IS 'Simple reason for stop';
+COMMENT ON COLUMN report_traffic_result_race_person.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
+COMMENT ON COLUMN report_traffic_result_race_person.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_result_race_person.rate IS 'Rate of officer-initiated traffic stops by stop result';
 ")
 
 # send table comment + column metadata
