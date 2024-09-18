@@ -260,7 +260,7 @@ df<-rbind(df1, df2, df3)
 
 # set column types
 charvect = rep('varchar', ncol(df)) 
-charvect <- replace(charvect, c(3,4,5), c("numeric"))
+charvect <- replace(charvect, c(5,6,7,8,9), c("numeric"))
 
 # add df colnames to the character vector
 
@@ -278,12 +278,15 @@ The denominator is indicated by the denom column in the table.
 R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_race_person.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_race_person.docx';
 
-COMMENT ON COLUMN report_traffic_result_race_person.race IS 'Race';
-COMMENT ON COLUMN report_traffic_result_race_person.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
-COMMENT ON COLUMN report_traffic_result_race_person.stop_result_simple IS 'Simple reason for stop';
-COMMENT ON COLUMN report_traffic_result_race_person.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
-COMMENT ON COLUMN report_traffic_result_race_person.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_result_race_person.rate IS 'Rate of officer-initiated traffic stops by stop result';
+COMMENT ON COLUMN report_traffic_result_race_person.race IS 'Perceived race';
+COMMENT ON COLUMN report_traffic_result_race_person.reason IS 'Reason for stop (which will only be traffic violations for this analysis)';
+COMMENT ON COLUMN report_traffic_result_race_person.denom IS 'Denominator used in analysis';
+COMMENT ON COLUMN report_traffic_result_race_person.stop_result_simple IS 'Simple result for stop';
+COMMENT ON COLUMN report_traffic_result_race_person.total IS 'Total number (denominator in rate calc) see denom column for which denominator is used';
+COMMENT ON COLUMN report_traffic_result_race_person.count IS 'Count of officer-initiated traffic stops for each stop result for each racial group (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_result_race_person.rate IS 'Rate of traffic stop results by race: count/total*100 (see denom colunm for more clarity on which demominator is being used to create the rate)';
+COMMENT ON COLUMN report_traffic_result_race_person.pop_total IS 'Total population for racial group in Fresno City based on census data';
+COMMENT ON COLUMN report_traffic_result_race_person.rate_per_1k IS 'Rate of traffic stops by result of stop for each perceived racial group per 1k total population of each racial gorup in Fresno city';
 ")
 
 # send table comment + column metadata

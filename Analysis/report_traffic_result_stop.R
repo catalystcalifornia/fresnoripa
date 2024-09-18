@@ -21,9 +21,6 @@ stop_reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 stop_result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 stop_race<-dbGetQuery(con, "SELECT * FROM rel_stops_race")
 
-person<-dbGetQuery(con, "SELECT * FROM rel_persons")
-person_race<-dbGetQuery(con, "SELECT * FROM report_traffic_result_stop")
-
 # Analysis 1:  Traffic stops by result ---------------------------
 # General table of people stopped for traffic violations by simple result
 
@@ -69,7 +66,7 @@ R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_stop.docx';
 
 COMMENT ON COLUMN report_traffic_result_stop.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
-COMMENT ON COLUMN report_traffic_result_stop.stop_result_simple IS 'Simple reason for stop';
+COMMENT ON COLUMN report_traffic_result_stop.stop_result_simple IS 'Simple result for stop';
 COMMENT ON COLUMN report_traffic_result_stop.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
 COMMENT ON COLUMN report_traffic_result_stop.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
 COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated traffic stops by stop result';
