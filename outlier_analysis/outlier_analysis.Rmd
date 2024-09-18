@@ -330,10 +330,9 @@ vif_values
 
 # actions_count--captured in action_taken, 
 # ads_removed_vehicle_order--captured in removed_from_vehicle
-# stop_result_simple_citation--make reference because it's a larger category
+# stop_result_simple_citation--make reference because it's a larger category and added stop_result_simple_no_action
 # ads_firearm_point--captured in use of force
 # contraband_count--captured in contraband found
-# ads_prop_seize--captured in contraband_found
 
 ```
 
