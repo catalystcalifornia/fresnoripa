@@ -38,8 +38,7 @@ df<-stop%>%
 
 # Rate: Offense codes / all citations WITHIN each traffic type --moving/nonmoving/equipment
 
-
-df%>%
+df<-df%>%
   filter(stop_result_simple=="citation for infraction")%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
@@ -49,8 +48,40 @@ df%>%
   slice(1)%>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   select(traffic_violation_type, rfs_traffic_violation_code, statute_literal_25,  total, count, rate)%>%
-  arrange(traffic_violation_type, -rate)%>%
-  group_by(traffic_violation_type)%>%
-  slice(1:10)
+  arrange(traffic_violation_type, -rate)
+
+# Push to postgres-----------------------------
+
+# set column types
+charvect = rep('varchar', ncol(df)) 
+charvect <- replace(charvect, c(4,5,6), c("numeric"))
+
+# add df colnames to the character vector
+
+names(charvect) <- colnames(df)
+
+dbWriteTable(con,  "report_citation_traffic_type_stop", df,
+             overwrite = TRUE, row.names = FALSE,
+             field.types = charvect)
+
+
+# # write comment to table, and column metadata
+
+table_comment <- paste0("COMMENT ON TABLE report_citation_traffic_type_stop  IS 'Analyzing top traffic citations given as a result of a traffic stop within each traffic stop type (moving, nonmoving, equipment).
+The denominator (total column) for this analysis is all traffic stops resulting in a citation within each traffic stop type.
+R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_citation_traffic_type_stop.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_citation_traffic_type_stop.docx';
+
+COMMENT ON COLUMN report_citation_traffic_type_stop.traffic_violation_type IS 'Traffic stop type (moving, nonmoving, equipment)';
+COMMENT ON COLUMN report_citation_traffic_type_stop.rfs_traffic_violation_code IS 'Traffic stop resulting in a citation specific citation code';
+COMMENT ON COLUMN report_citation_traffic_type_stop.statute_literal_25 IS 'Text description for accompnaying offense code';
+COMMENT ON COLUMN report_citation_traffic_type_stop.total IS 'Total number (denominator in rate calc) of traffic stops that resulted in a citation within each traffic stop type';
+COMMENT ON COLUMN report_citation_traffic_type_stop.count IS 'Count of each specific citation offense code within each traffic stop type';
+COMMENT ON COLUMN report_citation_traffic_type_stop.rate IS 'Rate of Rate of traffic stops resulting in a citation by each citation code out of all traffic stops resulting in a citation
+within each traffic stop type';
+")
+
+# send table comment + column metadata
+dbSendQuery(conn = con, table_comment)
   
   
