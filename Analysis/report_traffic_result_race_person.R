@@ -188,15 +188,15 @@ df2<-rbind(df2, df2_aian, df2_nhpi, df2_sswana)%>%
 
 df3<-df%>%
   left_join(pop, by=c("nh_race"="race"))%>%
-  rename("pop_total"="count")%>%
+  rename("total"="count")%>%
   filter(reason=="Traffic violation")%>%
   group_by(nh_race, stop_result_simple)%>%
   mutate(count=n(),
-  rate_per_1k=count/pop_total*1000,
+  rate_per_1k=count/total*1000,
   denom="population"
   )%>%
   slice(1)%>%
-  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)%>%
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)%>%
   filter(!grepl("nh_aian|nh_nhpi|nh_sswana", nh_race))
 
 ###### SWANA ######
@@ -204,48 +204,48 @@ df3<-df%>%
 df3_sswana<-df%>%
   filter(sswana_flag==1)%>%
   left_join(pop, by=c("sswana_label"="race"))%>%
-  rename("pop_total"="count")%>%
+  rename("total"="count")%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/pop_total*1000,
+         rate_per_1k=count/total*1000,
          denom="population",
          nh_race="sswana_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
 
 ###### AIAN ######
 
 df3_aian<-df%>%
   filter(aian_flag==1)%>%
   left_join(pop, by=c("aian_label"="race"))%>%
-  rename("pop_total"="count")%>%
+  rename("total"="count")%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/pop_total*1000,
+         rate_per_1k=count/total*1000,
          denom="population",
          nh_race="aian_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
 
 ###### NHPI ######
 
 df3_nhpi<-df%>%
   filter(nhpi_flag==1)%>%
   left_join(pop, by=c("nhpi_label"="race"))%>%
-  rename("pop_total"="count")%>%
+  rename("total"="count")%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/pop_total*1000,
+         rate_per_1k=count/total*1000,
          denom="population",
          nh_race="nhpi_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, pop_total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
 
 # Combine all tables together
 
@@ -285,7 +285,6 @@ COMMENT ON COLUMN report_traffic_result_race_person.stop_result_simple IS 'Simpl
 COMMENT ON COLUMN report_traffic_result_race_person.total IS 'Total number (denominator in rate calc) see denom column for which denominator is used';
 COMMENT ON COLUMN report_traffic_result_race_person.count IS 'Count of officer-initiated traffic stops for each stop result for each racial group (numerator for rate calc)';
 COMMENT ON COLUMN report_traffic_result_race_person.rate IS 'Rate of traffic stop results by race: count/total*100 (see denom colunm for more clarity on which demominator is being used to create the rate)';
-COMMENT ON COLUMN report_traffic_result_race_person.pop_total IS 'Total population for racial group in Fresno City based on census data';
 COMMENT ON COLUMN report_traffic_result_race_person.rate_per_1k IS 'Rate of traffic stops by result of stop for each perceived racial group per 1k total population of each racial gorup in Fresno city';
 ")
 
