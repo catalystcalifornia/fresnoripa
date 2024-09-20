@@ -17,9 +17,6 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull in necessary analysis tables
 
 stop<-dbGetQuery(con, "SELECT * FROM rel_stops")
-# stop_reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
-# stop_result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
-# stop_race<-dbGetQuery(con, "SELECT * FROM rel_stops_race")
 
 person<-dbGetQuery(con, "SELECT * FROM rel_persons")
 person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
@@ -54,8 +51,7 @@ mutate(total=n())%>%
   slice(1)%>%
   mutate(denom="traffic_stop_race")%>%
   select(nh_race, reason, denom, stop_result_simple, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
-  filter(!grepl("nh_aian|nh_nhpi|nh_sswana", nh_race))
+  arrange(nh_race, -rate)
 
 ###### SWANA ######
 
@@ -122,8 +118,7 @@ df2<-df%>%
   slice(1)%>%
   mutate(denom="traffic_result")%>%
   select(nh_race, reason, denom, stop_result_simple, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
-  filter(!grepl("nh_aian|nh_nhpi|nh_sswana", nh_race))
+  arrange(nh_race, -rate)
 
 ###### SWANA ######
 
@@ -184,6 +179,8 @@ df2<-rbind(df2, df2_aian, df2_nhpi, df2_sswana)%>%
 
 #### Denominator 3: Per 1k total population for each racial group ####
 
+#### ADD DENOMIATOR THAT IS ASIAN WITHOUT SA 
+
 ###### NH ######
 
 df3<-df%>%
@@ -196,8 +193,7 @@ df3<-df%>%
   denom="population"
   )%>%
   slice(1)%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)%>%
-  filter(!grepl("nh_aian|nh_nhpi|nh_sswana", nh_race))
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
 
 ###### SWANA ######
 
@@ -247,9 +243,26 @@ df3_nhpi<-df%>%
   ungroup()%>%
   select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
 
+#### ASIAN W/O SA DENOMINATOR ####
+
+df3_asian<-df%>%
+  mutate(nh_race=ifelse(nh_race %in% "nh_asian", "nh_asian_wo_sa", nh_race))%>%
+  left_join(pop, by=c("nh_race"="race"))%>%
+  rename("total"="count")%>%
+  filter(reason=="Traffic violation")%>%
+  group_by(nh_race, stop_result_simple)%>%
+  mutate(count=n(),
+         rate_per_1k=count/total*1000,
+         denom="population"
+  )%>%
+  slice(1)%>%
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)%>%
+  filter(grepl("nh_asian_wo_sa", nh_race))
+  
+
 # Combine all tables together
 
-df3<-rbind(df3, df3_aian, df3_nhpi, df3_sswana)%>%
+df3<-rbind(df3, df3_aian, df3_nhpi, df3_sswana, df3_asian)%>%
   rename("race"="nh_race")
 
 # Final combination of all analysis tables -----------------------------------
@@ -260,7 +273,7 @@ df<-rbind(df1, df2, df3)
 
 # set column types
 charvect = rep('varchar', ncol(df)) 
-charvect <- replace(charvect, c(5,6,7,8,9), c("numeric"))
+charvect <- replace(charvect, c(5,6,7,8), c("numeric"))
 
 # add df colnames to the character vector
 
