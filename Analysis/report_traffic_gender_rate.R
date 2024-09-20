@@ -1,4 +1,5 @@
 # Task: Calculate stop rates for traffic violations by gender and race in Fresno city ----------------
+# Include rate per 1K, % of all traffic stops either across all traffic stops or within race or within gender
 
 # Environment set up ----
 # Load Packages
@@ -75,13 +76,26 @@ traffic_nhpi <-  ois_traffic %>% group_by(nhpi_label,gender) %>%
 # combine estimates
 traffic_race_gender_table <- bind_rows(traffic_nh_race, traffic_sswana, traffic_aian, traffic_nhpi)
 
+# Stop rates as a function of % of traffic stops for each gender --------
+# Measure: what % of traffic stops for each gender are made for each racial group
+
+gender_totals<-traffic_nh_race%>%
+  group_by(gender)%>%
+  summarise(traffic_gender_total=sum(traffic_count))
+
+traffic_race_gender_table<-traffic_race_gender_table%>%left_join(gender_totals)%>%
+  mutate(traffic_gender_rate=traffic_count/traffic_gender_total)
+
 # Stop rates as a function of % of traffic stops for each racial group --------
 # Measure: what % of traffic stops for each racial group are made for each gender
 
-nh_race<-ois_traffic%>%
-  group_by(nh_race)%>%
-  summarise(traffic_race_total=n())%>%
-  rename(race=nh_race)
+race_totals<-traffic_race_gender_table%>%
+  group_by(race)%>%
+  summarise(traffic_race_total=sum(traffic_count))
+
+traffic_race_gender_table<-traffic_race_gender_table%>%left_join(race_totals)%>%
+  mutate(traffic_race_rate=traffic_count/traffic_race_total)
+
 
 # sswana, aian, nhpi
 sswana<-data.frame(race='sswana',traffic_race_total=sum(ois_traffic$sswana_flag))
