@@ -227,7 +227,7 @@ vars_d<-as.data.frame(colnames(stops_d))
 
 # Create and run model
 
-Below is a list of the variables we used in this model. Most match the variables used in RIPA outlier analysis for the SD Pillars project. The exception is the removal of officer divisions and beat variables, and the addition of gender action-count-by-stop variables. 
+Below is a list of the variables we used in this model. 
 
 Variable | Type of variable
 ------------- | -------------
