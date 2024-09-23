@@ -232,7 +232,6 @@ Below is a list of the variables we used in this model. Most match the variables
 Variable | Type of variable
 ------------- | -------------
 Stop duration | Dependent variable
-Stop action | Independent variable
 Stop in response to call for service | Independent variable
 Age of person stopped | Independent variable (continuous)
 Race of person stopped | Independent variable (categorical)
@@ -240,15 +239,14 @@ Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
-Number of Actions taken during stop | Independent variable (continuous)
+Number of actions taken during stop | Independent variable (continuous)
 Person remove from vehicle | Independent variable (categorical)
+Contraband found | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
 Person handcuffed | Independent variable (categorical)
 Search took place | Independent variable (categorical)
-Firearm pointed | Independent variable (categorical)
 Sobriety test conducted | Independent variable (categorical)
-Removed from vehicle without force | Independent variable (categorical)
 
 The following are the categorical variables that are not already dummy variables (1/0) and require establishing a reference group.
 
