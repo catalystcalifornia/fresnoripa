@@ -16,7 +16,7 @@ Part of the analysis of RIPA data from the Fresno Police Department for this pro
 
 The goal of this outlier analysis is to identify which stops have stop duration times that are outliers, and then cap those stop duration times appropriately. We do this using a regression model that controls for various factors that influence a stop duration time. 
 
-# Load in data and create stop-level data set
+# Load Data and Create Stop-level Data Set
 
 ```{r setup, include=FALSE}
 
@@ -145,11 +145,11 @@ stops<-stops%>%
 
 # Check for NAs
 
-sum(is.na(stops)) #0 NAs
+# sum(is.na(stops)) #0 NAs
 
 ```
 
-# Creating dummy version of stop-level data
+# Creating Dummy Version of Stop-level Data
 
 ```{r}
 
@@ -168,7 +168,7 @@ colnames(stops_d) = gsub("-", "", colnames(stops_d)) # remove hyphens
 
 # check no NAs still
 
-sum(is.na(stops_d)) #0
+# sum(is.na(stops_d)) #0
 
 # pull list of new cols
 
@@ -225,7 +225,7 @@ vars_d<-as.data.frame(colnames(stops_d))
 ```
 
 
-# Create and run model
+# Create and Run Model
 
 Below is a list of the variables we used in this model. 
 
@@ -392,7 +392,7 @@ model_all_metrics <- augment(model)
 ```
 
 
-# Identifying and Capping outliers using Predictive Interval
+# Identifying and Capping Outliers Using Predictive Interval
 
 We cap stop times that are either below or above their predictive interval based on their stop characteristics. In total, 180 stops have an upper cap applied and 84 have a lower cap applied. Together they represent only 5.0% of stops in 2022.
 
@@ -447,7 +447,7 @@ final_cap <- final_cap[, col_order]
 
 #### Explore results: ####
 
-table(final_cap$cap_type)
+# table(final_cap$cap_type)
 
 # sum(is.na(final_cap$stop_duration_capped)) # 0 NAs
 
@@ -534,7 +534,7 @@ colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",
 ```
 
 
-# Create postgres table
+# Create Postgres Table
 
 ```{r, include=FALSE, eval=FALSE}
 
