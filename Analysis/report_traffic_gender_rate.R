@@ -80,66 +80,37 @@ traffic_race_gender_table <- bind_rows(traffic_nh_race, traffic_sswana, traffic_
 # Measure: what % of traffic stops for each gender are made for each racial group
 
 gender_totals<-traffic_nh_race%>%
+  filter(!race %in% c('sswana','nhpi','aian'))%>% #exclude the aoic combos so we aren't overcounting gender totals
   group_by(gender)%>%
   summarise(traffic_gender_total=sum(traffic_count))
 
 traffic_race_gender_table<-traffic_race_gender_table%>%left_join(gender_totals)%>%
   mutate(traffic_gender_rate=traffic_count/traffic_gender_total)
 
+# check gender totals
+table(ois_traffic$gender)
+# checks out comparing to data in traffic_race_gender_table
+
 # Stop rates as a function of % of traffic stops for each racial group --------
-# Measure: what % of traffic stops for each racial group are made for each gender
+# Measure: what % of traffic stops for each racial group are made for each perceived gender
 
 race_totals<-traffic_race_gender_table%>%
   group_by(race)%>%
   summarise(traffic_race_total=sum(traffic_count))
 
+# check totals
+table(ois_traffic$nh_race)
+sum(ois_traffic$sswana_flag)
+sum(ois_traffic$aian_flag)
+sum(ois_traffic$nhpi_flag)
+# looks good compared to race_totals table
+
 traffic_race_gender_table<-traffic_race_gender_table%>%left_join(race_totals)%>%
   mutate(traffic_race_rate=traffic_count/traffic_race_total)
 
 
-# sswana, aian, nhpi
-sswana<-data.frame(race='sswana',traffic_race_total=sum(ois_traffic$sswana_flag))
-aian<-data.frame(race='aian',traffic_race_total=sum(ois_traffic$aian_flag))
-nhpi<-data.frame(race='nhpi',traffic_race_total=sum(ois_traffic$nhpi_flag))
-
-ois_race_table <- bind_rows(ois_race_table, ois_sswana_table, ois_aian_table, ois_nhpi_table)
-
-traffic_race_table<-traffic_race_table%>%left_join(ois_race_table)%>%
-  mutate(ois_rate=traffic_count/ois_count) # percent of ois stops for that race group that were for traffic violations
-
-# Stop rates as a function of population --------
-# Measure: Rate of traffic stops per 1K people of same race in fresno
-
-# Join population data
-df<-traffic_race_table%>%left_join(population_race%>%select(race,count)%>%rename(pop_count=count))
-
-# Add in rate for nh_asian that excludes south asian from population will rename race to nh_asian_wo_sa for clarity and joining
-nh_asian_wo_sa<-traffic_race_table%>%filter(race=='nh_asian')%>%mutate(race='nh_asian_wo_sa')%>%
-  left_join(population_race%>%select(race,count)%>%rename(pop_count=count))
-
-df<-bind_rows(df,nh_asian_wo_sa) # combine with df
-
-df$pop_1k_rate<-df$traffic_count/df$pop_count*1000 # calculate rates per 1K
-
-# Add in total rates ----
-# Add in measures for total trends in Fresno
-tot_pop<-population_race$count[population_race$race=='total'] # store total population
-
-total_df<-data.frame(race='total',
-                     traffic_count=NA,
-                     traffic_total=nrow(ois_traffic), # total traffic stops in fresno
-                     ois_count=nrow(ois), # total ois stops in fresno
-                     ois_rate=nrow(ois_traffic)/nrow(ois), # % of ois stops that are for traffic
-                     pop_count=tot_pop, # population
-                     pop_1k_rate=nrow(ois_traffic)/tot_pop*1000) # rate of traffic stops per 1K people in pop
-
-df<-bind_rows(df,total_df)
-
-
 # Export Data ----
-# filter out nh_sswana given we don't have population figures
-df<-df%>%filter(race!='nh_sswana')
-
+df<-traffic_race_gender_table
 # create level
 df <- df %>% mutate(reason = "Traffic violation")
 
@@ -159,10 +130,10 @@ add_table_comments <- function(con, schema, table_name, indicator, source, colum
 }
 
 
-table_name <- "report_traffic_race"
+table_name <- "report_traffic_race_gender"
 schema <- 'data'
 
-indicator <- "Rate of people stopped by race for traffic violation reasons calculated 3 ways--out of all traffic stops, out of officer-initiated stops for each racial group, and out of the population per 1K for each racial group.
+indicator <- "Rate of people stopped by race and gender for traffic violation reasons calculated 3 ways--out of all officer-initiated traffic stops, out of officer-initiated traffic stops for each gender, and out of all officer-initiated traffic stops for each racial group
 Stops included are people stopped for only a reason of traffic violation during officer-initiated stops, excluding calls for service"
 source <- "CADOJ RIPA 2022
 See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_report_traffic_race.docx
@@ -177,14 +148,15 @@ table_comment <- paste0(indicator, source)
 
 column_names <- colnames(df) # get column names
 
-column_comments <- c('Racial group. All groups are non-Hispanic other than sswana, aian, and nhpi. Includes an extra row for stop rates calculated as a function of Asian population excluding South Asian given RIPA race category SWANA/SA',
-                     'Number of people stopped for traffic stops for that racial group',
-                     'Total people in Fresno stopped for traffic stops',
-                     'Out of all traffic stops in Fresno, the rate or percent of those stops comprised of that racial group',
-                     'The number of officer-initiated stops for that racial group',
-                     'The percentage of officer-initiated stops for that racial group that were for traffic violations',
-                     'The population in Fresno for that racial group',
-                     'The stop rate for traffic violations per 1K people of the same race group in Fresno city',
+column_comments <- c('Perceived racial group. All groups are non-Hispanic other than sswana, aian, and nhpi.',
+                     'Perceived gender - male, female, transgender/gender non-conforming',
+                     'Number of people stopped for officer-initiated traffic stops for that racial group and gender combination',
+                     'Total people in Fresno stopped for officer-initiated traffic stops',
+                     'Out of all officer-initiated traffic stops in Fresno, the rate or percent of those stops comprised of that racial group and gender combination',
+                     'The number of officer-initiated traffic stops for that overall gender group',
+                     'The percentage of officer-initiated traffic stops for that gender group that were of that racial group and gender combo',
+                     'The number of officer-initiated traffic stops for that overall racial group',
+                     'The percentage of officer-initiated traffic stops for that racial group that were of that gender group and racial group combo',
                      'Level or universe of analysis--traffic violations')
 
 # add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
