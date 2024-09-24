@@ -108,12 +108,21 @@ action_more<-action_person %>%
   
 ### Prep stop-level gender data ###
 
+# First set the datatable to be at the stop level where each gender for each stop (where multiple people were stopped in a singel stop) show up but as a single row
+
+# Then recode data so that for stops that have multiple people and multiple genders, a ne wflag 'g_multiple' == 1 to indicate that the stop has multiple genders
+
+# For the stops that get a g_multiple flag, mutate so that the other gender dummy variables revert back to 0
+
 gender <- persons %>%
       select(stop_id, g_male, g_female, g_transgender_man, g_transgender_woman, 
          g_gender_nonconforming, g_multigender)%>%
   group_by(stop_id) %>%
   mutate(across(everything(), max)) %>%
-  slice(1)
+  slice(1)%>%
+   mutate(g_multiple=ifelse(sum(c_across(g_male:g_multigender))>1, 1, 0))%>%
+  mutate(across(c(g_male, g_female, g_transgender_man, g_transgender_woman, g_gender_nonconforming, g_multigender), ~ ifelse(g_multiple==1, 0, .)))
+  
 
 ### Join all stops-level data ###
 
@@ -144,7 +153,7 @@ sum(is.na(stops)) #0 NAs
 
 ```{r}
 
-#### Create dummy version of stop table  ####
+#### Create dummy version of stop table and gender columns  ####
 
 # Categorical variables need to become separate 1/0 dummy columns for the model
 
@@ -218,12 +227,11 @@ vars_d<-as.data.frame(colnames(stops_d))
 
 # Create and run model
 
-Below is a list of the variables we used in this model. Most match the variables used in RIPA outlier analysis for the SD Pillars project. The exception is the removal of officer divisions and beat variables, and the addition of gender action-count-by-stop variables. 
+Below is a list of the variables we used in this model. 
 
 Variable | Type of variable
 ------------- | -------------
 Stop duration | Dependent variable
-Stop action | Independent variable
 Stop in response to call for service | Independent variable
 Age of person stopped | Independent variable (continuous)
 Race of person stopped | Independent variable (categorical)
@@ -231,15 +239,14 @@ Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
-Number of Actions taken during stop | Independent variable (continuous)
+Number of actions taken during stop | Independent variable (continuous)
 Person remove from vehicle | Independent variable (categorical)
+Contraband found | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
 Person handcuffed | Independent variable (categorical)
 Search took place | Independent variable (categorical)
-Firearm pointed | Independent variable (categorical)
 Sobriety test conducted | Independent variable (categorical)
-Removed from vehicle without force | Independent variable (categorical)
 
 The following are the categorical variables that are not already dummy variables (1/0) and require establishing a reference group.
 
@@ -274,9 +281,10 @@ use_of_force+
     
 g_female+
     g_transgender_man+
-    g_transgender_woman+
-    g_multigender+
+     g_transgender_woman+
+     # g_multigender+ # Removing this from the model because this variable is aliased when running vif score probably due to addition of g_multiple column from gender recoding
     g_gender_nonconforming+
+  g_multiple+
 
 stop_nh_race_latinx +
 stop_nh_race_nh_aian+
@@ -293,7 +301,7 @@ stop_reason_simple_consent_search+
 stop_reason_simple_truant+
 stop_reason_simple_warrant+
 stop_reason_simple_parole+
- stop_reason_simple_reasonable_suspicion+
+ #  stop_reason_simple_reasonable_suspicion+ # Updated model makes this variable have a vif = 5.155970 which is high. There are only 239 stops with stop_reason_simple_reasonable_suspicion==1 
 stop_reason_simple_twoormore+
 
   # stop_result_simple_citation+
@@ -500,7 +508,7 @@ df %>%
 
 ```
 
-## With Capped Stop Times: Officer-initiated Stop Counts and Time Stats across All Units
+## With Capped Stop Times: Officer-initiated Stop Counts and Time Stats 
 
 ```{r}
 
