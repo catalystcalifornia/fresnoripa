@@ -61,7 +61,7 @@ chart<-rdaBubblepop(
   tooltip_text = tooltip_text,
   caption = caption_text,
   yaxis_label = "''",
-  export_data_label = ""
+  export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
 

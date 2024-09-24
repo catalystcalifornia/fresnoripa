@@ -19,11 +19,9 @@ con <- connect_to_db("eci_fresno_ripa")
 stop<-dbGetQuery(con, "SELECT * FROM rel_stops")
 stop_reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 stop_result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
-stop_race<-dbGetQuery(con, "SELECT * FROM rel_stops_race")
 
-# Analysis 1:  Traffic stops by result ---------------------------
+# Analysis:  Traffic stops by result ---------------------------
 # General table of people stopped for traffic violations by simple result
-
 
 # Take stop table and filter for calls for service, then join all needed tables
 
