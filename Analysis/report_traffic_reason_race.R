@@ -30,7 +30,8 @@ offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 df<-stop%>%
   filter(call_for_service==0)%>%
   left_join(person_reason)%>%
-  left_join(person_race, , by=c("stop_id", "person_number"))
+  left_join(person_race, , by=c("stop_id", "person_number"))%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))
 
 # Sub-Analysis 1---------------------
 # Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
@@ -47,7 +48,7 @@ df1<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(traffic_violation_type, nh_race)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  ungroup()%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -64,7 +65,6 @@ df1_aian<-df%>%
   filter(reason=="Traffic violation" & aian_flag==1)%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -83,7 +83,6 @@ df1_nhpi<-df%>%
   filter(reason=="Traffic violation" & nhpi_flag==1)%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -101,7 +100,6 @@ df1_sswana<-df%>%
   filter(reason=="Traffic violation" & sswana_flag==1)%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -129,7 +127,6 @@ df2.1<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -146,7 +143,6 @@ df2.1<-df%>%
 df2.1_aian<-df%>%
   filter(reason=="Traffic violation" & aian_flag==1)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -164,7 +160,6 @@ df2.1_aian<-df%>%
 df2.1_nhpi<-df%>%
   filter(reason=="Traffic violation" & nhpi_flag==1)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -181,7 +176,6 @@ df2.1_nhpi<-df%>%
 df2.1_sswana<-df%>%
   filter(reason=="Traffic violation" & sswana_flag==1)%>%
   mutate(total=n())%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -199,6 +193,9 @@ df2.1<-rbind(df2.1, df2.1_aian, df2.1_nhpi, df2.1_nhpi)%>%
   rename("race"="nh_race")
 
 #### Denom 2: By stop reason i.e.) %  of Latinx stopped for registration / all people stopped for registration ####
+
+
+#### JZ SOMETHING weird is happening with  rfs traffic code == '54657' my code is calculating a total of 362 instances of this but I am only seeing 303 in the actual dfs
 
 ###### NH #####
 
@@ -219,10 +216,34 @@ df2.2<-df%>%
   slice(1:5)
 
 
+###### AIAN #####
 
+df2.2_aian<-df%>%
+  filter(reason=="Traffic violation")%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(total=n())%>%
+  filter(aian_flag==1)%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="aian_aoic",
+         denom="traffic_reason")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(nh_race, -rate)%>%
+  group_by(nh_race)%>%
+  slice(1:5)
+
+# Final join of tables for both denominators--------------------------------------
+
+df<-rbind(df2.1, df2.2)
 
 
 # Push all tables to postgres------------------------------
+
+#### Sub-Analysis 1 ####
 
 # set column types
 charvect = rep('varchar', ncol(df)) 
