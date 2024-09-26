@@ -1,8 +1,4 @@
-###Analysis: Traffic stops by stop reason
-
-
-
-
+###Analysis: Traffic stops by stop reason and race
 
 #Set up work space---------------------------------------
 
@@ -38,7 +34,6 @@ df<-stop%>%
 
 # Sub-Analysis 1---------------------
 # Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
-
 
 # rate options:
 
@@ -123,12 +118,111 @@ df1_sswana<-df%>%
 df1<-rbind(df1, df1_aian, df1_nhpi, df1_nhpi)%>%
   rename("race"="nh_race")
 
+# Sub-Analysis 2---------------------
+# Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
+
+#### Denom 1: Per racial group. i.e.)  % of Latinx stopped for registration / all Latinx traffic stops ####
+
+##### NH #####
+
+df2.1<-df%>%
+  filter(reason=="Traffic violation")%>%
+  group_by(nh_race)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(denom="traffic_stop_race")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(nh_race, -rate)%>%
+  group_by(nh_race)%>%
+  slice(1:5)
+
+##### AIAN #####
+
+df2.1_aian<-df%>%
+  filter(reason=="Traffic violation" & aian_flag==1)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="aian_aoic",
+         denom="traffic_stop_race")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(rate)%>%
+  slice(1:5)
+
+
+##### NHPI #####
+
+df2.1_nhpi<-df%>%
+  filter(reason=="Traffic violation" & nhpi_flag==1)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="nhpi_aoic",
+         denom="traffic_stop_race")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(rate)%>%
+  slice(1:5)
+
+##### SWANA/SA #####
+
+df2.1_sswana<-df%>%
+  filter(reason=="Traffic violation" & sswana_flag==1)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="sswana_aoic",
+         denom="traffic_stop_race")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(rate)%>%
+  slice(1:5)
+
+## Combine all tables together ##
+
+df2.1<-rbind(df2.1, df2.1_aian, df2.1_nhpi, df2.1_nhpi)%>%
+  rename("race"="nh_race")
+
+#### Denom 2: By stop reason i.e.) %  of Latinx stopped for registration / all people stopped for registration ####
+
+###### NH #####
+
+df2.2<-df%>%
+  filter(reason=="Traffic violation")%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(statute_literal_25, offense_type_of_charge)%>%
+  mutate(total=n())%>%
+  group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(denom="traffic_reason")%>%
+  select(nh_race, denom, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  arrange(nh_race, -rate)%>%
+  group_by(nh_race)%>%
+  slice(1:5)
 
 
 
 
 
-# Push table to postgres------------------------------
+# Push all tables to postgres------------------------------
 
 # set column types
 charvect = rep('varchar', ncol(df)) 
