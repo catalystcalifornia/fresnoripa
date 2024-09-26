@@ -43,8 +43,6 @@ df<-stop%>%
 # rate options:
 
 ## 1) total stops within each stop type and race / all stops within stop type for that race i.e. all latinx moving stops
-## 2) total stops within each stop type and race / 1k racial population in Fresno
-
 
 # Analyze
 
@@ -124,6 +122,11 @@ df1_sswana<-df%>%
 
 df1<-rbind(df1, df1_aian, df1_nhpi, df1_nhpi)%>%
   rename("race"="nh_race")
+
+
+
+
+
 
 # Push table to postgres------------------------------
 
