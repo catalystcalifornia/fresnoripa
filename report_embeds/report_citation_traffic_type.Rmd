@@ -28,8 +28,8 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull analysis tables for visualizing
 
 df<-dbGetQuery(con, "SELECT * FROM report_citation_traffic_type_stop")%>%
-    mutate(statute_literal_25 = str_to_title(statute_literal_25)) # convert text for offense to be title case
-
+    mutate(statute_literal_25 = str_to_title(statute_literal_25))%>% # convert text for offense to be title case
+mutate(test="test")
 
 
 # visualize--------------------------
@@ -54,9 +54,9 @@ tooltip_text <- "Out of 100 people Fresno PD stopped in officer-initiated traffi
 
 chart<-rdaGroupedBar(
   df,
-  "statute_literal_25",
-  "rate",
-  "traffic_violation_type",
+   "traffic_violation_type",
+    "rate",
+   "test",
   title = "",
   subtitle = "",
   tooltip_text = "",
