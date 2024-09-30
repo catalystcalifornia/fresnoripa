@@ -15,7 +15,7 @@ library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 # library(devtools)
-# remotes::install_github("catalystcalifornia/rdaCharts") 
+#  remotes::install_github("catalystcalifornia/rdaCharts") 
 library(rdaCharts)
 library(stringr)
 
