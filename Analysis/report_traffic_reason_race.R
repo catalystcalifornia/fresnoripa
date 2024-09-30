@@ -54,7 +54,7 @@ df1<-df%>%
          rate=count/total*100)%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, traffic_violation_type, rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
+  select(nh_race, traffic_violation_type,  rfs_traffic_violation_code, statute_literal_25, total, count, rate)%>%
   arrange(nh_race, traffic_violation_type, -rate)%>%
   group_by(nh_race, traffic_violation_type)%>%
   slice(1:5)
@@ -128,7 +128,7 @@ df2.1<-df%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
-  mutate(count=n(),
+  mutate(count=n(), 
          rate=count/total*100)%>%
   slice(1)%>%
   ungroup()%>%
@@ -246,29 +246,31 @@ df<-rbind(df2.1, df2.2)
 #### Sub-Analysis 1 ####
 
 # set column types
-charvect = rep('varchar', ncol(df)) 
-charvect <- replace(charvect, c(3,4,5), c("numeric"))
+charvect = rep('varchar', ncol(df1)) 
+charvect <- replace(charvect, c(5,6,7), c("numeric"))
 
 # add df colnames to the character vector
 
-names(charvect) <- colnames(df)
+names(charvect) <- colnames(df1)
 
-dbWriteTable(con,  "report_traffic_result_stop", df,
+dbWriteTable(con,  "report_traffic_reason_type_race", df1,
              overwrite = TRUE, row.names = FALSE,
              field.types = charvect)
 
 
 # # write comment to table, and column metadata
 
-table_comment <- paste0("COMMENT ON TABLE report_traffic_result_stop  IS 'Analyzing officer-initiated traffic stops by simple stop result.
-R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_stop.R
-QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_stop.docx';
+table_comment <- paste0("COMMENT ON TABLE report_traffic_reason_type_race  IS 'Analyzing officer-initiated traffic stops by simple stop reason by traffic stop type for each racial group.
+R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_reason_race.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
 
-COMMENT ON COLUMN report_traffic_result_stop.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
-COMMENT ON COLUMN report_traffic_result_stop.stop_result_simple IS 'Simple result for stop';
-COMMENT ON COLUMN report_traffic_result_stop.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated traffic stops by stop result';
+COMMENT ON COLUMN report_traffic_reason_type_race.race IS 'Perceived race';
+COMMENT ON COLUMN report_traffic_reason_type_race.traffic_violation_type IS 'Type of traffic violation (moving, nonmoving, equipment)';
+COMMENT ON COLUMN report_traffic_reason_type_race.rfs_traffic_violation_code IS 'Traffic stop reason code';
+COMMENT ON COLUMN report_traffic_reason_type_race.statute_literal_25 IS 'Text description of the traffic stop reason corresponding with the traffic stop reason code';
+COMMENT ON COLUMN report_traffic_reason_type_race.total IS 'Total number of officer-initiated traffic stops within each traffic stop type for each race (denominator in rate calc)';
+COMMENT ON COLUMN report_traffic_reason_type_race.count IS 'Count of officer-initiated traffic stop reasonswithin each traffic stop type for each race (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_reason_type_race.rate IS 'Rate of officer-initiated traffic stop reasons for each type of traffic stop type by race';
 ")
 
 # send table comment + column metadata
