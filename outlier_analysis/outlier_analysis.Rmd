@@ -1,7 +1,7 @@
 ---
 title: "Fresno RIPA Data Project"
 subtitle: "Stop Duration Outlier Analysis"
-author: "Catalyst California"
+author: "Catalyst California in Partnership with Fresno BHC"
 output:
   html_document:
     css: "W:\\RDA Team\\R\\cc_brandguide.css"
@@ -16,7 +16,7 @@ Part of the analysis of RIPA data from the Fresno Police Department for this pro
 
 The goal of this outlier analysis is to identify which stops have stop duration times that are outliers, and then cap those stop duration times appropriately. We do this using a regression model that controls for various factors that influence a stop duration time. 
 
-# Load in data and create stop-level data set
+# Load Data and Create Stop-level Data Set
 
 ```{r setup, include=FALSE}
 
@@ -108,9 +108,9 @@ action_more<-action_person %>%
   
 ### Prep stop-level gender data ###
 
-# First set the datatable to be at the stop level where each gender for each stop (where multiple people were stopped in a singel stop) show up but as a single row
+# First set the data table to be at the stop level where each gender for each stop (where multiple people were stopped in a single stop) show up but as a single row
 
-# Then recode data so that for stops that have multiple people and multiple genders, a ne wflag 'g_multiple' == 1 to indicate that the stop has multiple genders
+# Then recode data so that for stops that have multiple people and multiple genders, a new flag 'g_multiple' == 1 to indicate that the stop has multiple genders
 
 # For the stops that get a g_multiple flag, mutate so that the other gender dummy variables revert back to 0
 
@@ -145,11 +145,11 @@ stops<-stops%>%
 
 # Check for NAs
 
-sum(is.na(stops)) #0 NAs
+# sum(is.na(stops)) #0 NAs
 
 ```
 
-# Creating dummy version of stop-level data
+# Creating Dummy Version of Stop-level Data
 
 ```{r}
 
@@ -168,7 +168,7 @@ colnames(stops_d) = gsub("-", "", colnames(stops_d)) # remove hyphens
 
 # check no NAs still
 
-sum(is.na(stops_d)) #0
+# sum(is.na(stops_d)) #0
 
 # pull list of new cols
 
@@ -225,7 +225,7 @@ vars_d<-as.data.frame(colnames(stops_d))
 ```
 
 
-# Create and run model
+# Create and Run Model
 
 Below is a list of the variables we used in this model. 
 
@@ -239,8 +239,8 @@ Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
-Number of actions taken during stop | Independent variable (continuous)
-Person remove from vehicle | Independent variable (categorical)
+Action taken during stop | Independent variable (categorical)
+Person removed from vehicle | Independent variable (categorical)
 Contraband found | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
@@ -253,7 +253,7 @@ The following are the categorical variables that are not already dummy variables
 Categorical Variable | Reference group
 ------------- | -------------
 Stop reason | Traffic violation
-Stop result | No action
+Stop result | Citation for infraction
 Race of person stopped | NH White
 Gender of person stopped | Cis-gender Male
 
@@ -282,7 +282,7 @@ use_of_force+
 g_female+
     g_transgender_man+
      g_transgender_woman+
-     # g_multigender+ # Removing this from the model because this variable is aliased when running vif score probably due to addition of g_multiple column from gender recoding
+     # g_multigender+ # Removing this from the model because this variable is aliased when running vif score probably due to addition of g_multiple column from gender recoding - which encompasses all stops of g_multigender
     g_gender_nonconforming+
   g_multiple+
 
@@ -301,10 +301,10 @@ stop_reason_simple_consent_search+
 stop_reason_simple_truant+
 stop_reason_simple_warrant+
 stop_reason_simple_parole+
- #  stop_reason_simple_reasonable_suspicion+ # Updated model makes this variable have a vif = 5.155970 which is high. There are only 239 stops with stop_reason_simple_reasonable_suspicion==1 
+  stop_reason_simple_reasonable_suspicion+
 stop_reason_simple_twoormore+
 
-  # stop_result_simple_citation+
+  # stop_result_simple_citation+ # reference group
 stop_result_simple_no_action+
 stop_result_simple_guardian+
 stop_result_simple_arrest_warrant+
@@ -324,7 +324,7 @@ stop_result_simple_twoormore+
 ## VIF Values
 
 Test for multicollinearity among independent variables: calculate Variance Influence Factor (VIF) scores of independent variables in model
-    + As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity (James et al. 2014).
+    + As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity (James et al. 2014). We retain any categorical variables that have slightly higher VIF score to ensure our reference categories remain the same (e.g., stops made for reasonable suspicion).
     
 ```{r}
 
@@ -334,23 +334,22 @@ vif_values <- vif(model)
 
 vif_values 
 
-# revisions
-
+# Variable tested and removed later due to high VIF or for better conceptual fit
 # actions_count--captured in action_taken, 
 # ads_removed_vehicle_order--captured in removed_from_vehicle
-# stop_result_simple_citation--make reference because it's a larger category and added stop_result_simple_no_action
+# stop_result_simple_citation--made reference because it's a larger category and added stop_result_simple_no_action
 # ads_firearm_point--captured in use of force
 # contraband_count--captured in contraband found
 
+# while  stop_reason_simple_reasonable_suspicion has a slightly high VIF score, we keep it in the model to ensure the reference category for stop reason stays as traffic violation only
 ```
 
 ## Regression Summary
 
 The regression summary table shows us the p values for all our independent variables. Note some have high p values (>.10) and are therefore not statistically significant at a 90% confidence interval. This could be because these variables have a small n, or these variables do not occur often. 
 
-The current model has a R^2 of 52% which is a good indication that our model is robust. This means that 52% of variance in stop duration times is explained by our model. 
+The current model has a R^2 of 59% which is a good indication that our model is robust. This means that 59% of variance in stop duration times is explained by our model. 
 
-Also note that the current model has 0 NA or missing values. This is the result of data cleaning and recoding done prior running the model. Specifically, NA values from people who were preceived as 6 or more races, and NA values from unknow SDPD divisions were all recoded accordingly to avoid NA values in the model. 
 
 The diagnostic plots give us a sense of how robust our working model is and if any adjustments are needed. See this [reference link for understanding diagnostic plots](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials/#:~:text=Regression%20diagnostics%20plots%20can%20be,creates%20a%20ggplot2%2Dbased%20graphics.&text=The%20diagnostic%20plots%20show%20residuals,check%20the%20linear%20relationship%20assumptions.) and what we want them to look like in order to feel confident about our model.
 
@@ -393,7 +392,9 @@ model_all_metrics <- augment(model)
 ```
 
 
-# Identifying and Capping outliers using Predictive Interval
+# Identifying and Capping Outliers Using Predictive Interval
+
+We cap stop times that are either below or above their predictive interval based on their stop characteristics. In total, 180 stops have an upper cap applied and 84 have a lower cap applied. Together they represent only 5.0% of stops in 2022.
 
 * Resource, CI vs Predicted Interval: https://towardsdatascience.com/confidence-intervals-vs-prediction-intervals-7b296ae58745
 * Resource: https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals
@@ -421,17 +422,6 @@ pv<-pv%>%mutate(pv=exp(pv_log),
 
 stops<-stops%>%
   left_join(pv, by = c("stop_id" = "stop_id"))
-
-  ## all analysis variables appear duplicated with column header ".x" and ".y"
-  # Rename ".x" columns to remove the ".x"
-
-# stops <- stops %>%
-#   rename("pv" = pv.x,
-#          "lwr" = lwr.x, 
-#          "upr" = upr.x, 
-#          "pv_log" = pv_log.x, 
-#          "lwr_log" = lwr_log.x, 
-#          "upr_log" = upr_log.x)
 
 # select columns of interest
 
@@ -471,7 +461,7 @@ low<-final_cap%>%
 
 # Descriptive Stats Testing
 
-Take the stop duration capped values created using the Predicted Value Confidence Interval method and run some descriptive stats 
+Take the stop duration capped values created using the Predicted Value Confidence Interval method and run some descriptive stats. 
 
 ## Original Stop Times: Officer-initiated Stop Counts and Time Stats for Fresno PD
 
@@ -544,7 +534,7 @@ colformat_double(j = c("Count Mins", "Percent Mins", "Average Stop Time (Mins)",
 ```
 
 
-# Create postgres table
+# Create Postgres Table
 
 ```{r, include=FALSE, eval=FALSE}
 
@@ -576,9 +566,9 @@ names(charvect) <- colnames(df_final)
 table_name <- "rel_stop_duration_capped"
 schema <- 'data'
 
-dbWriteTable(con, c(schema, table_name), df_final, 
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con, c(schema, table_name), df_final, 
+#              overwrite = FALSE, row.names = FALSE,
+#              field.types = charvect)
 
 # add meta data
 
@@ -594,15 +584,13 @@ Gender of person stopped | Independent variable (categorical)
 Stop reason | Independent variable (categorical)
 Stop result | Independent variable (categorical)
 Number of people stopped | Independent variable (continuous)
-Number of Actions taken during stop | Independent variable (continuous)
-Person remove from vehicle | Independent variable (categorical)
+Person removed from vehicle | Independent variable (categorical)
 Person detained | Independent variable (categorical)
 Use of force | Independent variable (categorical)
 Person handcuffed | Independent variable (categorical)
 Search took place | Independent variable (categorical)
-Firearm pointed | Independent variable (categorical)
+Contraband found | Independent variable (categorical)
 Sobriety test conducted | Independent variable (categorical)
-Removed from vehicle without force | Independent variable (categorical)
 
 Full methodology can be found in R script: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\IB\\fresnoripa\\outlier_analysis\\outlier_analysis.rmd
 QA document: 
