@@ -105,7 +105,7 @@ df_nh<-df%>%
   group_by(traffic_violation_type, nh_race)%>%
   mutate(total=n())%>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
-  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
   slice(1)%>%
