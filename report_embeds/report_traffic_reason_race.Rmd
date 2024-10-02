@@ -1,0 +1,34 @@
+---
+title: ""
+output:
+  html_document:
+    css: "W:\\RDA Team\\R\\cc_charts.css"
+---
+<!-- link to Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+```{r, include=FALSE}
+
+# set up -----------------------------
+
+library(RPostgreSQL)
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+# library(devtools)
+# remotes::install_github("catalystcalifornia/rdaCharts") 
+library(rdaCharts)
+library(stringr)
+
+#connect to postgres
+
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+con <- connect_to_db("eci_fresno_ripa")
+
+# pull analysis table for visualizing
+
+
+df<-dbGetQuery(con, "SELECT * FROM report_traffic_reason_race")%>%
+  mutate(stop_result_simple = str_to_title(stop_result_simple))
+
+# visualize--------------------------
