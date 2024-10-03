@@ -203,7 +203,7 @@ df2.2<-df%>%
   ungroup()%>%
   mutate(denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
+  arrange(nh_race, -count)%>%
   group_by(nh_race)%>%
   slice(1:5)
 
@@ -223,7 +223,7 @@ df2.2_aian<-df%>%
   mutate(nh_race="aian_aoic",
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
+  arrange(nh_race, -count)%>%
   group_by(nh_race)%>%
   slice(1:5)
 
@@ -242,7 +242,7 @@ df2.2_nhpi<-df%>%
   mutate(nh_race="nhpi_aoic",
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
+  arrange(nh_race, -count)%>%
   group_by(nh_race)%>%
   slice(1:5)
 
@@ -262,7 +262,7 @@ df2.2_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
+  arrange(nh_race, -count)%>%
   group_by(nh_race)%>%
   slice(1:5)
 

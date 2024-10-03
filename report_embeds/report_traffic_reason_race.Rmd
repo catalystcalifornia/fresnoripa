@@ -18,6 +18,10 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 # remotes::install_github("catalystcalifornia/rdaCharts") 
 library(rdaCharts)
 library(stringr)
+library(gt)
+library(htmltools)
+library(htmlwidgets)
+library(gtExtras)
 
 #connect to postgres
 
@@ -29,6 +33,178 @@ con <- connect_to_db("eci_fresno_ripa")
 
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_reason_race")%>%
-  mutate(stop_result_simple = str_to_title(stop_result_simple))
+mutate(race_label = case_when(
+    race == 'latinx' ~ "Latinx", 
+    race =='nh_white' ~ 'White',
+    race =='nh_black' ~ 'Black',
+    race == 'nh_asian' ~ 'Asian',
+   race == 'nh_multiracial' ~ 'Multiracial',
+    race == 'aian_aoic' ~ 'AIAN',
+    race == 'nh_aian' ~ 'AIAN NH',
+    race == 'nhpi_aoic' ~ 'NHPI',
+   race == 'nh_nhpi' ~ 'NHPI NH',
+    race == 'sswana_aoic' ~ 'SWANA/SA', 
+   race == 'nh_sswaba' ~ 'SWANA/SA NH', 
+    TRUE ~ as.character(race)))%>%
+  filter(count>=10) # filter to where at least 10 people were stopped
 
-# visualize--------------------------
+# split separate dfs for each denominator option
+
+df_race<-df%>%
+  filter(denom=="traffic_stop_race" &
+            total >= 10) # I think this denominator is the best one for visualizing
+
+
+df_reason<-df%>%
+  filter(denom=="traffic_reason" )
+
+# visualize RACE denom--------------------------
+
+
+# create caption 
+
+sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+
+methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
+
+racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+
+caption_text <- paste("<br>", sourcenote, methodnote)
+
+# create tooltip text
+
+tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+
+
+
+# run function
+
+chart_race<-rdaGroupedBar(
+  df_race,
+  "race",
+  "rate",
+  "statute_literal_25",
+  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
+  subtitle = "Percent of officer-initiated traffic stops by stop result",
+  tooltip_text = tooltip_text,
+  caption = caption_text,
+  export_data_label = list(pointFormat='{point.rate:.1f}%')
+)
+
+chart_race
+
+# TABLE option
+
+
+# select just columns of interest, specify header and footer
+table<-df_race%>%
+  group_by(race)%>%
+  # slice(1:3)%>%
+  # mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",
+  #                                  ifelse(statute_literal_25 %in% "Display Lic Plates Wrong", "Incorrect License Plate Displayed",
+  #                                         ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
+  #                                                ifelse(statute_literal_25 %in% "Unlaw Dirct Drv Opr/Hwy", "Unlawful Direction of Driving on a Highway", statute_literal_25)))))%>%
+  mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
+         " "=rate,
+         "Traffic Stop Reason"=statute_literal_25)%>%
+    ungroup()%>%
+    select(race, "Traffic Stop Reason","Count (%)"," ")%>%
+  gt()%>%
+  # question
+  tab_header(title=glue::glue("Fresno PD Makes Traffic Stops for Reasons That Do Not Improve Safety"),
+             subtitle="Most common traffic citation results by traffic stop type")%>%
+  # any data notes in footer
+  tab_footnote(footnote=html(caption_text),placement="left")
+
+
+
+
+
+  table<-table%>%
+  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
+  # if needed modify column widths here
+  cols_width(1~px(175),2~px(160),
+             3~px(250))%>%
+  opt_align_table_header("left")%>%
+  opt_table_font(font=c(google_font(name="Inter"),locations=NULL,default_fonts()))%>%
+  tab_options(table.background.color="#FBFBFB",
+    column_labels.background.color = "transparent",
+    table.font.size = px(12),
+    column_labels.font.size = px(12),
+    heading.align = "left",
+    table.font.names = "Inter",
+    heading.title.font.size = px(20),
+    heading.subtitle.font.size = px(13),
+    heading.border.bottom.color = "transparent",
+    column_labels.border.bottom.width = px(3),
+    column_labels.border.bottom.color = "#DEDEDE",
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    table.border.bottom.width = px(3),
+    data_row.padding = px(3),
+    footnotes.font.size = px(10),
+    footnotes.border.bottom.color = "transparent",
+    table.align='center')%>%
+  tab_style(style=
+            cell_borders(sides=c("top","bottom"),color="#DEDEDE",style="solid",weight=px(1)),locations=cells_body())%>%
+   tab_style(style=
+            cell_text(font=c(google_font(name="Inter"),default_fonts()),weight=900, color="black"),locations=cells_title())
+
+
+
+
+
+
+
+
+
+
+table
+
+
+
+
+#Visualize REASON denom------------------------------------------
+
+# create caption 
+
+sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+
+methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
+
+racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+
+caption_text <- paste("<br>", sourcenote, methodnote)
+
+# create tooltip text
+
+tooltip_text <- "Out of all of the people stopped in traffic for the reason of <b>{point.statute_literal_25}</b>,  <b>{point.rate:.1f}%</b> of those people were perceived by Fresno PD as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people."
+
+
+
+chart_reason<-rdaStackedBar(
+  df_reason,
+  "statute_literal_25",
+  "rate",
+  "race",
+  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
+  subtitle = "Percent of officer-initiated traffic stops by stop result",
+  tooltip_text = tooltip_text,
+  caption = "caption_text",
+  export_data_label = list(pointFormat='{point.rate:.1f}%')
+)
+
+chart_reason
+
+```
+
+```{r, echo=FALSE}
+chart
+```
+<script>
+  widg = document.getElementsByClassName('html-widget'); //find widgets
+  for (let i = 0; i < widg.length; i++) { //loop through
+    document.getElementsByClassName('highchart')[i].style.width = '100%'; //adjust width
+    document.getElementsByClassName('highchart')[i].style.height = '100%'; //adjust height
+  }
+</script>
