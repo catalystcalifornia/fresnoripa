@@ -227,14 +227,44 @@ column_comments <- c(
 
 # add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
 
-# test results of detained incidents
+## Results of traffic stops where someone was detained ----
 d_results<-ois_traffic%>%filter(detained==1)%>%left_join(p_results)
 
-test<-d_results%>%group_by(nh_race,stop_result_simple)%>%
+df_detained_results<-d_results%>%group_by(nh_race,gender,stop_result_simple)%>%
   summarise(count=n(),.groups='drop')%>%
-  group_by(nh_race)%>%
-  mutate(rate=count/sum(count))
+  group_by(nh_race,gender)%>%
+  mutate(total=sum(count),
+    rate=count/sum(count),
+         level='detained traffic stops')
 # nh_white most likely to result in custodial arrest with or without warrant
+
+# Export to postgres
+table_name <- "traffic_detained_result"
+schema <- 'data'
+
+indicator <- "Results of traffic stops that included a person being detained by race and gender. Calculated to help inform trends seen among people being detained in traffic stops"
+source <- "See QA doc for details: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_uof_detained.docx
+Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_traffic_uof_detained.R"
+table_comment <- paste0(indicator, source)
+
+# write table
+# dbWriteTable(conn, c(schema, table_name),df_detained_results,
+#              overwrite = FALSE, row.names = FALSE)
+
+# comment on table and columns
+column_names <- colnames(df_detained_results) # get column names
+
+column_comments <- c(
+  "Perceived race group. Only nh groups are included to review general trends seen for race groups with larger sample sizes",
+  "Perceived gender group. For purpose of sample size, we combine transgender and gender nonconforming categories",
+  "Simplified result of the stop for the person",
+  "Count of people detained for each race and gender group combo that resulted in that stop result- only incidents that occurred during traffic stops",
+  "Total number of people detained during a traffic stop for each race and gender group combo",
+  "Rate of at which people of each gender and race group experienced that stop result AND were detained out of people in that group who were detained during traffic stops",
+  "Column specifying universe of analysis"
+)
+
+# add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
 
 #disconnect
 dbDisconnect(conn)
