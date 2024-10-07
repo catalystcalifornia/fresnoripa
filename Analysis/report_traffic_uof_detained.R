@@ -15,6 +15,7 @@ stops <- dbGetQuery(conn, "SELECT * FROM data.rel_stops")
 persons<-dbGetQuery(conn, "SELECT * FROM data.rel_persons")
 p_reasons <- dbGetQuery(conn, "SELECT * FROM data.rel_persons_reason")
 p_actions<-dbGetQuery(conn, "SELECT * FROM data.rel_persons_actions")
+p_results<-dbGetQuery(conn, "SELECT * FROM data.rel_persons_result")
 
 # Stop universe selection and prep ----
 # Get count/df for officer-initiated stops
@@ -106,6 +107,34 @@ df_gender_rates$uof_total<-total
 print(select(traffic_uof,stop_id,person_number,nh_race)%>%arrange(stop_id))
 # UOF stops of people perceived as asian occurred during 1 stop
 
+# Export to postgres
+table_name <- "report_traffic_uof"
+schema <- 'data'
+
+indicator <- "Use of force rates by race and gender calculated both as a % of all traffic stops that resulted in use of force and % of traffic stops by race. Note that all uof incidents against Asian males occured during the same stop"
+source <- "See QA doc for details: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_uof_detained.docx
+Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_traffic_uof_detained.R"
+table_comment <- paste0(indicator, source)
+
+# write table
+# dbWriteTable(conn, c(schema, table_name),df_gender_rates,
+#              overwrite = FALSE, row.names = FALSE)
+
+# comment on table and columns
+column_names <- colnames(df_gender_rates) # get column names
+
+column_comments <- c(
+  "Perceived race group. Only nh groups are included given that aian, nhpi, and sswana rates did not differ from the nh groups for these",
+  "Perceived gender group. For purpose of sample size, we combine transgender and gender nonconforming categories",
+  "Use of force count for each race and gender group combo - only uof that occurred during traffic stops",
+  "Total number of traffic stops of each race and gender group combo",
+  "Rate of uof used against race and gender group calculated as a percentage of the total traffic stops that were conducted for that race and gender group",
+  "Total uof incidents that took place during traffic stops in all of fresno across gender and race groups",
+  "Share of uof incidents that were conducted for that gender and race group out of all instances of use of force during traffic stops"
+)
+
+# add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
+
 # Explore other actions ----
 actions_sum<-ois_traffic%>%select(is.numeric)%>%summarise_all(funs(sum),na.rm=TRUE)%>%
   pivot_longer(everything(),names_to='variable',values_to='count')
@@ -169,3 +198,43 @@ df_gender_rates_detained$detained_total<-total
 
 # place NAs with 0
 0->df_gender_rates_detained[is.na(df_gender_rates_detained)]
+
+# Export to postgres
+table_name <- "report_traffic_detained"
+schema <- 'data'
+
+indicator <- "Detained rates by race and gender calculated both as a % of all traffic stops that resulted in detainment and % of traffic stops by race."
+source <- "See QA doc for details: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_uof_detained.docx
+Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_traffic_uof_detained.R"
+table_comment <- paste0(indicator, source)
+
+# write table
+# dbWriteTable(conn, c(schema, table_name),df_gender_rates_detained,
+#              overwrite = FALSE, row.names = FALSE)
+
+# comment on table and columns
+column_names <- colnames(df_gender_rates_detained) # get column names
+
+column_comments <- c(
+  "Perceived race group. Only nh groups are included for nhpi given that nh and aoic groups did not differ for this group",
+  "Perceived gender group. For purpose of sample size, we combine transgender and gender nonconforming categories",
+  "Detained count for each race and gender group combo - only detained incidents that occurred during traffic stops",
+  "Total number of traffic stops of each race and gender group combo",
+  "Rate of at which each race and gender group were detained during traffic stops calculated as a percentage of the total traffic stops that were conducted for that race and gender group",
+  "Total people detained during traffic stops in all of fresno across gender and race groups",
+  "Share of total people detained that were from that gender and race group out of all instances of detainment during traffic stops"
+)
+
+# add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
+
+# test results of detained incidents
+d_results<-ois_traffic%>%filter(detained==1)%>%left_join(p_results)
+
+test<-d_results%>%group_by(nh_race,stop_result_simple)%>%
+  summarise(count=n(),.groups='drop')%>%
+  group_by(nh_race)%>%
+  mutate(rate=count/sum(count))
+# nh_white most likely to result in custodial arrest with or without warrant
+
+#disconnect
+dbDisconnect(conn)
