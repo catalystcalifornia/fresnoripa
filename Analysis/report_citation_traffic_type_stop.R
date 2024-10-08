@@ -90,7 +90,7 @@ dbSendQuery(conn = con, table_comment)
 
 
 
-# EXPLORATION: Analysis by race: -----------------------------------------------
+# EXPLORATION: Analysis by race AND stop type: -----------------------------------------------
 
 # JZ: I am not sure how useful this is but am going to push to postgres to explore more
 
@@ -175,7 +175,7 @@ ungroup()%>%
 df_race<-rbind(df_nh, df_aian, df_nhpi, df_sswana)%>%
   rename("race"="nh_race")
 
-# Push race table to postgres----------------------------------------
+# Push RACE + STOP TYPE table to postgres----------------------------------------
 
 # set column types
 charvect = rep('varchar', ncol(df_race)) 
@@ -211,4 +211,90 @@ within each traffic stop type';
 
 # send table comment + column metadata
 dbSendQuery(conn = con, table_comment)
+
+# EXPLORATION: Analysis by race WITHOUT stop type: -----------------------------------------------
+
+# JZ: I am not sure how useful this is but am going to push to postgres to explore more
+
+# Rate: Percent of citation offense code results out of all citation results within each traffic type for each race
+# i.e.) number offense code A for perceived Latinx person in non-moving stop / all citations of Latinx people in non-moving stops
+
+#### NH ####
+
+df_nh<-df%>%
+  left_join(person_race)%>%
+  filter(stop_result_simple=="citation for infraction")%>%
+  group_by(traffic_violation_type, nh_race)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  select(nh_race, traffic_violation_type,  rfs_traffic_violation_code, statute_literal_25,
+         total, count, rate)%>%
+  arrange(nh_race, traffic_violation_type, -rate)%>%
+  group_by(nh_race, traffic_violation_type)%>%
+  slice(1:5)
+
+#### AIAN ####
+
+df_aian<-df%>%
+  left_join(person_race)%>%
+  filter(stop_result_simple=="citation for infraction" & aian_flag == 1)%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  mutate(nh_race="aian_aoic")%>%
+  ungroup()%>%
+  select(nh_race, traffic_violation_type, rfs_traffic_violation_code, statute_literal_25,  total, count, rate)%>%
+  arrange(nh_race, traffic_violation_type, -rate)
+
+#### NHPI ####
+
+df_nhpi<-df%>%
+  left_join(person_race)%>%
+  filter(stop_result_simple=="citation for infraction" & nhpi_flag == 1)%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="nhpi_aoic")%>%
+  select(nh_race, traffic_violation_type, rfs_traffic_violation_code, statute_literal_25,  total, count, rate)%>%
+  arrange(nh_race, traffic_violation_type, -rate)
+
+
+#### SSWANA ####
+
+df_sswana<-df%>%
+  left_join(person_race)%>%
+  filter(stop_result_simple=="citation for infraction" & sswana_flag == 1)%>%
+  group_by(traffic_violation_type)%>%
+  mutate(total=n())%>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))%>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+  mutate(count=n(),
+         rate=count/total*100)%>%
+  slice(1)%>%
+  ungroup()%>%
+  mutate(nh_race="sswana_aoic")%>%
+  select(nh_race, traffic_violation_type, rfs_traffic_violation_code, statute_literal_25,  total, count, rate)%>%
+  arrange(nh_race, traffic_violation_type, -rate)%>%
+  group_by(nh_race, traffic_violation_type)%>%
+  slice(1:5)
+
+#### Final combine of all race tables ####
+
+df_race<-rbind(df_nh, df_aian, df_nhpi, df_sswana)%>%
+  rename("race"="nh_race")
+
 

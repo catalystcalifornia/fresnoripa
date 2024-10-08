@@ -36,9 +36,7 @@ con <- connect_to_db("eci_fresno_ripa")
 
 # pull analysis tables for visualizing
 
-df<-dbGetQuery(con, "SELECT * FROM report_citation_traffic_type_race WHERE 
-traffic_violation_type ='Equipment'
-AND statute_literal_25 ilike '%OPR VEH:WINDOW OBSTRUCTED%'")%>%
+df<-dbGetQuery(con, "SELECT * FROM report_citation_traffic_type_race")%>%
     mutate(statute_literal_25 = str_to_title(statute_literal_25))%>% # convert text for offense to be title case
   mutate(race_label=ifelse(race %in% "latinx", "Latinx",
                            ifelse(race %in% "nh_aian", "AIAN NH",
@@ -53,6 +51,10 @@ AND statute_literal_25 ilike '%OPR VEH:WINDOW OBSTRUCTED%'")%>%
                                                                                    ifelse(race %in% 'nh_asian', "Asian", race))))))))))))%>%
   mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",statute_literal_25))%>%
   arrange(-rate)
+
+```
+
+```{r, include=FALSE}
 
 # visualize--------------------------
 
@@ -86,6 +88,32 @@ chart<-rdaBubblepop(
   yaxis_label = "''",
   export_data_label = list(pointFormat='{point.rate:.1f}%') 
 )
+
+```
+
+
+```{r}
+# TESTING FACETED HIGHCHARTER GRAPHS
+
+library(purrr)
+
+df<-df%>%
+  filter(!grepl("nh_nhpi|nh_aian|nh_sswana", race))%>%
+  filter(statute_literal_25!="Unsafe Speed:prevail Cond")%>%
+  group_by(race)%>%
+  slice(1:5)%>%
+  filter(total>=10)
+
+map(unique(df$race), function(x){
+  df %>% filter(race == x) %>% 
+    hchart(., "bar", hcaes(x = statute_literal_25, y = rate),
+           showInLegend = FALSE) %>% 
+    hc_plotOptions(column = list(stacking = "normal")) %>% 
+    hc_add_theme(hc_theme_smpl()) %>% 
+    hc_title(text = x) %>% 
+    hc_yAxis(title = list(text = ""))
+  }) %>% 
+  hw_grid(rowheight = 350) %>% htmltools::browsable()
 
 ```
 
