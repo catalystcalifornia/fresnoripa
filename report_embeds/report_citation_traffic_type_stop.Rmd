@@ -58,7 +58,7 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 
 # select just columns of interest, specify header and footer
 table<-df%>%
-  filter(!grepl("Moving", traffic_violation_type))%>% 
+  # filter(!grepl("Moving", traffic_violation_type))%>% 
   group_by(traffic_violation_type)%>%
   slice(1:3)%>%
   mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",
@@ -76,14 +76,7 @@ table<-df%>%
   tab_header(title=glue::glue("Fresno PD Makes Traffic Stops for Reasons That Do Not Improve Safety"),
              subtitle="Most common traffic citation results by traffic stop type")%>%
   # any data notes in footer
-  tab_footnote(footnote=html(caption_text),placement="left")
-
-
-
-#### Step 4: Add preset styling ####  
-# no modifications needed here unless you need to modify column widths
-
-  table<-table%>%
+  tab_footnote(footnote=html(caption_text),placement="left")%>%
   gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
   # if needed modify column widths here
   cols_width(1~px(175),2~px(160),
