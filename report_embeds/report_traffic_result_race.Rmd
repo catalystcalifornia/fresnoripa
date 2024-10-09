@@ -50,15 +50,9 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_race")%>%
 
 df_race<-df%>%
   filter(denom=="traffic_stop_race")%>%
-  filter(race!="nh_nhpi" & race != "nh_aian")
+  filter(race!="nh_nhpi" & race != "nh_aian")%>%
+filter(stop_result_simple=="Citation For Infraction")
 
-df_result<-df%>%
-  filter(denom=="traffic_result")%>%
-  group_by(race)%>%
-  arrange(-count) #want to look by count not rates
-
-df_pop<-df%>%
-  filter(denom=="population")
 
 ```
 
@@ -80,147 +74,21 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 tooltip_text <- "Out of 100 people Fresno PD stopped and perceived as <b>{point.race_label}</b> in officer-initiated traffic stops,  <b>{point.rate:.1f}%</b> of them were given a <b>{point.stop_result_simple}</b> as a result of the stop, or a total of <b>{point.count:.1f}</b> people."
 
+# visualize t--------------------------
 
-# Visualize the "traffic_race" denominator but as a table------------------------
 
 
-# select just columns of interest, specify header and footer
-table_race<-df_race%>%
-  filter(!grepl("nh_aian|nh_sswana|nh_nhpi", race))%>%
-group_by(race_label)%>%
-  slice(1:3)%>%
-  # ungroup()%>%
-    mutate(stop_result_simple = str_to_title(stop_result_simple))%>%
-  mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
-         "Race"=race_label,
-         " "=rate,
-         "Stop Result"=stop_result_simple)%>%
-    select("Race", "Stop Result","Count (%)"," ")%>%
-  gt()%>%
-  # question
-  tab_header(title=glue::glue("Fresno PD Makes Traffic Stops for Reasons That Do Not Improve Safety"),
-             subtitle="Most common traffic citation results by traffic stop type")%>%
-  # any data notes in footer
-  tab_footnote(footnote=html(caption_text),placement="left")%>%
-  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
-  # if needed modify column widths here
-  cols_width(1~px(175),2~px(160),
-             3~px(250))%>%
-  opt_align_table_header("left")%>%
-  opt_table_font(font=c(google_font(name="Inter"),locations=NULL,default_fonts()))%>%
-  tab_options(table.background.color="#FBFBFB",
-    column_labels.background.color = "transparent",
-    table.font.size = px(12),
-    column_labels.font.size = px(12),
-    heading.align = "left",
-    table.font.names = "Inter",
-    heading.title.font.size = px(20),
-    heading.subtitle.font.size = px(13),
-    heading.border.bottom.color = "transparent",
-    column_labels.border.bottom.width = px(3),
-    column_labels.border.bottom.color = "#DEDEDE",
-    table.border.top.color = "transparent",
-    table.border.bottom.color = "transparent",
-    table.border.bottom.width = px(3),
-    data_row.padding = px(3),
-    footnotes.font.size = px(10),
-    footnotes.border.bottom.color = "transparent",
-    table.align='center')%>%
-  tab_style(style=
-            cell_borders(sides=c("top","bottom"),color="#DEDEDE",style="solid",weight=px(1)),locations=cells_body())%>%
-   tab_style(style=
-            cell_text(font=c(google_font(name="Inter"),default_fonts()),weight=900, color="black"),locations=cells_title())
-
-# table_race
-
-# visualize the "traffic_race" denom with graph function--------------------------
-
-df_race<-df_race%>%
-  group_by(race_label)%>%
-  slice(1:3)
-
-chart_race<-rdaGroupedBar(
+chart_race<-rdaBubblepop(
   df_race,
   "race_label",
   "rate",
-  "stop_result_simple",
+  "count",
   title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
   subtitle = "Percent of officer-initiated traffic stops by stop result and perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   export_data_label = list(pointFormat='{point.rate:.1f}%') 
 )
-
-```
-
-```{r, include=FALSE}
-
-# Visualize the "traffic_result" denominator but as a table------------------------
-
-
-# select just columns of interest, specify header and footer
-table_result<-df_result%>%
-  filter(!grepl("nh_aian|nh_sswana|nh_nhpi", race))%>%
-group_by(race_label)%>%
-  slice(1:3)%>%
-  # ungroup()%>%
-    mutate(stop_result_simple = str_to_title(stop_result_simple))%>%
-  mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
-         "Race"=race_label,
-         " "=rate,
-         "Stop Result"=stop_result_simple)%>%
-    select("Race", "Stop Result","Count (%)"," ")%>%
-  gt()%>%
-  # question
-  tab_header(title=glue::glue("Fresno PD Makes Traffic Stops for Reasons That Do Not Improve Safety"),
-             subtitle="Most common traffic citation results by traffic stop type")%>%
-  # any data notes in footer
-  tab_footnote(footnote=html(caption_text),placement="left")%>%
-  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
-  # if needed modify column widths here
-  cols_width(1~px(175),2~px(160),
-             3~px(250))%>%
-  opt_align_table_header("left")%>%
-  opt_table_font(font=c(google_font(name="Inter"),locations=NULL,default_fonts()))%>%
-  tab_options(table.background.color="#FBFBFB",
-    column_labels.background.color = "transparent",
-    table.font.size = px(12),
-    column_labels.font.size = px(12),
-    heading.align = "left",
-    table.font.names = "Inter",
-    heading.title.font.size = px(20),
-    heading.subtitle.font.size = px(13),
-    heading.border.bottom.color = "transparent",
-    column_labels.border.bottom.width = px(3),
-    column_labels.border.bottom.color = "#DEDEDE",
-    table.border.top.color = "transparent",
-    table.border.bottom.color = "transparent",
-    table.border.bottom.width = px(3),
-    data_row.padding = px(3),
-    footnotes.font.size = px(10),
-    footnotes.border.bottom.color = "transparent",
-    table.align='center')%>%
-  tab_style(style=
-            cell_borders(sides=c("top","bottom"),color="#DEDEDE",style="solid",weight=px(1)),locations=cells_body())%>%
-   tab_style(style=
-            cell_text(font=c(google_font(name="Inter"),default_fonts()),weight=900, color="black"),locations=cells_title())
-
-# table_result
-
-# Visualize result denom with chart function ----------------------------
-
-chart_result<-rdaStackedBar(
-  df_result,
-  "race_label",
-  "rate",
-  "stop_result_simple",
-  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
-  subtitle = "Percent of officer-initiated traffic stops by stop result",
-  tooltip_text = tooltip_text,
-  caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%') 
-)
-
 
 ```
 
