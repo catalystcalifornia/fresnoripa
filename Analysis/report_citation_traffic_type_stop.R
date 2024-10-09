@@ -58,7 +58,7 @@ df1<-df%>%
 
 # set column types
 charvect = rep('varchar', ncol(df1)) 
-charvect <- replace(charvect, c(4,5,6), c("numeric"))
+charvect <- replace(charvect, c(3,4,5), c("numeric"))
 
 # add df colnames to the character vector
 
