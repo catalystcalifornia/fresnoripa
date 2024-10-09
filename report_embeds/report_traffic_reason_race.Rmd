@@ -52,11 +52,12 @@ mutate(race_label = case_when(
 
 df_race<-df%>%
   filter(denom=="traffic_stop_race" &
-            total >= 10) # I think this denominator is the best one for visualizing
+            total >= 10)%>% # I think this denominator is the best one for visualizing
+filter(statute_literal_25 !="UNSAFE SPEED:PREVAIL COND") 
 
 
 df_reason<-df%>%
-  filter(denom=="traffic_reason" )
+  filter(denom=="traffic_reason" & count >=10)
 
 # visualize RACE denom--------------------------
 
@@ -76,90 +77,19 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
 
 
-
 # run function
 
-chart_race<-rdaGroupedBar(
+chart_race<-rdaStackedBar(
   df_race,
   "race",
   "rate",
   "statute_literal_25",
-  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
-  subtitle = "Percent of officer-initiated traffic stops by stop result",
+  title = "Denom 1: Out of all reasons within each racial group",
+  subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
-
-chart_race
-
-# TABLE option
-
-
-# select just columns of interest, specify header and footer
-table<-df_race%>%
-  group_by(race)%>%
-  # slice(1:3)%>%
-  # mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",
-  #                                  ifelse(statute_literal_25 %in% "Display Lic Plates Wrong", "Incorrect License Plate Displayed",
-  #                                         ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
-  #                                                ifelse(statute_literal_25 %in% "Unlaw Dirct Drv Opr/Hwy", "Unlawful Direction of Driving on a Highway", statute_literal_25)))))%>%
-  mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
-         " "=rate,
-         "Traffic Stop Reason"=statute_literal_25)%>%
-    ungroup()%>%
-    select(race, "Traffic Stop Reason","Count (%)"," ")%>%
-  gt()%>%
-  # question
-  tab_header(title=glue::glue("Fresno PD Makes Traffic Stops for Reasons That Do Not Improve Safety"),
-             subtitle="Most common traffic citation results by traffic stop type")%>%
-  # any data notes in footer
-  tab_footnote(footnote=html(caption_text),placement="left")
-
-
-
-
-
-  table<-table%>%
-  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
-  # if needed modify column widths here
-  cols_width(1~px(175),2~px(160),
-             3~px(250))%>%
-  opt_align_table_header("left")%>%
-  opt_table_font(font=c(google_font(name="Inter"),locations=NULL,default_fonts()))%>%
-  tab_options(table.background.color="#FBFBFB",
-    column_labels.background.color = "transparent",
-    table.font.size = px(12),
-    column_labels.font.size = px(12),
-    heading.align = "left",
-    table.font.names = "Inter",
-    heading.title.font.size = px(20),
-    heading.subtitle.font.size = px(13),
-    heading.border.bottom.color = "transparent",
-    column_labels.border.bottom.width = px(3),
-    column_labels.border.bottom.color = "#DEDEDE",
-    table.border.top.color = "transparent",
-    table.border.bottom.color = "transparent",
-    table.border.bottom.width = px(3),
-    data_row.padding = px(3),
-    footnotes.font.size = px(10),
-    footnotes.border.bottom.color = "transparent",
-    table.align='center')%>%
-  tab_style(style=
-            cell_borders(sides=c("top","bottom"),color="#DEDEDE",style="solid",weight=px(1)),locations=cells_body())%>%
-   tab_style(style=
-            cell_text(font=c(google_font(name="Inter"),default_fonts()),weight=900, color="black"),locations=cells_title())
-
-
-
-
-
-
-
-
-
-
-table
 
 
 
@@ -187,19 +117,21 @@ chart_reason<-rdaStackedBar(
   "statute_literal_25",
   "rate",
   "race",
-  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
-  subtitle = "Percent of officer-initiated traffic stops by stop result",
+  title = "Denom 2: Out of all people stopped per stop reason",
+  subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
   tooltip_text = tooltip_text,
   caption = "caption_text",
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
-chart_reason
 
 ```
 
 ```{r, echo=FALSE}
-chart
+
+chart_race
+
+chart_reason
 ```
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
