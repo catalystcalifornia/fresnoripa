@@ -113,7 +113,7 @@ df1<-rbind(df1, df1_aian, df1_nhpi, df1_nhpi)%>%
   rename("race"="nh_race")
 
 # Sub-Analysis 2---------------------
-# Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
+# Table of top 3-5 traffic code reasons by race 
 
 #### Denom 1: Per racial group. i.e.)  % of Latinx stopped for registration / all Latinx traffic stops ####
 

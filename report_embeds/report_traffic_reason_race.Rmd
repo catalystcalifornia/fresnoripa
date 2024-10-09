@@ -44,23 +44,53 @@ mutate(race_label = case_when(
     race == 'nhpi_aoic' ~ 'NHPI',
    race == 'nh_nhpi' ~ 'NHPI NH',
     race == 'sswana_aoic' ~ 'SWANA/SA', 
-   race == 'nh_sswaba' ~ 'SWANA/SA NH', 
+   race == 'nh_sswana' ~ 'SWANA/SA NH', 
     TRUE ~ as.character(race)))%>%
-  filter(count>=10) # filter to where at least 10 people were stopped
+  mutate(statute_literal_25 = case_when(
+    statute_literal_25 == 'UNSAFE SPEED:PREVAIL COND' ~ "Unsafe Speed while Driving Vehicle", 
+    statute_literal_25 =='NO REG:VEH/TRAILER/ETC' ~ 'No Vehicle Registration',
+    statute_literal_25 =='OPR VEH:WINDOW OBSTRUCTED' ~ 'Obstructed Window',
+    statute_literal_25 == 'FAIL STOP LINE/ETC AT RED' ~ 'Failure to Stop at Red Light',
+        # statute_literal_25 == 'USE CELLPH W/DRIV W/O HFD' ~ "Using Cellphone While Driving Without Handheld", 
+        #     statute_literal_25 == 'NO HND HLD DEVICE W/DRIVE' ~ "Using Cellphone While Driving Without Handheld", 
 
-# split separate dfs for each denominator option
+
+    TRUE ~ as.character(statute_literal_25)))
+
+
+# split separate dfs for each denominator option-----
 
 df_race<-df%>%
   filter(denom=="traffic_stop_race" &
-            total >= 10)%>% # I think this denominator is the best one for visualizing
-filter(statute_literal_25 !="UNSAFE SPEED:PREVAIL COND") 
+            count >= 10) # I think this denominator is the best one for visualizing
+
+# Combine the two 'using cell phone with no handheld device' citations into one -----
+
+summed <- df_race %>%
+  select(race, denom, statute_literal_25, total, count, race_label)%>%
+  filter(statute_literal_25 %in% c("USE CELLPH W/DRIV W/O HFD", "NO HND HLD DEVICE W/DRIVE"))%>%
+  group_by(race, denom) %>%
+  summarise(statute_literal_25= "Use of Cellphone with No Handheld Device (combined)",
+            total=total,
+            count = sum(count),
+            rate=count/total*100,
+            
+            race_label=race_label)%>%
+  slice(1)
+
+# Append these summed rows to the original data frame
+df_combined <- rbind(df_race, summed)
+
+# rearrange df and remove the previous separate cell phone citations
+
+df_combined<-df_combined%>%
+  ungroup()%>%
+  filter(!grepl("USE CELLPH W/DRIV W/O HFD|NO HND HLD DEVICE W/DRIVE", statute_literal_25))%>%
+  arrange(race, -rate)
 
 
-df_reason<-df%>%
-  filter(denom=="traffic_reason" & count >=10)
 
-# visualize RACE denom--------------------------
-
+# visualize--------------------------
 
 # create caption 
 
@@ -80,47 +110,14 @@ tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceive
 # run function
 
 chart_race<-rdaStackedBar(
-  df_race,
-  "race",
+  df_combined,
+  "race_label",
   "rate",
   "statute_literal_25",
-  title = "Denom 1: Out of all reasons within each racial group",
+  title = "Fresno PD Stops BIPOC People in Traffic for Reasons Not Related to Safety",
   subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%')
-)
-
-
-
-
-#Visualize REASON denom------------------------------------------
-
-# create caption 
-
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
-
-methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
-
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
-
-caption_text <- paste("<br>", sourcenote, methodnote)
-
-# create tooltip text
-
-tooltip_text <- "Out of all of the people stopped in traffic for the reason of <b>{point.statute_literal_25}</b>,  <b>{point.rate:.1f}%</b> of those people were perceived by Fresno PD as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people."
-
-
-
-chart_reason<-rdaStackedBar(
-  df_reason,
-  "statute_literal_25",
-  "rate",
-  "race",
-  title = "Denom 2: Out of all people stopped per stop reason",
-  subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
-  tooltip_text = tooltip_text,
-  caption = "caption_text",
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
@@ -131,7 +128,6 @@ chart_reason<-rdaStackedBar(
 
 chart_race
 
-chart_reason
 ```
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
