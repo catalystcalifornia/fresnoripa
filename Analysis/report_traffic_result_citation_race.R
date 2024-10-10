@@ -50,7 +50,7 @@ names(df) <- gsub(x = names(df), pattern = "\\.x", replacement = "")
 # Sub-Analysis 1---------------------
 # Table of top 3-5 traffic code results by race
 
-#### Denom 1: all citations within each racial group ####
+#### Denom 1: all citations within citations for each racial group ####
 
 ### NH ###
 
@@ -200,11 +200,11 @@ df1<-rbind(df1.1, df1.2)
 # Sub-Analysis 2---------------------
 # % of traffic stops resulting in 'driving without license' citation by race
 
-#### Denom: Out of all stops with citation result. i.e.)  % of Latinx stopped resulting in driving without license / all stops resulting in drive without license citation ####
+#### Denom 1: Out of all stops with citation result. i.e.)  % of Latinx stopped resulting in driving without license / all stops resulting in drive without license citation ####
 
 ##### NH #####
 
-df2<-df%>%
+df2.1<-df%>%
   filter(offense_statute=="12500(A)" |
            offense_statute=="12500(B)" |
            offense_statute=="12500(C)" |
@@ -217,12 +217,80 @@ df2<-df%>%
           denom="citation_result")%>%
   slice(1)%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
-  arrange(-rate)%>%
+  arrange(-rate)
+
+##### AIAN / NHPI #####
+
+# There are no citations resulting in driving without a license for AIAN or NHPI
+
+
+#### SSWANA ####
+
+df2.1_sswana<-df%>%
+  filter(offense_statute=="12500(A)" |
+           offense_statute=="12500(B)" |
+           offense_statute=="12500(C)" |
+           offense_statute=="12500(D)"|
+           offense_statute=="12951(A)")%>%
+  mutate(total=n())%>%
+  filter(sswana_flag==1)%>%
+  mutate(count=n(),
+         rate=count/total*100,
+         nh_race="sswana_aoic",
+         denom="citation_result")%>%
+  slice(1)%>%
+  select(nh_race, denom, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+
+#### Denom 2: Out of all traffic stops per racial group:  % of Latinx stopped resulting in driving without license / all Latinx citations ####
+
+##### NH #####
+
+df2.2<-df%>%
+  group_by(nh_race)%>%
+  mutate(total=n())%>%
+  filter(offense_statute=="12500(A)" |
+           offense_statute=="12500(B)" |
+           offense_statute=="12500(C)" |
+           offense_statute=="12500(D)"|
+           offense_statute=="12951(A)")%>%
+    mutate(count=n(),
+         rate=count/total*100,
+         denom="citation_race")%>%
+  slice(1)%>%
+  select(nh_race, denom, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+
+##### AIAN / NHPI #####
+
+# There are no citations resulting in driving without a license for AIAN or NHPI
+
+#### SSWANA ####
+
+df2.2_sswana<-df%>%
+  filter(sswana_flag==1)%>%
+  mutate(total=n())%>%
+  filter(offense_statute=="12500(A)" |
+           offense_statute=="12500(B)" |
+           offense_statute=="12500(C)" |
+           offense_statute=="12500(D)"|
+           offense_statute=="12951(A)")%>%
+  mutate(count=n(),
+         rate=count/total*100,
+         nh_race="sswana_aoic",
+         denom="citation_race")%>%
+  slice(1)%>%
+  select(nh_race, denom, statute_literal_25, total, count,rate)%>%
+  arrange(-rate)
+
+
+#### Combine all tables and denominators for sub-analysis 2 ####
+
+df2<-rbind(df2.1, df2.1_sswana, df2.2, df2.2_sswana)%>%
   rename(race=nh_race)
 
-### AIAN/NHPI/SSWANA ###
-
-#  For AIAN/NHPI/SSWANA there are no traffic stops resulting in a driving without license citation
 
 # Push all tables to postgres------------------------------
 
@@ -246,8 +314,8 @@ dbWriteTable(con,  "report_traffic_result_citation_race", df1,
 table_comment <- paste0("COMMENT ON TABLE report_traffic_result_citation_race  IS 'Analyzing officer-initiated traffic stops by citation results for each racial group. Note
 this analysis calculates rates with two denominator options: 1) out of all citations made within each racial group and 2) out of all stops made within each citation result. Which denominator is
 used for which rate calculation is denoted by the denom column in the tbale.
-R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_reason_race.R
-QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
+R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_citation_race.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_citation_race.docx';
 
 COMMENT ON COLUMN report_traffic_result_citation_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_traffic_result_citation_race.denom IS 'Which denominator was used in rate calc. if denom==citation_race that means the denominator is all citations within the racial group. If denom == citation_result that means out of all people stopped with that citation result';
@@ -280,12 +348,12 @@ dbWriteTable(con,  "report_traffic_result_citation_license_race", df2,
 table_comment <- paste0("COMMENT ON TABLE report_traffic_result_citation_license_race  IS 'Analyzing officer-initiated traffic stops by traffic stops that resulted in a driving without a license citation
 for each racial group.
 The denominator used for this analysis is out of all people stopped with a traffic stop that resulted in a driving without a license citation.
-R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_reason_race.R
-QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
+R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_citation_race.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_citation_race.docx';
 
 COMMENT ON COLUMN report_traffic_result_citation_license_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.denom IS 'Which denominator is used for the Total and Rate column. For this analysis the denominator
-is out of all people stopped with a driving without license citation';
+is either 1) out of all people stopped with a driving without license citation (denom==citation_result) OR out of all citations within each racial group (denom==citation_race)';
 COMMENT ON COLUMN report_traffic_result_citation_race.statute_literal_25 IS 'Text description of the traffic stop citation result';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.total IS 'Denominator in rate calc which is noted in the denom column.';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.count IS 'Count of officer-initiated traffic stops that resulted in a drive without license citation for each racial group (numerator for rate calc)';
