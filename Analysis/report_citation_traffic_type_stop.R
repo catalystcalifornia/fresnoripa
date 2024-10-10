@@ -200,7 +200,7 @@ QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_citation_tr
 
 COMMENT ON COLUMN report_citation_traffic_type_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_citation_traffic_type_race.traffic_violation_type IS 'Traffic stop type (moving, nonmoving, equipment)';
-COMMENT ON COLUMN report_citation_traffic_type_race.statute_literal_25 IS 'Text description for accompnaying offense code';
+COMMENT ON COLUMN report_citation_traffic_type_race.statute_literal_25 IS 'Text description for accompanying offense code';
 COMMENT ON COLUMN report_citation_traffic_type_race.total IS 'Total number (denominator in rate calc) of traffic stops that resulted in a citation within each traffic stop type';
 COMMENT ON COLUMN report_citation_traffic_type_race.count IS 'Count of each specific citation offense code within each traffic stop type';
 COMMENT ON COLUMN report_citation_traffic_type_race.rate IS 'Rate of Rate of traffic stops resulting in a citation by each citation code out of all traffic stops resulting in a citation
@@ -292,7 +292,7 @@ df_race<-rbind(df_nh, df_aian, df_nhpi, df_sswana)%>%
 
 # set column types
 charvect = rep('varchar', ncol(df_race)) 
-charvect <- replace(charvect, c(5,6,7), c("numeric"))
+charvect <- replace(charvect, c(3,4,5), c("numeric"))
 
 # add df colnames to the character vector
 
@@ -305,19 +305,18 @@ dbWriteTable(con,  "report_citation_traffic_race", df_race,
 
 # # write comment to table, and column metadata
 
-table_comment <- paste0("COMMENT ON TABLE report_citation_traffic_race  IS 'Analyzing top 5 traffic citation rates given as a result of a traffic stop within each traffic stop type (moving, nonmoving, equipment)
+table_comment <- paste0("COMMENT ON TABLE report_citation_traffic_race  IS 'Analyzing traffic citation rates given as a result of a traffic stop 
 for each perceived racial group.
-The denominator (total column) for this analysis is all traffic stops resulting in a citation within each traffic stop type
-for each perceived racial group.
+The denominator (total column) for this analysis is all traffic stops resulting in a citation within each perceived racial group.
 R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_citation_traffic_type_stop.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_citation_traffic_type_stop.docx';
 
 COMMENT ON COLUMN report_citation_traffic_race.race IS 'Perceived race';
-COMMENT ON COLUMN report_citation_traffic_race.statute_literal_25 IS 'Text description for accompnaying offense code';
-COMMENT ON COLUMN report_citation_traffic_race.total IS 'Total number (denominator in rate calc) of traffic stops that resulted in a citation within each traffic stop type';
-COMMENT ON COLUMN report_citation_traffic_race.count IS 'Count of each specific citation offense code within each traffic stop type';
+COMMENT ON COLUMN report_citation_traffic_race.statute_literal_25 IS 'Text description for accompanying offense code';
+COMMENT ON COLUMN report_citation_traffic_race.total IS 'Total number (denominator in rate calc) of traffic stops that resulted in a citation within each racial group';
+COMMENT ON COLUMN report_citation_traffic_race.count IS 'Count of each specific citation offense code within each racial group';
 COMMENT ON COLUMN report_citation_traffic_race.rate IS 'Rate of Rate of traffic stops resulting in a citation by each citation code out of all traffic stops resulting in a citation
-within each traffic stop type';
+within each racial group';
 ")
 
 # send table comment + column metadata
