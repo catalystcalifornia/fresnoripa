@@ -36,7 +36,7 @@ con <- connect_to_db("eci_fresno_ripa")
 
 # pull analysis tables for visualizing
 
-df<-dbGetQuery(con, "SELECT * FROM report_citation_traffic_race")%>%
+df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_race")%>%
     mutate(statute_literal_25 = str_to_title(statute_literal_25))%>% # convert text for offense to be title case
   mutate(race_label=ifelse(race %in% "latinx", "Latinx",
                            ifelse(race %in% "nh_aian", "AIAN NH",
