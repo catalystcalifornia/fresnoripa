@@ -29,29 +29,27 @@ con <- connect_to_db("eci_fresno_ripa")
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_race")%>%
   mutate(statute_literal_25 = str_to_title(statute_literal_25))%>%
-  filter(race!="nh_sswana")
-  # mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed",
-  #                                  "Obstructed Window",
-  #                              ifelse(statute_literal_25 %in% "Drive W/O License", "Driving Without License",
-  #   ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
-  #                    ifelse(statute_literal_25 %in% "Use Cellph W/Driv W/O Hfd", "Using Cellphone Without Handheld Device",
-  #                           ifelse(statute_literal_25 %in% "No Hnd Hld Device W/Drive",
-  #                                  "Using Cellphone Without Handheld Device", statute_literal_25))))))%>%
-   # mutate(race = case_when(
-   #  race == 'latinx' ~ "Latinx", 
-   #  race =='nh_white' ~ 'White',
-   #  race =='nh_black' ~ 'Black',
-   #  race == 'aian' ~ 'AIAN',
-   #  race == 'nhpi' ~ 'NHPI',
-   #  race == 'nh_twoormor' ~ 'Multiracial',
-   #   race == 'nh_sswana' ~ 'SWANA/SA', 
-   #   race == 'sswana_aoic' ~ 'SWANA/SA', 
-   #  race=='nh_asian' ~ 'Asian',
-   #  TRUE ~ as.character(race)))
+  filter(race!="nh_sswana")%>%
+  mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed",
+                                   "Obstructed Window",
+                               ifelse(statute_literal_25 %in% "Drive W/O License", "Driving Without License",
+    ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
+                     ifelse(statute_literal_25 %in% "Use Cellph W/Driv W/O Hfd", "Using Cellphone Without Handheld Device",
+                            ifelse(statute_literal_25 %in% "No Hnd Hld Device W/Drive",
+                                   "Using Cellphone Without Handheld Device", statute_literal_25))))))%>%
+   mutate(race = case_when(
+    race == 'latinx' ~ "Latinx",
+    race =='nh_white' ~ 'White',
+    race =='nh_black' ~ 'Black',
+    race == 'aian' ~ 'AIAN',
+    race == 'nhpi' ~ 'NHPI',
+    race == 'nh_twoormor' ~ 'Multiracial',
+     race == 'sswana_aoic' ~ 'SWANA/SA',
+    race=='nh_asian' ~ 'Asian',
+    TRUE ~ as.character(race)))
 
 # Aggregate the citations 'use of cellphone w drive without hfd' and 'no hnd hld device w/ drive' as they seem to basically be the same thing
 
-  
 
 # split up separate dfs for each denominator option
 
@@ -132,11 +130,54 @@ chart_result<-rdaStackedBar(
 
 ```
 
-```{r, echo=FALSE}
-chart_race
 
-chart_result
+```{r, echo=FALSE, message=FALSE}
+
+# TESTING FACETED HIGHCHARTER GRAPHS: RACE DENOMINATOR
+
+library(purrr)
+
+map(unique(df_race$race), function(x){
+  df_race %>% filter(race == x) %>% 
+    hchart(., "bar", hcaes(x = statute_literal_25, y = rate),
+           showInLegend = FALSE,
+           , color = "#3A207D") %>% 
+    hc_plotOptions(column = list(stacking = "normal")) %>% 
+    hc_add_theme(hc_theme_smpl()) %>% 
+    # hc_title(text = "Fresno PD Gives Citations for Traffic Stops that Do Not Improve Safety") %>% 
+    hc_title(text=paste0("Rate of traffic stops that result in a citation for people perceived as ",x))%>%
+    hc_yAxis(title = list(text = ""))%>%
+        hc_xAxis(title = list(text = ""))
+
+  }) %>% 
+  hw_grid(rowheight = 350) %>% htmltools::browsable()
+
 ```
+
+
+```{r, include=FALSE}
+
+# TESTING FACETED HIGHCHARTER GRAPHS: RESULT DENOMINATOR
+
+library(purrr)
+
+map(unique(df_result$statute_literal_25), function(x){
+  df_result %>% filter(statute_literal_25 == x) %>% 
+    hchart(., "bar", hcaes(x = race, y = rate),
+           showInLegend = FALSE,
+           color="#3A207D") %>% 
+    hc_plotOptions(column = list(stacking = "normal")) %>% 
+    hc_add_theme(hc_theme_smpl()) %>% 
+    hc_title(text = x) %>% 
+    hc_yAxis(title = list(text = ""))%>%
+    hc_xAxis(title=list(text=""))
+  }) %>% 
+  hw_grid(rowheight = 350) %>% htmltools::browsable()
+
+
+
+```
+
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
   for (let i = 0; i < widg.length; i++) { //loop through

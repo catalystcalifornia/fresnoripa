@@ -92,32 +92,6 @@ chart<-rdaBubblepop(
 
 ```
 
-
-```{r, include=FALSE}
-# TESTING FACETED HIGHCHARTER GRAPHS
-
-library(purrr)
-
-df<-df%>%
-  filter(!grepl("nh_nhpi|nh_aian|nh_sswana", race))%>%
-  filter(statute_literal_25!="Unsafe Speed:prevail Cond")%>%
-  group_by(race)%>%
-  slice(1:5)%>%
-  filter(total>=10)
-
-map(unique(df$race), function(x){
-  df %>% filter(race == x) %>% 
-    hchart(., "bar", hcaes(x = statute_literal_25, y = rate),
-           showInLegend = FALSE) %>% 
-    hc_plotOptions(column = list(stacking = "normal")) %>% 
-    hc_add_theme(hc_theme_smpl()) %>% 
-    hc_title(text = x) %>% 
-    hc_yAxis(title = list(text = ""))
-  }) %>% 
-  hw_grid(rowheight = 350) %>% htmltools::browsable()
-
-```
-
 ```{r, echo=FALSE}
 
 chart
