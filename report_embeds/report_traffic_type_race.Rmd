@@ -43,23 +43,18 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
                                                                      ifelse(race %in% "nhpi_aoic", "NHPI",
                                                                             ifelse(race %in% "sswana_aoic","SWANA/SA",
                                                                                    
- ifelse(race %in% "nh_asian_wo_sa","Asian NH w/o South Asian",
+ ifelse(race %in% "nh_asian_wo_sa","Asian",
                                                                                    ifelse(race %in% 'nh_asian', "Asian", race)))))))))))))%>%
   filter(race!="nh_sswana")
 
-# filter dataframes with different denominators to visualize and make decision on which embed to use for report
+# filter dataframes for population denominator which is the one I want to visualize
 
-df_race<-df%>%
-  filter(denom=="traffic_race" & total >=10)
-# %>%
-#   filter(race!="nh_nhpi" & race != "nh_aian")
-
-
-df_type<-df%>%
-  filter(denom=="traffic_type")
 
 df_pop<-df%>%
-  filter(denom=="population_per_1k")
+  filter(denom=="population_per_1k")%>%
+  filter(!grepl("nh_aian|nh_nhpi", race))%>%
+  filter(race!="nh_asian")%>% # I want to use the Asian calc that omits South Asian from the denominator
+  arrange( -rate)
 
 
 
@@ -81,56 +76,27 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 people Fresno PD stopped and perceived as <b>{point.race_label}</b> in officer-initiated traffic stops,  <b>{point.rate:.1f}%</b> of them were given a <b>{point.stop_result_simple}</b> as a result of the stop, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of 1,000 <b>{point.race_label}</b> people who live in Fresno City, Fresno PD stopped <b>{point.rate:.1f}</b> people they perceived as <b>{point.race_label}</b> in a <b>{point.traffic_violation_type} traffic stop<b>,  or a total of <b>{point.count:.1f}</b> people."
 
 # visualize  --------------------------
 
+# Deciding to move forward with the pop denominator
 
-
-chart_race<-rdaGroupedBar(
-  df_race,
+chart_pop<-rdaStackedBar(
+  df_pop,
   "race_label",
   "rate",
   "traffic_violation_type",
-  title = "Denom 1: Out of all traffic stops of each race",
-  subtitle = "Percent of officer-initiated traffic stops by traffic stop type and perceived race",
+  title = "The Black Population in Fresno City is Disproportionately Burdened by Traffic Stops made by Fresno PD Across All Types of Traffic Stops",
+  subtitle = "Rate of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population",
   tooltip_text = tooltip_text,
   caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%') 
-)
-
-chart_type<-rdaGroupedBar(
-  df_type,
-  "race_label",
-  "rate",
-  "traffic_violation_type",
-  title = "Denom 2: Out of all stops in each traffic stop type",
-  subtitle = "Percent of officer-initiated traffic stops by traffic stop type and perceived race",
-  tooltip_text = tooltip_text,
-  caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%') 
-)
-
-
-chart_pop<-rdaGroupedBar(
-  df_type,
-  "race_label",
-  "rate",
-  "traffic_violation_type",
-  title = "Denom 3: Per 1k total population of each racial group",
-  subtitle = "Percent of officer-initiated traffic stops by traffic stop type and perceived race",
-  tooltip_text = tooltip_text,
-  caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%') 
+  export_data_label = list(pointFormat='{point.rate:.1f}') 
 )
 
 ```
 
 ```{r, echo=FALSE}
-
-chart_race
-
-chart_type
 
 chart_pop
 
