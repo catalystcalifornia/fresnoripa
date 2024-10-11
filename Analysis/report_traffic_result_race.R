@@ -179,8 +179,6 @@ df2<-rbind(df2, df2_aian, df2_nhpi, df2_sswana)%>%
 
 #### Denominator 3: Per 1k total population for each racial group ####
 
-#### ADD DENOMIATOR THAT IS ASIAN WITHOUT SA 
-
 ###### NH ######
 
 df3<-df%>%
