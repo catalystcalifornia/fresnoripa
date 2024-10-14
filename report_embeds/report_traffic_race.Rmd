@@ -70,7 +70,7 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.1f}</b> people stopped."
+tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
 
 # Visualizing as table --------------------------
 
@@ -83,7 +83,7 @@ chart_race<-rdaBubblepop(
   subtitle="Officer-initiated traffic stops by perceived race per 1K people of same race",
   tooltip_text=tooltip_text,
   caption=caption_text,
-  export_data_label=list(pointFormat='{point.pop_1k_rate:.1f}per 1K'))
+  export_data_label=list(pointFormat='{point.pop_1k_rate:.1f} per 1K'))
 
 ```
 
