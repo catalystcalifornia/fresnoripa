@@ -50,18 +50,13 @@ orange <- "#F25922"
 
 ```
 
-*The San Diego Police Department criminalizes communities of color, especially Black people, in Southeast San Diego by routinely labeling them as gang members. This practice inflicts devastating racially biased harms, undermines community safety, and wastes tremendous public dollars.*  
+*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color and immigrants. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
 
 
 # ACKNOWLEDGEMENTS
 
 
 # BRIEF METHODOLOGY
-
-This report evaluates SDPD gang profiling in the City of San Diego by analyzing data collected by SDPD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015.  For each stop made by law enforcement, RIPA data includes key information that can be assessed for evidence of racial or identify profiling—including characteristics about the person stopped (e.g., race, gender, and age), the stop location, the length of the stop, the reason for the stop, and the result of the stop. 
-
-Using RIPA data, this report examines gang profiling by using the officer assignment field (under “gang enforcement”) which we find underrepresents total gang enforcement activity being done by SDPD, and stop result filed (under “field interview card”). 
-
 
 # FINDINGS
 
@@ -93,8 +88,7 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 
 ### A. Officers use minor reasons to pull over people of color
 
-```{r stacked-chart, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
-```
+
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
 ```
@@ -102,12 +96,15 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
+```{r table, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
+```
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
 ```
 
 ```{r facet, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
+
 
 
 ### C. Furthermore, use of citations is biased against people of color 
@@ -156,24 +153,7 @@ Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
 
 Hillary Khan, Data Architect, Catalyst California
 
-**Authors**
-
-Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
-
-Chauncee Smith, Associate Director, Reimagine Justice & Safety, Catalyst California
-
-Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
-
-**Communications**
-
-Ron Simms, Jr., Associate Director, Communications, Catalyst California
-
-Roxanna Reyes, Senior Digital Communications Associate, Catalyst California
-
-**Video Storytelling**
-
-[List videographer, and other Pillars would like to have acknowledged]
-
+Alicia Võ, Research and Data Analyst
 
 # METHODOLOGY
 

@@ -84,7 +84,7 @@ chart_race<-rdaBubblepop(
   "rate",
   "count",
   title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
-  subtitle = "Percent of officer-initiated traffic stops by stop result and perceived race",
+  subtitle = "Percent of officer-initiated traffic stops resulting in a citation by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   export_data_label = list(pointFormat='{point.rate:.1f}%') 

@@ -90,7 +90,7 @@ chart<-rdaBubblepop(
   "rate",
   count,
   title = "Fresno PD Is Twice as Likely to Cite Perceived Latinx Drivers for Driving Without a License Compared to Perceived White Drivers",
-  subtitle = "Rate of traffic stops that result in a citation for driving without a license",
+  subtitle = "Rate of traffic stops that result in a citation for driving without a license by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   yaxis_label = "''",

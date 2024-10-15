@@ -98,7 +98,7 @@ table<-df%>%
     select("Traffic Violation Type", "Traffic Stop Citation Result","Count (%)"," ")%>%
   gt()%>%
   # question
-  tab_header(title=glue::glue("Fresno PD gives Traffic Citations that Do Not Require Police or Advance Public Safety"),
+  tab_header(title=glue::glue("Fresno PD gives Traffic Citations for Stops that Do Not Require Police or Advance Public Safety"),
              subtitle="Most common traffic citation results by traffic stop type")%>%
   # any data notes in footer
   tab_footnote(footnote=html(caption_text),placement="left")%>%

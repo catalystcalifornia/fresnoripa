@@ -81,7 +81,7 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 tooltip_text <- "Out of 100 people perceived by Fresno PD as <b>{point.race}</b> and stopped for a traffic stop that resulted in a citation, <b>{point.rate:.1f}%</b> were stopped for a <b>{point.statute_literal_25} citation</b>, or a total of <b>{point.count:.1f}</b> people."
 # run function
 
-chart_race<-rdaStackedBar(
+chart_race<-rdaGroupedBar(
   df_race,
   "race",
   "rate",
@@ -93,7 +93,7 @@ chart_race<-rdaStackedBar(
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
-
+chart_race
 
 # visualize DENOM 2: RESULT--------------------------
 
@@ -114,7 +114,7 @@ tooltip_text <- "Out of 100 people stopped in officer-initiated traffic stops th
 
 # run function
 
-chart_result<-rdaStackedBar(
+chart_result<-rdaGroupedBar(
   df_result,
   "statute_literal_25",
   "rate",
@@ -126,7 +126,7 @@ chart_result<-rdaStackedBar(
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
-
+chart_result
 
 ```
 
@@ -145,7 +145,7 @@ map(unique(df_race$race), function(x){
     hc_plotOptions(column = list(stacking = "normal")) %>% 
     hc_add_theme(hc_theme_smpl()) %>% 
     # hc_title(text = "Fresno PD Gives Citations for Traffic Stops that Do Not Improve Safety") %>% 
-    hc_title(text=paste0("Rate of traffic stops that result in a citation for people perceived as ",x))%>%
+    hc_title(text=paste0("Rate of Traffic Stops by Citation Result for People Perceived by Fresno PD as ",x))%>%
     hc_yAxis(title = list(text = ""))%>%
         hc_xAxis(title = list(text = ""))
 
