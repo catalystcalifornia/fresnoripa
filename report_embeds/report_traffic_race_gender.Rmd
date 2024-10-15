@@ -1,0 +1,106 @@
+---
+title: ""
+output:
+  html_document:
+    css: "W:\\RDA Team\\R\\cc_charts.css"
+---
+<!-- link to Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+```{r, include=FALSE}
+
+# set up -----------------------------
+
+library(RPostgreSQL)
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+library(devtools)
+remotes::install_github("catalystcalifornia/rdaCharts")
+library(rdaCharts)
+# library(stringr)
+library(htmltools) 
+# library(htmlwidgets)
+# remotes::install_github("jthomasmock/gtExtras")
+library(gtExtras)
+library(gt)
+library(extrafont)
+library(usethis)
+
+  papaya <- "#F25922"
+  peridot <- "#CEEA01"
+  lavender <- "#CEC4E2"
+  meteorite <- "#3A207D"
+  ccblue <- "#0860BC"
+
+  black <- "#000000"
+  alabaster<-"#FBFBFB"
+  gainsboro <- "#DEDEDE"
+
+#connect to postgres
+
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+con <- connect_to_db("eci_fresno_ripa")
+
+# pull and clean analysis tables for visualizing ----
+
+df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_race_gender")
+
+# filter groups being visualized and select rate and counts to be visualized
+df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian","aian","nhpi","nh_multiracial","nh_black","sswana"))%>%
+  filter(gender %in% c("Male","Female"))%>%
+  select(race,gender,traffic_count,traffic_race_total,traffic_race_rate)%>%
+  arrange(gender,traffic_race_rate)%>%
+  mutate(traffic_race_rate=traffic_race_rate*100)
+
+# create race label
+df<-df%>%mutate(race_label = case_when(
+    race == 'latinx' ~ "Latinx", 
+    race =='nh_white' ~ 'White',
+    race =='nh_black' ~ 'Black',
+    race == 'nh_asian' ~ 'Asian',
+   race == 'nh_multiracial' ~ 'Multiracial',
+    race == 'aian' ~ 'AIAN',
+    race == 'nhpi' ~ 'NHPI',
+    race == 'sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(race)))
+
+# visualize--------------------------
+
+# create caption 
+
+sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Officers stopped a total of 6 individuals perceived as transgender or gender non-conforming. 67% of these people were perceived as Latinx."
+
+racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+
+caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+
+
+# create tooltip text
+
+tooltip_text <- "Out of the {point.traffic_race_total} people Fresno PD stopped for traffic reasons and perceived as {point.race_label}, <b>{point.traffic_race_rate:.1f}%</b> were perceived as <b>{point.gender}</b> by Fresno PD, a total of <b>{point.traffic_count:.0f}</b> people."
+
+# Visualizing as table --------------------------
+chart_race_gender<-rdaGroupedBar(df,"race_label","traffic_race_rate","gender",bar_colors=list(lavender,meteorite),title="Fresno PD Stops a Higher Share of Men of Color During Traffic Stops",
+  subtitle = "Percent of officer-initiated traffic stops by perceived gender out of stops of same race",
+  tooltip_text = tooltip_text,
+  caption = caption_text,
+  export_data_label = list(pointFormat='{point.traffic_race_rate:.1f}%')
+)
+
+```
+
+```{r, echo=FALSE}
+
+chart_race_gender
+
+```
+<script>
+  widg = document.getElementsByClassName('html-widget'); //find widgets
+  for (let i = 0; i < widg.length; i++) { //loop through
+    document.getElementsByClassName('highchart')[i].style.width = '100%'; //adjust width
+    document.getElementsByClassName('highchart')[i].style.height = '100%'; //adjust height
+  }
+</script>
