@@ -145,7 +145,7 @@ map(unique(df_race$race), function(x){
     hc_plotOptions(column = list(stacking = "normal")) %>% 
     hc_add_theme(hc_theme_smpl()) %>% 
     # hc_title(text = "Fresno PD Gives Citations for Traffic Stops that Do Not Improve Safety") %>% 
-    hc_title(text=paste0("Rate of Traffic Stops by Citation Result for People Perceived by Fresno PD as ",x))%>%
+    hc_title(text=paste0("Top Three Traffic Citation Results for People Perceived by Fresno PD as ",x))%>%
     hc_yAxis(title = list(text = ""))%>%
         hc_xAxis(title = list(text = ""))
 
