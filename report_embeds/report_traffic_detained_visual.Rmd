@@ -39,21 +39,24 @@ con <- connect_to_db("eci_fresno_ripa")
 df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_detained")
 
 # filter groups being visualized and select rate and counts to be visualized
-df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian_wo_sa","aian","nhpi","nh_multiracial","nh_black","sswana"))%>%
-  select(race,traffic_count,pop_count,pop_1k_rate)%>%
-  arrange(-pop_1k_rate)
+df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian","nh_aian","nh_nhpi","nh_multiracial","nh_black","nh_sswana"))%>%
+  select(race,gender,detained_count,detained_total,detained_total_rate)%>%
+  arrange(-detained_total_rate)%>%
+  filter(detained_total_rate>0)%>%
+  mutate(detained_total_rate=detained_total_rate*100)
 
 # create race label
 df<-df%>%mutate(race_label = case_when(
     race == 'latinx' ~ "Latinx", 
     race =='nh_white' ~ 'White',
     race =='nh_black' ~ 'Black',
-    race == 'nh_asian_wo_sa' ~ 'Asian',
+    race == 'nh_asian' ~ 'Asian',
    race == 'nh_multiracial' ~ 'Multiracial',
-    race == 'aian' ~ 'AIAN',
-    race == 'nhpi' ~ 'NHPI',
-    race == 'sswana' ~ 'SWANA/SA', 
-    TRUE ~ as.character(race)))
+    race == 'nh_aian' ~ 'AIAN',
+    race == 'nh_nhpi' ~ 'NHPI',
+    race == 'nh_sswana' ~ 'SWANA/SA', 
+    TRUE ~ as.character(race)),
+   label=paste0(race_label," ",gender))
 
 # visualize--------------------------
 
@@ -61,29 +64,28 @@ df<-df%>%mutate(race_label = case_when(
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops that included an officer detaining the person stopped in 2022."
 
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
 caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 
 
 # create tooltip text
 
-tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
+tooltip_text <- "Fresno PD detained {point.detained_total} people during officer-initiated traffic stops. <b>{point.detained_total_rate:.1f}%</b> of these people were perceived as <b>{point.label}s</b> by officers."
 
 # Visualizing as table --------------------------
 
-chart_race<-rdaBubblepop(
+chart_race<-rdaBar(
   df,
-  "race_label",
-  "pop_1k_rate",
-  "traffic_count",
-  title="Fresno PD Disproportionately Stops People They Perceive as Black or SWANA/SA For Traffic Reasons",
-  subtitle="Officer-initiated traffic stops by perceived race per 1K people of same race",
+  "label",
+  "detained_total_rate",
+  title="Fresno PD Disproportionately Detains Latinx Males During Traffic Stops",
+  subtitle="People detained during officer-initiated traffic stops by perceived race and gender (%)",
   tooltip_text=tooltip_text,
   caption=caption_text,
-  export_data_label=list(pointFormat='{point.pop_1k_rate:.1f} per 1K'))
+  export_data_label=list(pointFormat='{point.detained_total_rate:.1f}%'))
 
 ```
 
