@@ -55,15 +55,6 @@ orange <- "#F25922"
 
 # ACKNOWLEDGEMENTS
 
-Thank you to the people of Southeast San Diego for sharing their stories. Their stories bring to light the inhumane interactions the Southeast community experiences daily with the police. We are incredibly grateful for their courage and honesty. We urge the City to respond to their stories by putting an end to racially biased policing in San Diego.
-
-
-# CONTEXT
-
-
-```{r calgang-table, child= 'report_embeds/report_calgangstats_table.Rmd', echo=FALSE}
-```
-
 
 # BRIEF METHODOLOGY
 
@@ -74,52 +65,57 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 
 # FINDINGS
 
-In sum, the data for SDPD clearly show racial bias towards people who officers perceive as Black and/or Latinx, and that these groups are disproportionately impacted by gang enforcement activity. Regions with higher concentrations of  Black and Latinx residents, such as Southeast San Diego, have higher stop rates and are subject to greater gang enforcement activity. Furthermore, comparing stop rates to the San Diego population shows that SDPD stops people perceived as Black at rates much higher than their proportion of the population. In addition to racial bias, the data show that SDPD gang profiling activities often undermine safety by inflicting tremendous harm upon Southeast San Diego community members while rarely resulting in the discovery of criminal evidence or an arrest. . Community member stories add more poignancy to the impact of SDPD’s racially biased activities by showing how Black and Latinx people have personally been harmed repeatedly by officers.
 
 ## 1. Fresno PD disproportionately stops people and men of color for traffic stops 
 
 
 ### A. People of color disproportionately stopped generally for traffic stop
 
-```{r bubble-chart, child= 'report_embeds/report_stoprates_race_person_bubble.Rmd', echo=FALSE}
-```
-
-```{r bubble-chart, child= 'report_embeds/report_stoprates_result_race_person_stacked.Rmd', echo=FALSE}
-```
 
 ### B.Men of color especially targeted during these stops  
 
 
-```{r bubble-chart, child= 'report_embeds/report_stoprates_race_gang_person_bubble.Rmd'}
-```
-
 ### C. People of color targeted across types of traffic stops  
 
+```{r table, child= 'report_embeds/report_traffic_type.Rmd'}
+```
+
+```{r stacked-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
+```
 
 ## 2.  These stops do not advance safety and are a means to profile people of color   
 
 ### A. Officers use minor reasons to pull over people of color
 
-```{r donut-chart, child= 'report_embeds/report_hitrates_race_person_donut.Rmd'} 
+```{r stacked-chart, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
 ```
 
-```{r stacked-chart, child= 'report_embeds/report_hitrates_race_ficard_person_bubblepop.Rmd'}
+```{r stacked-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
 ```
+
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
-```{r dot-map, child= 'report_embeds/report_hitrates_div_race_ficard_person_density_map.Rmd'}
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
 ```
 
+```{r facet, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
+```
+
+
 ### C. Furthermore, use of citations is biased against people of color 
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_window_race.Rmd'}
+```
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
+```
 
 
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
 ### A. They are used to inflict harm of men of color through use of force and searches 
-
-```{r item-chart, child= 'report_embeds/report_timespent_div_ficard_race_person_group.Rmd'}
-```
 
 
 ## 4. Fresno PD spends a disproportionate amount of time on traffic stops and wastes further resources based on their racial bias. 
@@ -147,8 +143,6 @@ Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst Californi
 
 Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
 
-David Segovia, Research & Data Analyst, Catalyst California
-
 Hillary Khan, Data Architect, Catalyst California
 
 **Authors**
@@ -156,8 +150,6 @@ Hillary Khan, Data Architect, Catalyst California
 Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
 
 Chauncee Smith, Associate Director, Reimagine Justice & Safety, Catalyst California
-
-Mitchelle Woodson, Legal Director, Pillars of the Community
 
 Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
 
