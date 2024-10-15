@@ -71,8 +71,14 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 
 ### A. People of color disproportionately stopped generally for traffic stop
 
+```{r bubble-chart, child= 'report_embeds/report_traffic_race.Rmd'}
+```
+
 
 ### B.Men of color especially targeted during these stops  
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
+```
 
 
 ### C. People of color targeted across types of traffic stops  
