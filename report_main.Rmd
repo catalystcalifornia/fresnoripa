@@ -81,7 +81,7 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 ```
 
 
-### C. People of color targeted across types of traffic stops  
+### C. People of color are targeted across all types of traffic stops  
 
 ```{r table, child= 'report_embeds/report_traffic_type.Rmd'}
 ```
@@ -123,6 +123,11 @@ Using RIPA data, this report examines gang profiling by using the officer assign
 
 ### A. They are used to inflict harm of men of color through use of force and searches 
 
+```{r stacked-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
+```
+
+```{r bar-chart, child= 'report_embeds/report_traffic_detained_visual.Rmd'}
+```
 
 ## 4. Fresno PD spends a disproportionate amount of time on traffic stops and wastes further resources based on their racial bias. 
 
