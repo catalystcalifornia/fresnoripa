@@ -1,0 +1,160 @@
+---
+title: "Joint Report with Fresno BHC on Fresno PD Police Stops"
+subtitle: "DRAFT"
+author: "Catalyst California and Fresno BHC"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    css: "W:\\RDA Team\\R\\cc_brandguide.css"
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+---
+  
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+
+
+list.of.packages <- c("usethis", "highcharter", "tidyverse", "sf", "leaflet", "sp", "htmltools", "magrittr", "flextable", "lorem",  "htmlwidgets", "vembedr", "knitr")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+#### Load libraries ####
+library(usethis)
+library(highcharter)
+library(tidyverse)
+library(sf)
+library(leaflet)
+library(sp)
+library(htmltools) # for html escape
+library(magrittr)
+library(flextable)
+library(lorem)
+library(htmlwidgets)
+library(vembedr)
+library(knitr)
+
+#### Add database connection ####
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+con <- connect_to_db("eci_fresno_ripa")
+
+## Reknit all embeds so git will recognize file changes
+# source("report_embeds/run_embeds.R")
+
+peridot <- "#CEEA01"
+orange <- "#F25922"
+
+```
+
+*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color and immigrants. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
+
+
+# ACKNOWLEDGEMENTS
+
+
+# BRIEF METHODOLOGY
+
+# FINDINGS
+
+
+## 1. Fresno PD disproportionately stops people and men of color for traffic stops 
+
+
+### A. People of color disproportionately stopped generally for traffic stop
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_race.Rmd'}
+```
+
+
+### B.Men of color especially targeted during these stops  
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
+```
+
+
+### C. People of color are targeted across all types of traffic stops  
+
+```{r table, child= 'report_embeds/report_traffic_type.Rmd'}
+```
+
+```{r stacked-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
+```
+
+## 2.  These stops do not advance safety and are a means to profile people of color   
+
+### A. Officers use minor reasons to pull over people of color
+
+
+
+```{r stacked-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
+```
+
+
+### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
+
+```{r table, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
+```
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
+```
+
+```{r facet, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
+```
+
+
+
+### C. Furthermore, use of citations is biased against people of color 
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_window_race.Rmd'}
+```
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
+```
+
+
+## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
+
+### A. They are used to inflict harm of men of color through use of force and searches 
+
+```{r stacked-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
+```
+
+```{r bar-chart, child= 'report_embeds/report_traffic_detained_visual.Rmd'}
+```
+
+## 4. Fresno PD spends a disproportionate amount of time on traffic stops and wastes further resources based on their racial bias. 
+
+### A. Most of Fresno PD time is spent on traffic stops
+
+### B. They are biased in how they spend their time during these stops
+
+## 5. The City of Fresno annually wastes millions of dollars on Fresno PD’s harmful and biased practice
+
+### A. The City of Fresno spends more money on Fresno PD than on things that promote safety
+
+# RECOMMENDATIONS
+
+1. Alternative investments that actually increase safety
+2. Enact the Protect Act
+3. Others...
+
+
+# AUTHORS
+
+**Research and Data Analysis**
+
+Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
+
+Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
+
+Hillary Khan, Data Architect, Catalyst California
+
+Alicia Võ, Research and Data Analyst
+
+# METHODOLOGY
+
+[link to methodology on GitHub]

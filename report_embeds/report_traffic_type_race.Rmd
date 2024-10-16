@@ -18,10 +18,11 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 # remotes::install_github("catalystcalifornia/rdaCharts") 
 library(rdaCharts)
 library(stringr)
-library(htmltools) 
+library(htmltools)
 library(htmlwidgets)
 library(gtExtras)
 library(gt)
+
 #connect to postgres
 
 source("W:\\RDA Team\\R\\credentials_source.R")
@@ -87,7 +88,7 @@ chart_pop<-rdaStackedBar(
   "race_label",
   "rate",
   "traffic_violation_type",
-  title = "The Black Population in Fresno City is Disproportionately Burdened by Traffic Stops made by Fresno PD Across All Types of Traffic Stops",
+  title = "Fresno PD Disproportionately Burdens Black People in Fresno with Traffic Stops Across all Stop Types",
   subtitle = "Rate of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population",
   tooltip_text = tooltip_text,
   caption = caption_text,
