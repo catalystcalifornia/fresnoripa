@@ -29,16 +29,11 @@ con <- connect_to_db("eci_fresno_ripa")
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_reason_type_race")
 
-
-
 # Only keep columns of interest for visualizing
 
-test<-df%>%
-  filter(traffic_violation_type!="Moving")%>%
-  filter(total>=10) # only keep where at least 10 people total were stopped for a traffic stop within that stop type
-
 df<-df%>%
-  filter(total>=10)
+  filter(traffic_violation_type!="Moving")%>%
+  filter(count>=10) # only keep where at least 10 people total were stopped for a traffic stop within that stop type
 
 #Visualize  ------------------------------------------
 
@@ -58,7 +53,7 @@ tooltip_text <- "Out of all of the people stopped in traffic for the reason of <
 
 
 
-chart<-rdaGroupedBar(
+chart<-rdaStackedBar(
   df,
   "statute_literal_25",
   "rate",

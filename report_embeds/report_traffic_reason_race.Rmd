@@ -33,6 +33,7 @@ con <- connect_to_db("eci_fresno_ripa")
 
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_reason_race")%>%
+  filter(race!="nh_sswana")%>% # don't need this will use sswana_aoic which is the same
 mutate(race_label = case_when(
     race == 'latinx' ~ "Latinx", 
     race =='nh_white' ~ 'White',
@@ -44,17 +45,12 @@ mutate(race_label = case_when(
     race == 'nhpi_aoic' ~ 'NHPI',
    race == 'nh_nhpi' ~ 'NHPI NH',
     race == 'sswana_aoic' ~ 'SWANA/SA', 
-   race == 'nh_sswana' ~ 'SWANA/SA NH', 
     TRUE ~ as.character(race)))%>%
   mutate(statute_literal_25 = case_when(
     statute_literal_25 == 'UNSAFE SPEED:PREVAIL COND' ~ "Unsafe Speed while Driving Vehicle", 
     statute_literal_25 =='NO REG:VEH/TRAILER/ETC' ~ 'No Vehicle Registration',
     statute_literal_25 =='OPR VEH:WINDOW OBSTRUCTED' ~ 'Obstructed Window',
     statute_literal_25 == 'FAIL STOP LINE/ETC AT RED' ~ 'Failure to Stop at Red Light',
-        # statute_literal_25 == 'USE CELLPH W/DRIV W/O HFD' ~ "Using Cellphone While Driving Without Handheld", 
-        #     statute_literal_25 == 'NO HND HLD DEVICE W/DRIVE' ~ "Using Cellphone While Driving Without Handheld", 
-
-
     TRUE ~ as.character(statute_literal_25)))
 
 
@@ -70,7 +66,7 @@ summed <- df_race %>%
   select(race, denom, statute_literal_25, total, count, race_label)%>%
   filter(statute_literal_25 %in% c("USE CELLPH W/DRIV W/O HFD", "NO HND HLD DEVICE W/DRIVE"))%>%
   group_by(race, denom) %>%
-  summarise(statute_literal_25= "Use of Cellphone with No Handheld Device (combined)",
+  summarise(statute_literal_25= "Use of Cellphone with No Handheld Device",
             total=total,
             count = sum(count),
             rate=count/total*100,
@@ -96,11 +92,11 @@ df_combined<-df_combined%>%
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 10 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."
 
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote)
+caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
@@ -109,12 +105,12 @@ tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceive
 
 # run function
 
-chart_race<-rdaStackedBar(
+chart_race<-rdaGroupedBar(
   df_combined,
   "race_label",
   "rate",
   "statute_literal_25",
-  title = "Fresno PD Stops BIPOC People in Traffic for Reasons Not Related to Safety",
+  title = "Fresno PD Stops BIPOC People in Traffic Stops for Reasons That Do Not Require Policing",
   subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
@@ -129,6 +125,46 @@ chart_race<-rdaStackedBar(
 chart_race
 
 ```
+
+
+```{r, echo=FALSE, message=FALSE}
+
+# Explore facet option instead
+
+library(purrr)
+
+list_of_plots <- map(unique(df_combined$statute_literal_25), function(x) {
+  filtered_data <- df_combined %>%
+    filter(statute_literal_25 == x) %>%
+    arrange(desc(rate))  # Sort by descending y-values
+  
+  if (nrow(filtered_data) == 0) {
+    return(NULL)  # Skip this group if there are no rows
+  }
+
+   hchart(filtered_data, "bar", hcaes(x = race_label, y = rate),
+           showInLegend = FALSE,
+           , color = "#3A207D") %>% 
+    hc_plotOptions(column = list(stacking = "normal")) %>% 
+    hc_add_theme(hc_theme_smpl()) %>% 
+    hc_title(text = paste0("Rate of Traffic Stops by Reason: ",x)) %>% 
+    hc_yAxis(title = list(text = ""))%>%
+    hc_xAxis(title = list(text = ""))%>%
+   hc_tooltip(pointFormat = tooltip_text)
+})
+
+  
+browsable(
+  tagList(
+    tags$h2("Fresno PD Stops People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"),  # Main title
+    list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
+  )
+)
+
+
+
+```
+
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
   for (let i = 0; i < widg.length; i++) { //loop through
