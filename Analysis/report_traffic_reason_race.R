@@ -30,7 +30,7 @@ offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 df<-stop%>%
   filter(call_for_service==0)%>%
   left_join(person_reason)%>%
-  left_join(person_race, , by=c("stop_id", "person_number"))%>%
+  left_join(person_race, by=c("stop_id", "person_number"))%>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))
 
 # Sub-Analysis 1---------------------
@@ -42,7 +42,7 @@ df<-stop%>%
 
 df1<-df%>%
   filter(reason=="Traffic violation")%>%
-  group_by(traffic_violation_type, nh_race)%>%
+  group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
   ungroup()%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race)%>%
@@ -58,9 +58,10 @@ df1<-df%>%
 ### AIAN ###
 
 df1_aian<-df%>%
-  filter(reason=="Traffic violation" & aian_flag==1)%>%
+  filter(reason=="Traffic violation")%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
+  filter(aian_flag==1) %>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -76,9 +77,10 @@ df1_aian<-df%>%
 ### NHPI ###
 
 df1_nhpi<-df%>%
-  filter(reason=="Traffic violation" & nhpi_flag==1)%>%
+  filter(reason=="Traffic violation" )%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
+  filter(nhpi_flag==1)%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -93,9 +95,10 @@ df1_nhpi<-df%>%
 ### SWANA/SA ###
 
 df1_sswana<-df%>%
-  filter(reason=="Traffic violation" & sswana_flag==1)%>%
+  filter(reason=="Traffic violation")%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
+  filter(sswana_flag==1)%>%
   group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
          rate=count/total*100)%>%
@@ -109,7 +112,7 @@ df1_sswana<-df%>%
 
 ## Combine all tables together ##
 
-df1<-rbind(df1, df1_aian, df1_nhpi, df1_nhpi)%>%
+df1<-rbind(df1, df1_aian, df1_nhpi, df1_sswana)%>%
   rename("race"="nh_race")
 
 # Sub-Analysis 2---------------------
@@ -147,7 +150,7 @@ df2.1_aian<-df%>%
   mutate(nh_race="aian_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(rate)%>%
+  arrange(-rate)%>%
   slice(1:5)
 
 
@@ -164,7 +167,7 @@ df2.1_nhpi<-df%>%
   mutate(nh_race="nhpi_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(rate)%>%
+  arrange(-rate)%>%
   slice(1:5)
 
 ##### SWANA/SA #####
@@ -180,7 +183,7 @@ df2.1_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(rate)%>%
+  arrange(-rate)%>%
   slice(1:5)
 
 #### Combine all tables together ####
@@ -303,7 +306,7 @@ QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_rea
 COMMENT ON COLUMN report_traffic_reason_type_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_traffic_reason_type_race.traffic_violation_type IS 'Type of traffic violation (moving, nonmoving, equipment)';
 COMMENT ON COLUMN report_traffic_reason_type_race.statute_literal_25 IS 'Text description of the traffic stop reason corresponding with the traffic stop reason code';
-COMMENT ON COLUMN report_traffic_reason_type_race.total IS 'Total number of officer-initiated traffic stops within each traffic stop type for each race (denominator in rate calc)';
+COMMENT ON COLUMN report_traffic_reason_type_race.total IS 'Total number of officer-initiated traffic stops within each traffic stop type (denominator in rate calc)';
 COMMENT ON COLUMN report_traffic_reason_type_race.count IS 'Count of officer-initiated traffic stop reasonswithin each traffic stop type for each race (numerator for rate calc)';
 COMMENT ON COLUMN report_traffic_reason_type_race.rate IS 'Rate of officer-initiated traffic stop reasons for each type of traffic stop type by race';
 ")
