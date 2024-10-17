@@ -82,7 +82,7 @@ chart<-rdaBubblepop(
   race_label,
   "rate",
   count,
-  title = "Fresno PD Disproportionately Cites BIPOC People in Traffic for Window Obstruction",
+  title = "Fresno PD Disproportionately Cites BIPOC People in Traffic Stops for Window Obstruction",
   subtitle = "Traffic stops by traffic citation reason and perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,

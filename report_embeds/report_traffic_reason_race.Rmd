@@ -120,12 +120,6 @@ chart_race<-rdaGroupedBar(
 
 ```
 
-```{r, echo=FALSE}
-
-chart_race
-
-```
-
 
 ```{r, echo=FALSE, message=FALSE}
 

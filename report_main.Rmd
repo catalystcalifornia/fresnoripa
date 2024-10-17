@@ -50,11 +50,12 @@ orange <- "#F25922"
 
 ```
 
-*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color and immigrants. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
+*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
 
 
 # ACKNOWLEDGEMENTS
 
+# CONTEXT
 
 # BRIEF METHODOLOGY
 
@@ -78,9 +79,6 @@ orange <- "#F25922"
 
 ### C. People of color are targeted across all types of traffic stops  
 
-```{r table, child= 'report_embeds/report_traffic_type.Rmd'}
-```
-
 ```{r stacked-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
 ```
 
@@ -96,15 +94,12 @@ orange <- "#F25922"
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
-```{r table, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
-```
-
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
 ```
 
-```{r facet, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
-```
 
+```{r table, child= 'report_embeds/report_citation_traffic_type_stop.Rmd'}
+```
 
 
 ### C. Furthermore, use of citations is biased against people of color 
@@ -118,7 +113,7 @@ orange <- "#F25922"
 
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
-### A. They are used to inflict harm of men of color through use of force and searches 
+### A. Actions taken during traffic stops are biased toward men of color 
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
 ```
@@ -137,11 +132,6 @@ orange <- "#F25922"
 ### A. The City of Fresno spends more money on Fresno PD than on things that promote safety
 
 # RECOMMENDATIONS
-
-1. Alternative investments that actually increase safety
-2. Enact the Protect Act
-3. Others...
-
 
 # AUTHORS
 
