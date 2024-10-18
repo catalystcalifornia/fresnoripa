@@ -133,9 +133,7 @@ df2.1<-df%>%
   ungroup()%>%
   mutate(denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -rate)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  arrange(nh_race, -rate)
 
 ##### AIAN #####
 
@@ -150,8 +148,7 @@ df2.1_aian<-df%>%
   mutate(nh_race="aian_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 
 ##### NHPI #####
@@ -167,8 +164,7 @@ df2.1_nhpi<-df%>%
   mutate(nh_race="nhpi_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 ##### SWANA/SA #####
 
@@ -183,8 +179,7 @@ df2.1_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="traffic_stop_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 #### Combine all tables together ####
 
@@ -207,8 +202,7 @@ df2.2<-df%>%
   mutate(denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
   arrange(nh_race, -count)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  group_by(nh_race)
 
 
 ###### AIAN #####
@@ -227,8 +221,7 @@ df2.2_aian<-df%>%
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
   arrange(nh_race, -count)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  group_by(nh_race)
 
 ###### NHPI #####
 
@@ -245,9 +238,7 @@ df2.2_nhpi<-df%>%
   mutate(nh_race="nhpi_aoic",
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -count)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  arrange(nh_race, -count)
 
 
 ###### SSWANA #####
@@ -265,9 +256,7 @@ df2.2_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="traffic_reason")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(nh_race, -count)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  arrange(nh_race, -count)
 
 #### Combine all race tables ####
 
