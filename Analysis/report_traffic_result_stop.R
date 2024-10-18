@@ -115,16 +115,16 @@ COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated 
  
  # # write comment to table, and column metadata
  
- table_comment <- paste0("COMMENT ON TABLE report_traffic_result_stop  IS 'Analyzing officer-initiated traffic stops by simple stop result.
+ table_comment <- paste0("COMMENT ON TABLE report_traffic_result_person  IS 'Analyzing people stopped for officer-initiated traffic stops by simple stop result.
 R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_stop.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_stop.docx';
 
-COMMENT ON COLUMN report_traffic_result_stop.stop_reason_simple IS 'Reason for stop (which will only be traffic violations for this analysis)';
-COMMENT ON COLUMN report_traffic_result_stop.stop_result_simple IS 'Simple result for stop';
-COMMENT ON COLUMN report_traffic_result_stop.total IS 'Total number of officer-initiated traffic stops (denominator in rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.count IS 'Count of officer-initiated traffic stops for each stop result (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated traffic stops by stop result';
+COMMENT ON COLUMN report_traffic_result_person.reason IS 'Reason for stop (which will only be traffic violations for this analysis)';
+COMMENT ON COLUMN report_traffic_result_person.stop_result_simple IS 'Simple result for stop';
+COMMENT ON COLUMN report_traffic_result_person.total IS 'Total number of people stopped for officer-initiated traffic stops (denominator in rate calc)';
+COMMENT ON COLUMN report_traffic_result_person.count IS 'Count of people in officer-initiated traffic stops for each stop result (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_result_person.rate IS 'Rate of people stopped for officer-initiated traffic stops by stop result';
 ")
  
  # send table comment + column metadata
- dbSendQuery(conn = con, table_comment)
+ # dbSendQuery(conn = con, table_comment)
