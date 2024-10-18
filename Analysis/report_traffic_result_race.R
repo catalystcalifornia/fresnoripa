@@ -8,6 +8,8 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 
+options(scipen=999)
+
 #connect to postgres
 
 source("W:\\RDA Team\\R\\credentials_source.R")
@@ -182,16 +184,18 @@ df2<-rbind(df2, df2_aian, df2_nhpi, df2_sswana)%>%
 ###### NH ######
 
 df3<-df%>%
-  left_join(pop, by=c("nh_race"="race"))%>%
+  left_join(pop%>%
+              mutate(nh_race=ifelse(race=='nh_twoormor', 'nh_multiracial',race)), # help multiracial join
+            by=c("nh_race"="nh_race"))%>%
   rename("total"="count")%>%
   filter(reason=="Traffic violation")%>%
   group_by(nh_race, stop_result_simple)%>%
   mutate(count=n(),
-  rate_per_1k=count/total*1000,
-  denom="population"
+  rate=count/total*1000,
+  denom="population race (1K)"
   )%>%
   slice(1)%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate)
 
 ###### SWANA ######
 
@@ -202,12 +206,12 @@ df3_sswana<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/total*1000,
-         denom="population",
+         rate=count/total*1000,
+         denom="population race (1K)",
          nh_race="sswana_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate)
 
 ###### AIAN ######
 
@@ -218,12 +222,12 @@ df3_aian<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/total*1000,
-         denom="population",
+         rate=count/total*1000,
+         denom="population race (1K)",
          nh_race="aian_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate)
 
 ###### NHPI ######
 
@@ -234,12 +238,12 @@ df3_nhpi<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/total*1000,
-         denom="population",
+         rate=count/total*1000,
+         denom="population race (1K)",
          nh_race="nhpi_aoic")%>%
   slice(1)%>%
   ungroup()%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate)
 
 #### ASIAN W/O SA DENOMINATOR ####
 
@@ -250,36 +254,36 @@ df3_asian<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(nh_race, stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/total*1000,
-         denom="population"
+         rate=count/total*1000,
+         denom="population race (1K)"
   )%>%
   slice(1)%>%
-  select(nh_race, reason, denom, stop_result_simple, total, count, rate_per_1k)%>%
+  select(nh_race, reason, denom, stop_result_simple, total, count, rate)%>%
   filter(grepl("nh_asian_wo_sa", nh_race))
   
 
 # Combine all tables together
 
-df3<-rbind(df3, df3_aian, df3_nhpi, df3_sswana, df3_asian)%>%
+df3<-rbind(df3%>%filter(nh_race!='nh_sswana'), df3_aian, df3_nhpi, df3_sswana, df3_asian)%>%
   rename("race"="nh_race")
 
 # Final combination of all analysis tables -----------------------------------
 
-df<-rbind(df1, df2, df3)
+df_final<-rbind(df1, df2, df3)
 
 # Push table to postgres-----------------------------------------
 
 # set column types
-charvect = rep('varchar', ncol(df)) 
+charvect = rep('varchar', ncol(df_final)) 
 charvect <- replace(charvect, c(5,6,7,8), c("numeric"))
 
 # add df colnames to the character vector
 
-names(charvect) <- colnames(df)
+names(charvect) <- colnames(df_final)
 
-dbWriteTable(con,  "report_traffic_result_race", df,
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "report_traffic_result_race", df_final,
+#              overwrite = FALSE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # # write comment to table, and column metadata
@@ -295,9 +299,8 @@ COMMENT ON COLUMN report_traffic_result_race.denom IS 'Denominator used in analy
 COMMENT ON COLUMN report_traffic_result_race.stop_result_simple IS 'Simple result for stop';
 COMMENT ON COLUMN report_traffic_result_race.total IS 'Total number (denominator in rate calc) see denom column for which denominator is used';
 COMMENT ON COLUMN report_traffic_result_race.count IS 'Count of officer-initiated traffic stops for each stop result for each racial group (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_result_race.rate IS 'Rate of traffic stop results by race: count/total*100 (see denom colunm for more clarity on which demominator is being used to create the rate)';
-COMMENT ON COLUMN report_traffic_result_race.rate_per_1k IS 'Rate of traffic stops by result of stop for each perceived racial group per 1k total population of each racial gorup in Fresno city';
+COMMENT ON COLUMN report_traffic_result_race.rate IS 'Rate of traffic stop results by race: count/total*100 unless noted as per 1K population (see denom colunm for more clarity on which demominator is being used to create the rate)';
 ")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# dbSendQuery(conn = con, table_comment)
