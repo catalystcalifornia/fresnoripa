@@ -208,6 +208,7 @@ df2.1<-df%>%
          rate=count/total*100,
           denom="citation_result")%>%
   slice(1)%>%
+  mutate(statute_literal_25="DRIVE W/O LICENSE or DRIVE W/O VALID LICENSE")%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
@@ -231,6 +232,7 @@ df2.1_sswana<-df%>%
          nh_race="sswana_aoic",
          denom="citation_result")%>%
   slice(1)%>%
+  mutate(statute_literal_25="DRIVE W/O LICENSE or DRIVE W/O VALID LICENSE")%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
@@ -251,6 +253,7 @@ df2.2<-df%>%
          rate=count/total*100,
          denom="citation_race")%>%
   slice(1)%>%
+  mutate(statute_literal_25="DRIVE W/O LICENSE or DRIVE W/O VALID LICENSE")%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
@@ -274,6 +277,7 @@ df2.2_sswana<-df%>%
          nh_race="sswana_aoic",
          denom="citation_race")%>%
   slice(1)%>%
+  mutate(statute_literal_25="DRIVE W/O LICENSE or DRIVE W/O VALID LICENSE")%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
   arrange(-rate)
 
@@ -296,9 +300,9 @@ charvect <- replace(charvect, c(4,5,6), c("numeric"))
 
 names(charvect) <- colnames(df1)
 
-dbWriteTable(con,  "report_traffic_result_citation_race", df1,
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "report_traffic_result_citation_race", df1,
+#              overwrite = TRUE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # # write comment to table, and column metadata
@@ -318,7 +322,7 @@ COMMENT ON COLUMN report_traffic_result_citation_race.rate IS 'Rate of officer-i
 ")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# dbSendQuery(conn = con, table_comment)
 
 #### Sub-Analysis 2 ####
 
@@ -330,28 +334,29 @@ charvect <- replace(charvect, c(4,5,6), c("numeric"))
 
 names(charvect) <- colnames(df2)
 
-dbWriteTable(con,  "report_traffic_result_citation_license_race", df2,
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "report_traffic_result_citation_license_race", df2,
+#              overwrite = TRUE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # # write comment to table, and column metadata
 
 table_comment <- paste0("COMMENT ON TABLE report_traffic_result_citation_license_race  IS 'Analyzing officer-initiated traffic stops by traffic stops that resulted in a driving without a license citation
 for each racial group.
-The denominator used for this analysis is out of all people stopped with a traffic stop that resulted in a driving without a license citation.
+The denominator used for this analysis is either out of all people stopped with a traffic stop that resulted in a driving without a license citation or out of all citations given for each racial group.
+Codes used are 12500(A),12500(B),12500(C),12500(D),12951(A)
 R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_citation_race.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_citation_race.docx';
 
 COMMENT ON COLUMN report_traffic_result_citation_license_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.denom IS 'Which denominator is used for the Total and Rate column. For this analysis the denominator
 is either 1) out of all people stopped with a driving without license citation (denom==citation_result) OR out of all citations within each racial group (denom==citation_race)';
-COMMENT ON COLUMN report_traffic_result_citation_race.statute_literal_25 IS 'Text description of the traffic stop citation result';
+COMMENT ON COLUMN report_traffic_result_citation_race.statute_literal_25 IS 'Text description of the traffic stop citation result can be one of two descriptions';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.total IS 'Denominator in rate calc which is noted in the denom column.';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.count IS 'Count of officer-initiated traffic stops that resulted in a drive without license citation for each racial group (numerator for rate calc)';
 COMMENT ON COLUMN report_traffic_result_citation_license_race.rate IS 'Rate of officer-initiated traffic stops that resulted in a drive without license citation by race';
 ")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# dbSendQuery(conn = con, table_comment)
 
