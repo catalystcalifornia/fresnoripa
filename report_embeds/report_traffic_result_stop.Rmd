@@ -55,7 +55,7 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 people stopped in officer-initiated traffic stops,  <b>{point.rate:.1f}%</b> of people were given a stop result of <b>{point.stop_result_simple}</b>, or a total of <b>{point.count:.0f}</b> people."
+tooltip_text <- "Out of 100 people stopped in traffic stops,  <b>{point.rate:.1f}%</b> of people were given a stop result of <b>{point.stop_result_simple}</b>, or a total of <b>{point.count:.0f}</b> people."
 
 
 
