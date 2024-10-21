@@ -20,8 +20,11 @@ stop<-dbGetQuery(con, "SELECT * FROM rel_stops")
 stop_reason<-dbGetQuery(con, "SELECT * FROM rel_stops_reason")
 stop_result<-dbGetQuery(con, "SELECT * FROM rel_stops_result")
 
+p_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
+p_result<-dbGetQuery(con, "SELECT * FROM rel_persons_result")
+
 # Analysis:  Traffic stops by result ---------------------------
-# General table of people stopped for traffic violations by simple result
+# General table of unique stops for traffic violations by simple result
 
 # Take stop table and filter for calls for service, then join all needed tables
 
@@ -72,4 +75,53 @@ COMMENT ON COLUMN report_traffic_result_stop.rate IS 'Rate of officer-initiated 
 
 # send table comment + column metadata
  dbSendQuery(conn = con, table_comment)
+ 
+ # Analysis:  Traffic stops (people stopped) by result ---------------------------
+ # General table of people stopped for traffic violations by simple result
+ 
+ # Take stop table and filter for calls for service, then join all needed tables
+ 
+ df_p<-stop%>%
+   filter(call_for_service==0)%>%
+   left_join(p_reason)%>%
+   left_join(p_result)
+ 
+ # Analyze
+ 
+ df_p<-df_p%>%
+   filter(reason=="Traffic violation")%>%
+   mutate(total=n())%>%
+   group_by(stop_result_simple)%>%
+   mutate(count=n(),
+          rate=count/total*100)%>%
+   slice(1)%>%
+   select(reason, stop_result_simple, total, count, rate)%>%
+   arrange(-rate)
+ 
+ # Push table to postgres------------------------------
+ 
+ # set column types
+ charvect = rep('varchar', ncol(df_p)) 
+ charvect <- replace(charvect, c(3,4,5), c("numeric"))
+ 
+ # add df colnames to the character vector
+ 
+ names(charvect) <- colnames(df_p)
+ 
+ # dbWriteTable(con,  "report_traffic_result_person", df_p,
+ #              overwrite = FALSE, row.names = FALSE,
+ #              field.types = charvect)
+ 
+ 
+ # # write comment to table, and column metadata
+ 
+ table_comment <- paste0("COMMENT ON TABLE report_traffic_result_person  IS 'Analyzing people stopped for officer-initiated traffic stops by simple stop result.
+R script used to recode and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_result_stop.R
+QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_result_stop.docx';
+COMMENT ON COLUMN report_traffic_result_person.reason IS 'Reason for stop (which will only be traffic violations for this analysis)';
+COMMENT ON COLUMN report_traffic_result_person.stop_result_simple IS 'Simple result for stop';
+COMMENT ON COLUMN report_traffic_result_person.total IS 'Total number of people stopped for officer-initiated traffic stops (denominator in rate calc)';
+COMMENT ON COLUMN report_traffic_result_person.count IS 'Count of people in officer-initiated traffic stops for each stop result (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_result_person.rate IS 'Rate of people stopped for officer-initiated traffic stops by stop result';
+")
 
