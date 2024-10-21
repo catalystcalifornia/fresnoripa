@@ -94,7 +94,7 @@ orange <- "#F25922"
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
-```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
+```{r bubble-chart, child= 'report_embeds/report_traffic_result.Rmd'}
 ```
 
 
