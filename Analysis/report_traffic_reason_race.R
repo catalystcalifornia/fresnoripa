@@ -21,84 +21,83 @@ df <- stop %>%
   left_join(person_reason) %>%
   left_join(person_race, by=c("stop_id", "person_number")) %>%
   left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code")) %>%
-  filter(reason=="Traffic violation")
+  filter(reason=="Traffic violation") %>%
+  select(nh_race, traffic_violation_type, statute_literal_25, offense_type_of_charge, ends_with("_flag"))
 
 # Sub-Analysis 1---------------------
 # Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
 
 # Analyze
+violation_type_counts <- df %>%
+  select(traffic_violation_type) %>%
+  group_by(traffic_violation_type) %>%
+  mutate(total=n()) %>%
+  distinct(.)
 
 ### NH ###
-
-df1 <- df%>%
-  group_by(traffic_violation_type)%>%
-  mutate(total=n())%>%
-  ungroup()%>%
-  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race)%>%
+df1_nh <- df %>%
+  # get total counts for violation types
+  left_join(violation_type_counts, by=c("traffic_violation_type")) %>% 
+  # get counts of each traffic reason per nh_race
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge, nh_race) %>%
   mutate(count=n(),
          rate=count/total*100)%>%
-  slice(1)%>%
-  ungroup()%>%
-  select(nh_race, traffic_violation_type, statute_literal_25, total, count, rate)%>%
+  ungroup() %>%
+  distinct() %>%
+  # drop unneeded columns
+  select(-c(ends_with("_flag"), offense_type_of_charge)) %>% 
+  # get top 5 traffic violations for each nh_race X traffic_violation_type combo (can return less than 5)
   arrange(nh_race, traffic_violation_type, -rate)%>%
-  group_by(nh_race, traffic_violation_type)%>%
-  slice(1:5)
+  group_by(nh_race, traffic_violation_type) %>%
+  slice(1:5) 
 
 ### AIAN ###
-
-df1_aian<-df%>%
-  group_by(traffic_violation_type)%>%
-  mutate(total=n())%>%
+df1_aian <- df %>%
   filter(aian_flag==1) %>%
-  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+  left_join(violation_type_counts, by=c("traffic_violation_type")) %>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge) %>%
   mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  ungroup()%>%
-  mutate(nh_race="aian_aoic")%>%
-  select(nh_race, traffic_violation_type, statute_literal_25, total, count, rate)%>%
-  arrange(traffic_violation_type, -rate)%>%
-  group_by(traffic_violation_type)%>%
+         rate=count/total*100) %>%
+  ungroup() %>%
+  distinct() %>%
+  mutate(nh_race="aian_aoic") %>%
+  select(-c(ends_with("_flag"), offense_type_of_charge)) %>%
+  arrange(traffic_violation_type, -rate) %>%
+  group_by(traffic_violation_type) %>%
   slice(1:5)
 
-
 ### NHPI ###
-
-df1_nhpi<-df%>%
-  group_by(traffic_violation_type)%>%
-  mutate(total=n())%>%
-  filter(nhpi_flag==1)%>%
-  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+df1_nhpi <- df %>%
+  filter(nhpi_flag==1) %>%
+  left_join(violation_type_counts, by=c("traffic_violation_type")) %>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge) %>%
   mutate(count=n(),
-         rate=count/total*100)%>%
-  slice(1)%>%
-  ungroup()%>%
-  mutate(nh_race="nhpi_aoic")%>%
-  select(nh_race, traffic_violation_type, statute_literal_25, total, count, rate)%>%
-  arrange(traffic_violation_type, -rate)%>%
-  group_by(traffic_violation_type)%>%
+         rate=count/total*100) %>%
+  ungroup() %>%
+  distinct() %>%
+  mutate(nh_race="nhpi_aoic") %>%
+  select(-c(ends_with("_flag"), offense_type_of_charge)) %>%
+  arrange(traffic_violation_type, -rate) %>%
+  group_by(traffic_violation_type) %>%
   slice(1:5)
 
 ### SWANA/SA ###
-
-df1_sswana<-df%>%
-  group_by(traffic_violation_type)%>%
-  mutate(total=n())%>%
-  filter(sswana_flag==1)%>%
-  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge)%>%
+df1_sswana <- df%>%
+  filter(sswana_flag==1) %>%
+  left_join(violation_type_counts, by=c("traffic_violation_type")) %>%
+  group_by(traffic_violation_type, statute_literal_25, offense_type_of_charge) %>%
   mutate(count=n(),
          rate=count/total*100)%>%
-  slice(1)%>%
-  ungroup()%>%
-  mutate(nh_race="sswana_aoic")%>%
-  select(nh_race, traffic_violation_type, statute_literal_25, total, count, rate)%>%
-  arrange(traffic_violation_type, -rate)%>%
-  group_by(traffic_violation_type)%>%
+  ungroup() %>%
+  distinct() %>%
+  mutate(nh_race="sswana_aoic") %>%
+  select(-c(ends_with("_flag"), offense_type_of_charge)) %>%
+  arrange(traffic_violation_type, -rate) %>%
+  group_by(traffic_violation_type) %>%
   slice(1:5)
 
 ## Combine all tables together ##
-
-df1<-rbind(df1, df1_aian, df1_nhpi, df1_sswana)%>%
+df1 <- rbind(df1_nh, df1_aian, df1_nhpi, df1_sswana) %>%
   rename("race"="nh_race")
 
 # Sub-Analysis 2---------------------
