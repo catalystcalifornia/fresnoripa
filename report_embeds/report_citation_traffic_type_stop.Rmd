@@ -44,19 +44,18 @@ df<-dbGetQuery(con, "SELECT * FROM report_citation_traffic_type_stop")%>%
 sum_values <- df %>%
   group_by(traffic_violation_type)%>%
   filter(statute_literal_25 %in% c("Use Cellph W/Driv W/O Hfd", "No Hnd Hld Device W/Drive")) %>%
-  summarise(count_sum = sum(count))%>%
-  filter(traffic_violation_type=="Moving")
+  summarise(statute_literal_25="Using Cell Phone Without Handheld Device While Driving",
+    total=ifelse(traffic_violation_type == "Moving", total, NA),
+            count_sum = sum(count),
+            rate=count_sum/total*100)%>%
+  ungroup()%>%
+  slice(1)%>%
+  rename("count"="count_sum")
 
-# Create the new row
-new_row <- data.frame(traffic_violation_type="Moving", 
-                      statute_literal_25 = "Using Cell Phone without Handheld Device while Driving (combined)", 
-                      total = 426,
-                      count = sum_values$count_sum,
-                      rate=sum_values$count_sum/426*100)
 
 # Add new combined row to df and remove thse two separate handheld offenses 
 
-df <- rbind(df, new_row)
+df <- rbind(df, sum_values)
 
 df<-df%>%
   filter(!grepl("Use Cellph W/Driv W/O Hfd|No Hnd Hld Device W/Drive", statute_literal_25))%>%
@@ -86,10 +85,12 @@ table<-df%>%
   group_by(traffic_violation_type)%>%
   slice(1:3)%>%
   mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",
+                         ifelse(statute_literal_25 %in% "Drive W/O License", "Driving Without a License",
+                                   ifelse(statute_literal_25 %in% "Fail Prove Fin Rsp:po Req", "Failure to Prove Financial Responsibility (i.e. Insurance)",
                                    ifelse(statute_literal_25 %in% "Display Lic Plates Wrong", "Incorrect License Plate Displayed",
                                           ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
                                                  ifelse(statute_literal_25 %in% "Unlaw Dirct Drv Opr/Hwy", "Unlawful Direction of Driving on a Highway",
-                                                        ifelse(statute_literal_25 %in% "Unsafe Speed:prevail Cond", "Operation Vehicle at Unsafe Speed",statute_literal_25))))))%>%
+                                                        ifelse(statute_literal_25 %in% "Unsafe Speed:prevail Cond", "Operating Vehicle at Unsafe Speed",statute_literal_25))))))))%>%
   mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
          " "=rate,
          "Traffic Violation Type"=traffic_violation_type,
@@ -98,7 +99,7 @@ table<-df%>%
     select("Traffic Violation Type", "Traffic Stop Citation Result","Count (%)"," ")%>%
   gt()%>%
   # question
-  tab_header(title=glue::glue("Fresno PD gives Traffic Citations for Stops that Do Not Require Police or Advance Public Safety"),
+  tab_header(title=glue::glue("At The End of a Stop, Fresno PD Cites People For Offenses That Do Not Require Police or Advance Public Safety"),
              subtitle="Most common traffic citation results by traffic stop type")%>%
   # any data notes in footer
   tab_footnote(footnote=html(caption_text),placement="left")%>%
