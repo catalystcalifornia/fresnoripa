@@ -53,13 +53,13 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 officer-initiated traffic stops made by Fresno PD,  <b>{point.rate:.1f}%</b> resulted in <b>{point.stop_result_simple}</b>, or a total of <b>{point.count:.1f}</b> stops."
+tooltip_text <- "Out of 100 traffic stops made by Fresno PD,  <b>{point.rate:.1f}%</b> resulted in <b>{point.stop_result_simple}</b>, or a total of <b>{point.count:.0f}</b> stops."
 
 # visualize t--------------------------
 
 
 
-chart<-rdaBubblepop(
+chart<-rdaBar(
   df,
   "stop_result_simple",
   "rate",
