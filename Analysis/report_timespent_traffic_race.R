@@ -44,8 +44,14 @@ table(ois_traffic_race$stop_result_simple)
 target<-list(c("citation for infraction","no action","warning verbal or written"))
 
 # not quite working to include stops that resulted in say warning and citation for infraction
-df<-ois_traffic_race[sapply(ois_traffic_race$stop_result_list, \(id) any(target[[1]] %in% id)), ]
+# df<-ois_traffic_race[sapply(ois_traffic_race$stop_result_list, \(id) any(target[[1]] %in% id)), ]
 
+# JZ QA 10/21/24: alternative way of trying to filter for any of the 3 target results
+
+df<-ois_traffic_race%>%
+  filter(str_detect(stop_result_list, "citation for infraction|no action|warning verbal or written"))
+
+table(df$stop_result_list)
 
 # Time spent by race --------
 # Measure: 5-number summary of time spent by race
