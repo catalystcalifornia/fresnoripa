@@ -141,7 +141,7 @@ list_of_plots <- map(unique(df_combined$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$h2("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
+    tags$h3("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
     list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
   )
 )
