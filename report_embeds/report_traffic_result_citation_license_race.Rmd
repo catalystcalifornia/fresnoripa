@@ -37,7 +37,7 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull analysis tables for visualizing
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_license_race")%>%
-    mutate(statute_literal_25 = str_to_title(statute_literal_25))%>% # convert text for offense to be title case
+    mutate(statute_literal_25 = "driving without a license")%>% # convert text for offense to be title case
   mutate(race_label=ifelse(race %in% "latinx", "Latinx",
                            ifelse(race %in% "nh_aian", "AIAN NH",
                                   ifelse(race %in% "nh_black", "Black",
@@ -70,7 +70,7 @@ df_race<-df%>%
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in a citation for infraction."
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
@@ -78,7 +78,7 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 people Fresno PD stopped and percevied as <b>{point.race_label}</b> in an officer-initiated traffic stop that resulted in a <b>citation</b>, <b>{point.rate:.1f}%</b> of people were cited for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> were for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
 
 # Run bubblechart function
