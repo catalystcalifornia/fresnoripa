@@ -40,14 +40,14 @@ df <- traffic_reason_race %>%
              race == 'nhpi_aoic' ~ 'NHPI',
              race == 'nh_nhpi' ~ 'NHPI NH',
              race == 'sswana_aoic' ~ 'SWANA/SA',
-             TRUE ~ as.character(race)),
+             .default = as.character(race)),
          statute_literal_25 = 
            case_when(
              statute_literal_25 == 'UNSAFE SPEED:PREVAIL COND' ~ "Unsafe Speed while Driving Vehicle",
              statute_literal_25 =='NO REG:VEH/TRAILER/ETC' ~ 'No Vehicle Registration',
              statute_literal_25 =='OPR VEH:WINDOW OBSTRUCTED' ~ 'Obstructed Window',
              statute_literal_25 == 'FAIL STOP LINE/ETC AT RED' ~ 'Failure to Stop at Red Light',
-             TRUE ~ as.character(statute_literal_25)))
+             .default = as.character(statute_literal_25)))
 
 
 # split separate dfs for each denominator option-----
