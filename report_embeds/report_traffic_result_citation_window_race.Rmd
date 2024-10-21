@@ -63,7 +63,7 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_race")%>%
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in a citation for infraction."
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
@@ -71,7 +71,7 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 people Fresno PD stopped and percevied as <b>{point.race_label}</b> in an officer-initiated traffic stop that resulted in a <b>citation</b>, <b>{point.rate:.1f}%</b> of people were cited for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> were for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
 
 # Run bubblechart function
@@ -82,8 +82,8 @@ chart<-rdaBubblepop(
   race_label,
   "rate",
   count,
-  title = "Fresno PD Disproportionately Cites BIPOC People in Traffic Stops for Window Obstruction",
-  subtitle = "Traffic stops by traffic citation reason and perceived race",
+  title = "Fresno PD Disproportionately Cites BIPOC People for Window Obstruction",
+  subtitle = "Citations for window obstruction out of total citations by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   yaxis_label = "''",
