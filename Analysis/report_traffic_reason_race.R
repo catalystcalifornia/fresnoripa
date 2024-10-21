@@ -1,37 +1,27 @@
 ###Analysis: Traffic stops by stop reason and race
 
 #Set up work space---------------------------------------
-
-
 library(RPostgreSQL)
 library(dplyr)
-library(tidyr)
-library(stringr)
 
 #connect to postgres
-
 source("W:\\RDA Team\\R\\credentials_source.R")
-
 con <- connect_to_db("eci_fresno_ripa")
 
 # pull in necessary analysis tables
+stop <- dbGetQuery(con, "SELECT * FROM rel_stops") %>%
+  filter(call_for_service==0) # officer-initiated stops
+person_reason <- dbGetQuery(con, "SELECT * FROM rel_persons_reason")
+person_race <- dbGetQuery(con, "SELECT * FROM rel_races_recode")
+pop <- dbGetQuery(con, "SELECT * FROM population_race_fresno_city")
+offense_codes <- dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
 
-stop<-dbGetQuery(con, "SELECT * FROM rel_stops")
-
-person_reason<-dbGetQuery(con, "SELECT * FROM rel_persons_reason")
-person_race<-dbGetQuery(con, "SELECT * FROM rel_races_recode")
-
-pop<-dbGetQuery(con, "SELECT * FROM population_race_fresno_city")
-
-offense_codes<-dbGetQuery(con, "SELECT * FROM cadoj_ripa_offense_codes_2023")
-
-# join necessary tables for analysis 
-
-df<-stop%>%
-  filter(call_for_service==0)%>%
-  left_join(person_reason)%>%
-  left_join(person_race, by=c("stop_id", "person_number"))%>%
-  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code"))
+# join necessary tables and filter for traffic violation reason analysis 
+df <- stop %>%
+  left_join(person_reason) %>%
+  left_join(person_race, by=c("stop_id", "person_number")) %>%
+  left_join(offense_codes, by=c("rfs_traffic_violation_code"="offense_code")) %>%
+  filter(reason=="Traffic violation")
 
 # Sub-Analysis 1---------------------
 # Table of top 3-5 traffic code reasons by race and traffic violation type (moving, equipment, non-moving) 
@@ -40,8 +30,7 @@ df<-stop%>%
 
 ### NH ###
 
-df1<-df%>%
-  filter(reason=="Traffic violation")%>%
+df1 <- df%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
   ungroup()%>%
@@ -58,7 +47,6 @@ df1<-df%>%
 ### AIAN ###
 
 df1_aian<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
   filter(aian_flag==1) %>%
@@ -77,7 +65,6 @@ df1_aian<-df%>%
 ### NHPI ###
 
 df1_nhpi<-df%>%
-  filter(reason=="Traffic violation" )%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
   filter(nhpi_flag==1)%>%
@@ -95,7 +82,6 @@ df1_nhpi<-df%>%
 ### SWANA/SA ###
 
 df1_sswana<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(traffic_violation_type)%>%
   mutate(total=n())%>%
   filter(sswana_flag==1)%>%
@@ -123,7 +109,6 @@ df1<-rbind(df1, df1_aian, df1_nhpi, df1_sswana)%>%
 ##### NH #####
 
 df2.1<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(nh_race)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
@@ -138,7 +123,7 @@ df2.1<-df%>%
 ##### AIAN #####
 
 df2.1_aian<-df%>%
-  filter(reason=="Traffic violation" & aian_flag==1)%>%
+  filter(aian_flag==1)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
@@ -154,7 +139,7 @@ df2.1_aian<-df%>%
 ##### NHPI #####
 
 df2.1_nhpi<-df%>%
-  filter(reason=="Traffic violation" & nhpi_flag==1)%>%
+  filter(nhpi_flag==1)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
@@ -169,7 +154,7 @@ df2.1_nhpi<-df%>%
 ##### SWANA/SA #####
 
 df2.1_sswana<-df%>%
-  filter(reason=="Traffic violation" & sswana_flag==1)%>%
+  filter(sswana_flag==1)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(count=n(),
@@ -191,7 +176,6 @@ df2.1<-rbind(df2.1, df2.1_aian, df2.1_nhpi, df2.1_sswana)%>%
 ###### NH #####
 
 df2.2<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(total=n())%>%
   group_by(statute_literal_25, offense_type_of_charge, nh_race)%>%
@@ -208,7 +192,6 @@ df2.2<-df%>%
 ###### AIAN #####
 
 df2.2_aian<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(total=n())%>%
   filter(aian_flag==1)%>%
@@ -226,7 +209,6 @@ df2.2_aian<-df%>%
 ###### NHPI #####
 
 df2.2_nhpi<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(total=n())%>%
   filter(nhpi_flag==1)%>%
@@ -244,7 +226,6 @@ df2.2_nhpi<-df%>%
 ###### SSWANA #####
 
 df2.2_sswana<-df%>%
-  filter(reason=="Traffic violation")%>%
   group_by(statute_literal_25, offense_type_of_charge)%>%
   mutate(total=n())%>%
   filter(sswana_flag==1)%>%
@@ -344,3 +325,4 @@ COMMENT ON COLUMN report_traffic_reason_race.rate IS 'Rate of officer-initiated 
 # send table comment + column metadata
 dbSendQuery(conn = con, table_comment)
 
+dbDisconnect(con)
