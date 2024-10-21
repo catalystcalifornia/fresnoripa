@@ -23,6 +23,7 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull analysis table for visualizing
 traffic_reason_race <- dbGetQuery(con, "SELECT * FROM report_traffic_reason_race")
 
+dbDisconnect(con)
 ```
 
 ```{r prep-data, include=FALSE}
