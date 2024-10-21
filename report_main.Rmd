@@ -124,7 +124,15 @@ orange <- "#F25922"
 
 ### A. Most of Fresno PD time is spent on traffic stops
 
+
+```{r bar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
+```
+
 ### B. They are biased in how they spend their time during these stops
+
+
+```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
+```
 
 ## 5. The City of Fresno annually wastes millions of dollars on Fresno PD’s harmful and biased practice
 
