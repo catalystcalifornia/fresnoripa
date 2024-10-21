@@ -130,6 +130,10 @@ list_of_plots <- map(unique(df_combined$statute_literal_25), function(x) {
     hc_title(text = paste0("Rate of Traffic Stops by Reason: ",x)) %>% 
     hc_yAxis(title = list(text = ""))%>%
     hc_xAxis(title = list(text = ""))%>%
+    hc_caption(
+      text = caption_text,
+      useHTML=TRUE
+    )%>%
      
    hc_tooltip(pointFormat = tooltip_text)
 })
@@ -137,9 +141,7 @@ list_of_plots <- map(unique(df_combined$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$p("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
-     tags$p(style = "font-size: 10px; color: gray;", 
-           "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024.  Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 10 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."),
+    tags$h2("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
     list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
   )
 )
