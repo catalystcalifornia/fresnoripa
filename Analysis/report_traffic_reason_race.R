@@ -254,16 +254,16 @@ dbWriteTable(con,  "report_traffic_reason_type_race", df1,
              field.types = charvect)
 
 # # write comment to table, and column metadata
-table_comment <- paste0("COMMENT ON TABLE report_traffic_reason_type_race  IS 'Analyzing officer-initiated traffic stops by simple stop reason by traffic stop type for each racial group.
+table_comment <- paste0("COMMENT ON TABLE report_traffic_reason_type_race  IS 'Top 5 stop reasons by race for each stop type in officer-initiated traffic stops'
 R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_reason_race.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
 
 COMMENT ON COLUMN report_traffic_reason_type_race.race IS 'Perceived race';
 COMMENT ON COLUMN report_traffic_reason_type_race.traffic_violation_type IS 'Type of traffic violation (moving, nonmoving, equipment)';
 COMMENT ON COLUMN report_traffic_reason_type_race.statute_literal_25 IS 'Text description of the traffic stop reason corresponding with the traffic stop reason code';
-COMMENT ON COLUMN report_traffic_reason_type_race.total IS 'Total number of officer-initiated traffic stops within each traffic stop type (denominator in rate calc)';
-COMMENT ON COLUMN report_traffic_reason_type_race.count IS 'Count of officer-initiated traffic stop reasonswithin each traffic stop type for each race (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_reason_type_race.rate IS 'Rate of officer-initiated traffic stop reasons for each type of traffic stop type by race';
+COMMENT ON COLUMN report_traffic_reason_type_race.total IS 'Total number of officer-initiated traffic stops within each traffic stop type (rate calc denominator)';
+COMMENT ON COLUMN report_traffic_reason_type_race.count IS 'Count of officer-initiated traffic stop reasons within each traffic stop type for each race (rate calc numerator)';
+COMMENT ON COLUMN report_traffic_reason_type_race.rate IS 'Rate of officer-initiated traffic stop reasons per race out by traffic stop type';
 ")
 
 # send table comment + column metadata
@@ -291,16 +291,13 @@ R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
 
 COMMENT ON COLUMN report_traffic_reason_race.race IS 'Perceived race';
-COMMENT ON COLUMN report_traffic_reason_race.denom IS 'Which denominator is used for the Total and Rate column. 
-If denom==traffic_stop_race then the total column represents total number of traffic stops within each racial group.
-If denom==traffic_reason then the total represents the total number of traffic stops with that stop reason.';
-
+COMMENT ON COLUMN report_traffic_reason_race.denom IS 'Denominator type used for the Total and Rate column. 
+If denom==traffic_stop_race then total represents total number of officer-initiated traffic stops for that racial group.
+If denom==traffic_reason then total represents total number of officer-initiated traffic stops for that stop reason.';
 COMMENT ON COLUMN report_traffic_reason_race.statute_literal_25 IS 'Text description of the traffic stop reason corresponding with the traffic stop reason code';
-COMMENT ON COLUMN report_traffic_reason_race.total IS 'Denominator in rate calc which is noted in the denom column as there are two options. 
-If denom==traffic_stop_race then the total column represents total number of traffic stops within each racial group. 
-If denom==traffic_reason then the total represents the total number of traffic stops with that stop reason.';
-COMMENT ON COLUMN report_traffic_reason_race.count IS 'Count of officer-initiated traffic stop reasons within each race (numerator for rate calc)';
-COMMENT ON COLUMN report_traffic_reason_race.rate IS 'Rate of officer-initiated traffic stop reasons by race using both denominators for the rate calc';
+COMMENT ON COLUMN report_traffic_reason_race.total IS 'Denominator count used in rate calc (see denom column for type); 
+COMMENT ON COLUMN report_traffic_reason_race.count IS 'Count of officer-initiated traffic stop reasons for that race (numerator for rate calc)';
+COMMENT ON COLUMN report_traffic_reason_race.rate IS 'Rate is count of officer-initiated traffic stop reasons by race divided by total (which depends on denom type)';
 ")
 
 # send table comment + column metadata
