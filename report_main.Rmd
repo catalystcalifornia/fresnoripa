@@ -107,6 +107,9 @@ orange <- "#F25922"
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
 
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
+```
+
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
 ### A. Actions taken during traffic stops are biased toward men of color 
