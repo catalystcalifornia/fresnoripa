@@ -65,9 +65,7 @@ df1.1<-df%>%
   ungroup()%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
   arrange(-rate)%>%
-  arrange(nh_race, -rate)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  arrange(nh_race, -rate)
 
 ### AIAN ###
 
@@ -82,8 +80,7 @@ df1.1_aian<-df%>%
   mutate(nh_race="aian_aoic",
          denom="citation_race")%>%
   select(nh_race,  denom, statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 ### NHPI ###
 
@@ -98,8 +95,7 @@ df1.1_nhpi<-df%>%
   mutate(nh_race="nhpi_aoic",
          denom="citation_race")%>%
   select(nh_race, denom,  statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 ### SWANA/SA ###
 
@@ -114,8 +110,7 @@ df1.1_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="citation_race")%>%
   select(nh_race, denom, statute_literal_25, total, count, rate)%>%
-  arrange(-rate)%>%
-  slice(1:5)
+  arrange(-rate)
 
 ## Combine all tables together ##
 
@@ -137,9 +132,7 @@ df1.2<-df%>%
   slice(1)%>%
   ungroup()%>%
   select(nh_race, denom, statute_literal_25, total, count,rate)%>%
-  arrange(nh_race, -count)%>%
-  group_by(nh_race)%>%
-  slice(1:5)
+  arrange(nh_race, -count)
 
 ### AIAN ###
 
@@ -184,8 +177,7 @@ df1.2_sswana<-df%>%
   mutate(nh_race="sswana_aoic",
          denom="citation_result")%>%
   select(nh_race,  denom, statute_literal_25, total, count, rate)%>%
-  arrange(-count)%>%
-  slice(1:5)
+  arrange(-count)
 
 ## Combine all tables together ##
 

@@ -81,7 +81,8 @@ df_combined <- rbind(df_race, summed)
 
 df_combined<-df_combined%>%
   ungroup()%>%
-  filter(!grepl("USE CELLPH W/DRIV W/O HFD|NO HND HLD DEVICE W/DRIVE", statute_literal_25))%>%
+  filter(grepl("Unsafe Speed while Driving Vehicle|Obstructed Window|No Vehicle Registration", statute_literal_25))%>%
+  
   arrange(race, -rate)
 
 
@@ -101,21 +102,6 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 # create tooltip text
 
 tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
-
-
-# run function
-
-chart_race<-rdaGroupedBar(
-  df_combined,
-  "race_label",
-  "rate",
-  "statute_literal_25",
-  title = "Fresno PD Stops BIPOC People in Traffic Stops for Reasons That Do Not Require Policing",
-  subtitle = "Percent of officer-initiated traffic stops by stop reason and perceived race",
-  tooltip_text = tooltip_text,
-  caption = caption_text,
-  export_data_label = list(pointFormat='{point.rate:.1f}%')
-)
 
 
 ```
@@ -144,13 +130,18 @@ list_of_plots <- map(unique(df_combined$statute_literal_25), function(x) {
     hc_title(text = paste0("Rate of Traffic Stops by Reason: ",x)) %>% 
     hc_yAxis(title = list(text = ""))%>%
     hc_xAxis(title = list(text = ""))%>%
+    hc_caption(
+      text = caption_text,
+      useHTML=TRUE
+    )%>%
+     
    hc_tooltip(pointFormat = tooltip_text)
 })
 
   
 browsable(
   tagList(
-    tags$h2("Fresno PD Stops People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"),  # Main title
+    tags$h3("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
     list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
   )
 )

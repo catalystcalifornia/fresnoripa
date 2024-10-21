@@ -94,7 +94,7 @@ orange <- "#F25922"
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
-```{r bubble-chart, child= 'report_embeds/report_traffic_result_race.Rmd'}
+```{r bubble-chart, child= 'report_embeds/report_traffic_result.Rmd'}
 ```
 
 
@@ -104,12 +104,11 @@ orange <- "#F25922"
 
 ### C. Furthermore, use of citations is biased against people of color 
 
-```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_window_race.Rmd'}
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
 ```
-
 
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
