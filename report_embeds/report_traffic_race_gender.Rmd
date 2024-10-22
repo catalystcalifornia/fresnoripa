@@ -50,8 +50,9 @@ df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_race_gender")
 df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian","aian","nhpi","nh_multiracial","nh_black","sswana"))%>%
   filter(gender %in% c("Male","Female"))%>%
   select(race,gender,traffic_count,traffic_race_total,traffic_race_rate)%>%
-  arrange(gender,traffic_race_rate)%>%
-  mutate(traffic_race_rate=traffic_race_rate*100)
+  arrange(-traffic_race_rate)%>%
+  mutate(traffic_race_rate=traffic_race_rate*100)%>%
+  filter(traffic_race_total>=5)
 
 # create race label
 df<-df%>%mutate(race_label = case_when(
@@ -65,15 +66,19 @@ df<-df%>%mutate(race_label = case_when(
     race == 'sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(race)))
 
+gender_factors<-c("Male","Female") 
+
+df$gender <- factor(x=df$gender, levels = gender_factors) # factor levels to order plot by
+
 # visualize--------------------------
 
 # create caption 
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Officers stopped a total of 6 individuals perceived as transgender or gender non-conforming. 67% of these people were perceived as Latinx."
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Officers stopped a total of 6 individuals perceived as transgender or gender nonconforming. 67% of these people were perceived as Latinx. Officers stopped fewer than 5 people perceived as Native Hawaiian/Pacific Islander or multiracial."
 
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
 caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 
@@ -83,7 +88,7 @@ caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 tooltip_text <- "Out of the {point.traffic_race_total} people Fresno PD stopped for traffic reasons and perceived as {point.race_label}, <b>{point.traffic_race_rate:.1f}%</b> were perceived as <b>{point.gender}</b> by Fresno PD, a total of <b>{point.traffic_count:.0f}</b> people."
 
 # Visualizing as table --------------------------
-chart_race_gender<-rdaGroupedBar(df,"race_label","traffic_race_rate","gender",bar_colors=list(lavender,meteorite),title="Fresno PD Stops a Higher Share of Men of Color During Traffic Stops",
+chart_race_gender<-rdaGroupedBar(df,"race_label","traffic_race_rate","gender",bar_colors=list(meteorite,lavender),title="Fresno PD Stops a Higher Share of Men of Color During Traffic Stops",
   subtitle = "Percent of officer-initiated traffic stops by perceived gender out of stops of same race",
   tooltip_text = tooltip_text,
   caption = caption_text,
