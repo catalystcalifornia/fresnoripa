@@ -2,9 +2,9 @@
 
 # Environment set up ----
 # Load Packages
-library(tidyverse)
 library(RPostgreSQL)
 library(dplyr)
+library(purrr)
 source("W:\\RDA Team\\R\\credentials_source.R")
 conn <- connect_to_db("eci_fresno_ripa")
 
@@ -37,15 +37,28 @@ ois_traffic_race<-ois_traffic%>%
 ois_traffic_race<-ois_traffic_race%>%
   mutate(bipoc=ifelse(nh_race=='nh_white','White','BIPOC'))
 
-
 table(ois_traffic_race$stop_result_simple)
 
 # filter just for stops that resulted in one or more of the three: citation for infraction, warning, no action
-target<-list(c("citation for infraction","no action","warning verbal or written"))
+target<-list("citation for infraction","no action","warning verbal or written")
 
-# not quite working to include stops that resulted in say warning and citation for infraction
-df<-ois_traffic_race[sapply(ois_traffic_race$stop_result_list, \(id) any(target[[1]] %in% id)), ]
+# stop_result_list is not an actual list - need to convert and then can create  
+# column that checks if elements in that list are not in our target list 
+df <- ois_traffic_race %>%
+  # will use eval(parse()) to convert to list, but need to reformat single result stops to have "c()" syntax
+  mutate(stop_result_list2 = case_when(unique_stop_result_count==1 ~ paste0('c("', stop_result_list, '")'),
+                                       .default = stop_result_list)) %>%
+  # convert to list type (in View will still say character - 
+  # can confirm with this code: typeof(df[1450, "stop_result_list3"]) VS typeof(df[1450, "stop_result_list"]) )
+  mutate(stop_result_list3 = map(stop_result_list2, ~eval(parse(text=.x)))) %>%
+  # actual check: returns TRUE if any of the elements in stop_result_list3 are not in our target list
+  mutate(target_check = map_lgl(stop_result_list3, ~any(!(. %in% target)))) %>%
+  # filter for only stops where all results are in target list
+  filter(target_check == FALSE) %>%
+  select(-c(stop_result_list2, stop_result_list3, target_check))
 
+# confirm worked
+table(df$stop_result_list)
 
 # Time spent by race --------
 # Measure: 5-number summary of time spent by race
