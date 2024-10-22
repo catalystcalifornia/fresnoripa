@@ -255,7 +255,7 @@ dbWriteTable(con,  "report_traffic_reason_type_race", df1,
              field.types = charvect)
 
 # # write comment to table, and column metadata
-table_comment <- paste0("COMMENT ON TABLE report_traffic_reason_type_race  IS 'Top 5 stop reasons by race for each stop type in officer-initiated traffic stops'
+table_comment <- paste0("COMMENT ON TABLE report_traffic_reason_type_race  IS 'Top 5 stop reasons by race for each stop type in officer-initiated traffic stops
 R script used to analyze and import table: W:\\Project\\ECI\\Fresno RIPA\\GitHub\\JZ\\fresnoripa\\Analysis\\report_traffic_reason_race.R
 QA document: W:\\Project\\ECI\\Fresno RIPA\\Documentation\\QA_report_traffic_reason_race.docx';
 
@@ -296,7 +296,7 @@ COMMENT ON COLUMN report_traffic_reason_race.denom IS 'Denominator type used for
 If denom==traffic_stop_race then total represents total number of officer-initiated traffic stops for that racial group.
 If denom==traffic_reason then total represents total number of officer-initiated traffic stops for that stop reason.';
 COMMENT ON COLUMN report_traffic_reason_race.statute_literal_25 IS 'Text description of the traffic stop reason corresponding with the traffic stop reason code';
-COMMENT ON COLUMN report_traffic_reason_race.total IS 'Denominator count used in rate calc (see denom column for type); 
+COMMENT ON COLUMN report_traffic_reason_race.total IS 'Denominator count used in rate calc (see denom column for type)'; 
 COMMENT ON COLUMN report_traffic_reason_race.count IS 'Count of officer-initiated traffic stop reasons for that race (numerator for rate calc)';
 COMMENT ON COLUMN report_traffic_reason_race.rate IS 'Rate is count of officer-initiated traffic stop reasons by race divided by total (which depends on denom type)';
 ")
