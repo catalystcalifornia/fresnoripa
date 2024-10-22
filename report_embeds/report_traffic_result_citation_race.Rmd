@@ -171,7 +171,6 @@ browsable(
 
 ```
 
-
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
   for (let i = 0; i < widg.length; i++) { //loop through
