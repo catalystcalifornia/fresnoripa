@@ -204,8 +204,8 @@ df3_sswana<-df%>%
   filter(reason=="Traffic violation")%>%
   group_by(stop_result_simple)%>%
   mutate(count=n(),
-         rate_per_1k=count/total*1000,
-         denom="population",
+         rate=count/total*1000,
+         denom="population race (1K)",
          nh_race="sswana_aoic")%>%
   slice(1)%>%
   ungroup()%>%
@@ -279,9 +279,9 @@ charvect <- replace(charvect, c(5,6,7), c("numeric"))
 
 names(charvect) <- colnames(df_final)
 
-dbWriteTable(con,  "report_traffic_result_race", df_final,
-             overwrite = TRUE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "report_traffic_result_race", df_final,
+#              overwrite = FALSE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # # write comment to table, and column metadata
@@ -301,4 +301,4 @@ COMMENT ON COLUMN report_traffic_result_race.rate IS 'Rate of traffic stop resul
 ")
 
 # send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# dbSendQuery(conn = con, table_comment)
