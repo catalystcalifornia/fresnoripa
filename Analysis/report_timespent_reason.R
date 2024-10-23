@@ -2,7 +2,6 @@
 
 # Environment set up ----
 # Load Packages
-library(tidyverse)
 library(RPostgreSQL)
 library(dplyr)
 source("W:\\RDA Team\\R\\credentials_source.R")
