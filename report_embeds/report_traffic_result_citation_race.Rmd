@@ -122,14 +122,4 @@ browsable(
 
 ```
 
-
 <div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br>  Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024.  Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart.</span> </div>
-
-
-<script>
-  widg = document.getElementsByClassName('html-widget'); //find widgets
-  for (let i = 0; i < widg.length; i++) { //loop through
-    document.getElementsByClassName('highchart')[i].style.width = '100%'; //adjust width
-    document.getElementsByClassName('highchart')[i].style.height = '100%'; //adjust height
-  }
-</script>

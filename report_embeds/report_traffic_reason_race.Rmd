@@ -109,8 +109,8 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
          showInLegend = FALSE, color = "#3A207D") %>%
     hc_plotOptions(column = list(stacking = "normal")) %>%
     hc_add_theme(hc_theme_smpl()) %>%
-    hc_title(text = paste0("Rate of Traffic Stops by Reason: ", x)) %>% 
-    hc_yAxis(title = list(text = ""))%>%
+    hc_subtitle(text = paste0("Rate of traffic stops made for  ", x," reason out of all traffic stops by race")) %>% 
+    hc_yAxis(title = list(text = "Percent (%)"))%>%
     hc_xAxis(title = list(text = ""))%>%
     # hc_caption(
     #   text = caption_text,
@@ -121,7 +121,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$h3("Fresno PD Pulls Over People Perceived as BIPOC in Traffic Stops for Reasons Not Related to Safety at Higher Rates than People Perceived as White"), # Main title
+    tags$h3("Officer Use Non-Public Safety Reasons to Pull Over People of Color"), # Main title
     list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
   )
 )
