@@ -40,6 +40,7 @@ df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_detained")
 
 # filter groups being visualized and select rate and counts to be visualized
 df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian","nh_aian","nh_nhpi","nh_multiracial","nh_black","nh_sswana"))%>%
+    filter(gender_race_traffic_total>=5) %>% # only include groups where at least 5 people were stopped in traffic stops
   select(race,gender,detained_count,detained_total,detained_total_rate)%>%
   arrange(-detained_total_rate)%>%
   filter(detained_total_rate>0)%>%
@@ -64,7 +65,7 @@ df<-df%>%mutate(race_label = case_when(
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops that included an officer detaining a person in 2022. Genders are based on cisgender identification by officers."
+methodnote <- "Analysis for all officer-initiated traffic stops that included an officer detaining a person in 2022. Genders are based identification by officers. According to the data source, officers did not report detaining people perceived as transgender or gender nonconforming. Officers did not report detaining people perceived as American Indian/Alaska Native or Native Hawaiian/Pacific Islander alone."
 
 racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
@@ -82,7 +83,7 @@ chart_race<-rdaBar(
   "label",
   "detained_total_rate",
   title="Fresno PD Disproportionately Detains Latinx Males During Traffic Stops",
-  subtitle="People detained during officer-initiated traffic stops by perceived race and gender (%)",
+  subtitle="Percent of people detained during officer-initiated traffic stops by perceived race and gender",
   tooltip_text=tooltip_text,
   caption=caption_text,
   export_data_label=list(pointFormat='{point.detained_total_rate:.1f}%'))
