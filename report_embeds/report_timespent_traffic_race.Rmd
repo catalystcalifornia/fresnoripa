@@ -219,45 +219,45 @@ jitter_chart<-highchart() %>%
   hc_add_theme(cc_theme)
 
 
-sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time)%>%
-  pivot_longer(!race,names_to="measure", values_to="time")%>%
-  filter(!race %in% c('nh_aian','nh_multiracial','nh_nhpi','White','BIPOC'))%>%
-  mutate(race_label = case_when(
-    race == 'latinx' ~ "Latinx", 
-    race =='nh_white' ~ 'White',
-    race =='nh_black' ~ 'Black',
-    race == 'nh_asian' ~ 'Asian',
-    race == 'nh_sswana' ~ 'SWANA/SA', 
-    TRUE ~ as.character(race)),
-    measure=case_when(measure=='min_time' ~ 'Minimum Time',
-                      measure=='q25_time' ~ '25% of Stops',
-                      measure=='median_time' ~ '50% of Stops',
-                      measure=='q75_time' ~ '75% of Stops',
-                      measure=='q95_time' ~ '95% of Stops',
-                      TRUE ~ as.character(measure)))
-
-sum_df$race_label <- factor(x=sum_df$race_label, levels = c('Asian','Black','Latinx','SWANA/SA','White')) # factor levels to order plot by
-
-sum_chart<-highchart() %>%
-   hc_xAxis(type = "category") %>%
-   hc_add_series(
-    data = sum_df,
-    type = "scatter",
-    hcaes(x = "race_label", y = "time", group = "measure"),
-    tooltip = list(headerFormat="", pointFormat = "{point.time:.0f} minutes spent on {point.measure} of people perceived as {point.race_label}")
-  ) %>%
-  hc_plotOptions(scatter = list(
-    marker = list(
-      radius = 5,
-      symbol = "circle",
-      lineWidth = .5
-    )
-  ))  %>%
-  hc_colors(list("#372278", "#5F3B63","#A8683C", "#D58424", "#FF9900"))%>%
-  hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People Perceived as Black or Asian") %>%
-  hc_caption(text=caption_text)%>%
-    hc_subtitle(text = "Range of time spent on traffic stops resulting in a citation for infraction, warning, or no action by race")%>%
-  hc_add_theme(cc_theme)
+# sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time)%>%
+#   pivot_longer(!race,names_to="measure", values_to="time")%>%
+#   filter(!race %in% c('nh_aian','nh_multiracial','nh_nhpi','White','BIPOC'))%>%
+#   mutate(race_label = case_when(
+#     race == 'latinx' ~ "Latinx", 
+#     race =='nh_white' ~ 'White',
+#     race =='nh_black' ~ 'Black',
+#     race == 'nh_asian' ~ 'Asian',
+#     race == 'nh_sswana' ~ 'SWANA/SA', 
+#     TRUE ~ as.character(race)),
+#     measure=case_when(measure=='min_time' ~ 'Minimum Time',
+#                       measure=='q25_time' ~ '25% of Stops',
+#                       measure=='median_time' ~ '50% of Stops',
+#                       measure=='q75_time' ~ '75% of Stops',
+#                       measure=='q95_time' ~ '95% of Stops',
+#                       TRUE ~ as.character(measure)))
+# 
+# sum_df$race_label <- factor(x=sum_df$race_label, levels = c('Asian','Black','Latinx','SWANA/SA','White')) # factor levels to order plot by
+# 
+# sum_chart<-highchart() %>%
+#    hc_xAxis(type = "category") %>%
+#    hc_add_series(
+#     data = sum_df,
+#     type = "scatter",
+#     hcaes(x = "race_label", y = "time", group = "measure"),
+#     tooltip = list(headerFormat="", pointFormat = "{point.time:.0f} minutes spent on {point.measure} of people perceived as {point.race_label}")
+#   ) %>%
+#   hc_plotOptions(scatter = list(
+#     marker = list(
+#       radius = 5,
+#       symbol = "circle",
+#       lineWidth = .5
+#     )
+#   ))  %>%
+#   hc_colors(list("#372278", "#5F3B63","#A8683C", "#D58424", "#FF9900"))%>%
+#   hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People Perceived as Black or Asian") %>%
+#   hc_caption(text=caption_text)%>%
+#     hc_subtitle(text = "Range of time spent on traffic stops resulting in a citation for infraction, warning, or no action by race")%>%
+#   hc_add_theme(cc_theme)
 
 
 ```
@@ -269,7 +269,7 @@ jitter_chart
 ```
 ```{r, echo=FALSE}
 
-sum_chart
+# sum_chart
 
 ```
 <script>
