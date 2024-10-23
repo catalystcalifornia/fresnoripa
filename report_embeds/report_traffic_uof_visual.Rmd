@@ -86,9 +86,9 @@ df <- within(df, label <- factor(label, levels=c("White Males","White Females","
 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops that included an officer using force against a person in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops that included an officer using force against a person in 2022. Genders are based identification by officers. According to the data source, officers reported no uses of force against people perceived as transgender or gender nonconforming."
 
-racenote <- "Race/ethnicity: Person of color includes any person perceived as non-White. According to the data source, officers reported no uses of force against transgender and gendernonconfirming individuals."
+racenote <- "Race/ethnicity: Person of color includes any person perceived as non-White."
 
 caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 
