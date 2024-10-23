@@ -37,7 +37,7 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull analysis tables for visualizing
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_license_race")%>%
-    mutate(statute_literal_25 = "driving without a license")%>% # convert text for offense to be title case
+    mutate(statute_literal_25 = "Driving Without a License")%>% # convert text for offense to be title case
   mutate(race_label=ifelse(race %in% "latinx", "Latinx",
                            ifelse(race %in% "nh_aian", "AIAN NH",
                                   ifelse(race %in% "nh_black", "Black",
@@ -58,7 +58,7 @@ df_result<-df%>%
   filter(denom=="citation_result")
 
 df_race<-df%>%
-  filter(denom=="citation_race") # I think this is the one we want to visualize
+  filter(denom=="citation_race")
 
 ```
 
@@ -83,17 +83,34 @@ tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{
 
 # Run bubblechart function
 
+  ## COLORS ##
+  papaya <- "#F25922"
+  peridot <- "#CEEA01"
+  lavender <- "#CEC4E2"
+  meteorite <- "#3A207D"
+  ccblue <- "#0860BC"
 
-chart<-rdaBubblepop(
-  df_race,
-  race_label,
+  black <- "#000000"
+  alabaster<-"#FBFBFB"
+  gainsboro <- "#DEDEDE"
+
+  # add custom ordering on stacked bar
+  
+  
+# add factors for sorting
+df_result <- within(df_result, race_label <- factor(race_label, levels=c("White","SWANA/SA", "Asian","Black", "Latinx")))
+
+
+chart<-rdaStackedBar(
+  df_result,
+ statute_literal_25,
   "rate",
-  count,
+  race_label,
+ bar_colors=list( gainsboro, "#949494", lavender, "#8E7ACA", "#362178"),
   title = "Fresno PD Is Twice as Likely to Cite Perceived Latinx Drivers for Driving Without a License Compared to Perceived White Drivers",
   subtitle = "Rate of traffic stops that result in a citation for driving without a license by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
-  yaxis_label = "''",
   export_data_label = list(pointFormat='{point.rate:.1f}%') 
 )
 
