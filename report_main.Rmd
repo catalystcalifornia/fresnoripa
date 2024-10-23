@@ -62,7 +62,7 @@ orange <- "#F25922"
 # FINDINGS
 
 
-## 1. Fresno PD disproportionately stops people and men of color for traffic stops 
+## 1. Fresno PD disproportionately stops people of color, especially men of color for traffic stops 
 
 
 ### A. People of color disproportionately stopped generally for traffic stop
