@@ -175,9 +175,8 @@ df_pop<-df%>%
                       ifelse(nhpi_flag==1, 3192, 
                              ifelse(sswana_flag==1, 33158,  total))))%>%
   mutate(total = case_when(
-    nh_race == "nh_multiracial" & sswana_flag==1 ~ 17479,
-    TRUE ~ total))%>%  # hard code the one person who is sswana and multiracial to use the multiracial denominator:
-  filter(nh_race!="nh_sswana") # no population estimates for nh_sswana
+    nh_race == "nh_multiracial" & sswana_flag==1 ~ 33158,
+    TRUE ~ total)) # hard code the one person who is sswana and multiracial to use the multiracial denominator:
 
 ##### NH #####
 
