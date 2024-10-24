@@ -2,7 +2,6 @@
 
 # Environment set up ----
 # Load Packages
-library(tidyverse)
 library(RPostgreSQL)
 library(dplyr)
 source("W:\\RDA Team\\R\\credentials_source.R")
@@ -78,7 +77,7 @@ add_table_comments <- function(con, schema, table_name, indicator, source, colum
 table_name <- "report_timespent_reason"
 schema <- 'data'
 
-indicator <- "Time spent on officer-initiated stops by stop reason, including percent of time, average, median. Times are in hours or minutes as noted"
+indicator <- "Time spent on officer-initiated stops by stop reason, including percent of time, average, median. Times are in hours or minutes as noted. "
 source <- "CADOJ RIPA 2022
 See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_report_timespent_reason_race.docx
 Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_timespent_reason.R"
@@ -109,7 +108,7 @@ column_comments <- c('Reason for the stop simplified to be unique by stop',
 table_name <- "timespent_ois_cfs"
 schema <- 'data'
 
-indicator <- "Time spent on stops by officer-inititated or calls for service, including percent of time, average, median. Times are in hours or minutes as noted"
+indicator <- "Time spent on stops by officer-inititated or calls for service, including percent of time, average, median. Times are in hours or minutes as noted. "
 source <- "CADOJ RIPA 2022
 See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_report_timespent_reason_race.docx
 Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_timespent_reason.R"
