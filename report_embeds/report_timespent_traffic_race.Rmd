@@ -7,7 +7,7 @@ output:
 <!-- link to Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-```{r load, include=FALSE}
+```{r, include=FALSE}
 
 # set up -----------------------------
 library(RPostgreSQL)
@@ -43,7 +43,7 @@ dbDisconnect(con)
 ```
 
 
-```{r prep-data, include=FALSE}
+```{r, include=FALSE}
 # Stop universe selection and prep ----
 # join race, result, and capped time
 ois_traffic_race <- ois_traffic %>%
@@ -85,7 +85,8 @@ cor.test(df$bipoc_flag, df$stop_duration_capped)
 
 ```
 
-```{r prep-visual, include=FALSE}
+```{r, include=FALSE}
+
 # visualize--------------------------
 ## COLORS ##
 papaya <- "#F25922"
@@ -189,7 +190,8 @@ racenote <- "Race is based on officer perception. People of Color includes all i
 caption_text <- paste("<br>", sourcenote, methodnote, racenote)
 ```
 
-```{r create-visual, echo=FALSE}
+```{r, echo=FALSE}
+
 jitter_chart <- highchart() %>%
   hc_chart(inverted = TRUE) %>%
   hc_add_series(
@@ -231,7 +233,7 @@ jitter_chart
 
 ```
 
-```{r create-visual2, include=FALSE}
+```{r, include=FALSE}
 # stop_result_list is not an actual list - need to convert and then can create  
 # column that checks if elements in that list are not in our target list 
 df_qa <- ois_traffic_race %>%
