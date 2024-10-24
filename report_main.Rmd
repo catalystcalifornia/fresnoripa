@@ -62,16 +62,16 @@ orange <- "#F25922"
 # FINDINGS
 
 
-## 1. Fresno PD disproportionately stops people and men of color for traffic stops 
+## 1. Fresno PD disproportionately stops people of color, especially men of color for traffic stops
 
 
-### A. People of color disproportionately stopped generally for traffic stop
+### A. People of color disproportionately subjected to traffic stops
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_race.Rmd'}
 ```
 
 
-### B.Men of color especially targeted during these stops  
+### B.Men of color especially targeted for traffic stops  
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
 ```
@@ -84,8 +84,7 @@ orange <- "#F25922"
 
 ## 2.  These stops do not advance safety and are a means to profile people of color   
 
-### A. Officers use minor reasons to pull over people of color
-
+### A. Officer use non-public safety reasons to pull over people of color
 
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
@@ -98,7 +97,7 @@ orange <- "#F25922"
 ```
 
 
-### C. Furthermore, use of citations is biased against people of color 
+### C. Furthermore, Fresno PD's ticketing practices are biased against people of color 
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
@@ -108,7 +107,7 @@ orange <- "#F25922"
 
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
-### A. Actions taken during traffic stops are biased toward men of color 
+### A. Actions taken during traffic stops are biased against men of color 
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
 ```
