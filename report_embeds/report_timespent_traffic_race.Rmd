@@ -184,21 +184,21 @@ caption_text <- paste("<br>", sourcenote, methodnote)
 ```
 
 ```{r create-visual, include=FALSE}
-jitter_chart<-highchart() %>%
-   hc_xAxis(type = "category") %>%
+jitter_chart <- highchart() %>%
    hc_add_series(
     data = df,
     type = "scatter",
-    hcaes(x = "bipoc", y = "df$stop_duration_capped", group = "bipoc"),
+    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
     tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")) %>%
   hc_plotOptions(scatter = list(
     color = meteorite,
     marker = list(
       radius = 2,
       symbol = "circle",
-      lineWidth = .5)))  %>%
-  hc_plotOptions(scatter = list(jitter = list(x = .1, y = 0)))%>%
-  hc_yAxis(min=0)%>%
+      lineWidth = .5),
+    jitter = list(x = .1, y = 0))) %>%
+  hc_xAxis(type="category") %>%
+  hc_yAxis(min=0,max=60)%>%
   hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
     hc_subtitle(text = "Each dot represents the time spent stopping a person cited for an infraction and/or given a warning or no action")%>%
