@@ -110,7 +110,7 @@ add_table_comments <- function(con, schema, table_name, indicator, source, colum
 table_name <- "report_timespent_traffic_race"
 schema <- 'data'
 
-indicator <- "Time spent on officer-initiated traffic stops that resulted in citation for infraction, no action, or warning by race and by BIPOC or not. Includes 5-number summary. Times are in minutes"
+indicator <- "Time spent on officer-initiated traffic stops that resulted in citation for infraction, no action, or warning by race and by BIPOC or not. Includes 5-number summary. Times are in minutes. "
 source <- "CADOJ RIPA 2022
 See QA doc for details: W:/Project/ECI/Fresno RIPA/Documentation/QA_report_timespent_reason_race.docx
 Script: W:/Project/ECI/Fresno RIPA/GitHub/EMG/fresnoripa/Analysis/report_timespent_reason.R"
