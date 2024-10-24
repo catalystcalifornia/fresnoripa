@@ -8,68 +8,59 @@ output:
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 
-```{r, include=FALSE}
+```{r load, include=FALSE}
 
 # set up -----------------------------
-
 library(RPostgreSQL)
 library(purrr)
 source("W:\\RDA Team\\R\\credentials_source.R")
-# 
-# source("W:\\RDA Team\\Packages\\rdaCharts\\HK\\R\\rdaBubblepop.R") # sourcing one of the visual files so I can get color codes
-
 # library(devtools)
  # remotes::install_github("catalystcalifornia/rdaCharts")
 library(rdaCharts)
-# library(stringr)
-library(htmltools) 
-# library(htmlwidgets)
-# remotes::install_github("jthomasmock/gtExtras")
-library(gtExtras)
-library(gt)
-library(extrafont)
-library(usethis)
 
-#connect to postgres
-
+# connect to postgres
 source("W:\\RDA Team\\R\\credentials_source.R")
-
 con <- connect_to_db("eci_fresno_ripa")
 
 # Import data
+# Get df of stop_ids for officer-initiated stops
+ois_stops <- dbGetQuery(con, "SELECT * FROM data.rel_stops") %>% 
+  filter(call_for_service==0) %>%
+  select(stop_id)
+
+# Get df of officer-initiated stops where people stopped just for traffic violations
+ois_traffic <- dbGetQuery(con, "SELECT * FROM data.rel_persons_reason") %>%
+  filter(reason=='Traffic violation') %>%
+  select(stop_id,person_number,reason) %>%
+  filter(stop_id %in% ois_stops$stop_id)
+
 time <- dbGetQuery(con, "SELECT * FROM data.rel_stop_duration_capped")
-stops <- dbGetQuery(con, "SELECT * FROM data.rel_stops")
-p_reasons <- dbGetQuery(con, "SELECT * FROM data.rel_persons_reason")
 p_races <- dbGetQuery(con, "SELECT * FROM data.rel_races_recode")
 races <- dbGetQuery(con, "SELECT * FROM data.rel_stops_race")
-p_results<-dbGetQuery(con, "SELECT * FROM data.rel_persons_result")
-summary<-dbGetQuery(con, "SELECT * FROM data.report_timespent_traffic_race")
+p_results <- dbGetQuery(con, "SELECT * FROM data.rel_persons_result")
+summary <- dbGetQuery(con, "SELECT * FROM data.report_timespent_traffic_race")
+```
 
 
+```{r prep-data, include=FALSE}
 # Stop universe selection and prep ----
-# Get df for officer-initiated stops
-ois <- stops %>% filter(call_for_service==0)%>%select(stop_id)
-
-# Filter for people stopped just for traffic violations
-traffic <- p_reasons%>%filter(reason=='Traffic violation')%>%select(stop_id,person_number,reason)
-
-# Filter traffic stops just for ois
-ois_traffic<-traffic%>%filter(stop_id %in% ois$stop_id)
-
 # join race, result, and capped time
-ois_traffic_race<-ois_traffic%>%
-  left_join(p_races)%>%select(-race_count_re)%>%
-  left_join(time)%>%
-  left_join(p_results)
-
-# add bipoc column 
-ois_traffic_race<-ois_traffic_race%>%
-  mutate(bipoc=ifelse(nh_race=='nh_white','Persons Perceived as White','Persons of Color'))%>%
-    mutate(bipoc_label=ifelse(nh_race=='nh_white','White','a Person of Color'))%>%
-  mutate(bipoc_flag=ifelse(bipoc=='People of Color',1,0))
+ois_traffic_race <- ois_traffic %>%
+  left_join(p_races) %>%
+  select(-race_count_re) %>%
+  left_join(time) %>%
+  left_join(p_results) %>%
+  # add bipoc column 
+# ois_traffic_race <- ois_traffic_race %>%
+  mutate(bipoc=
+           ifelse(nh_race=='nh_white', 'Persons Perceived as White', 'Persons of Color'),
+         bipoc_label=
+           ifelse(nh_race=='nh_white', 'White', 'a Person of Color')) %>%
+  mutate(bipoc_flag=
+           ifelse(bipoc=='Persons of Color', 1, 0))
 
 # filter just for stops that resulted in one or more of the three: citation for infraction, warning, no action
-target<-list("citation for infraction","no action","warning verbal or written")
+target <- list("citation for infraction", "no action", "warning verbal or written")
 
 # stop_result_list is not an actual list - need to convert and then can create  
 # column that checks if elements in that list are not in our target list 
@@ -87,102 +78,98 @@ df <- ois_traffic_race %>%
   select(-c(stop_result_list2, stop_result_list3, target_check))
 
 cor.test(df$bipoc_flag, df$stop_duration_capped)
-# significantly correlated
+# significantly correlated, p-value = 0.008005
+```
 
+```{r prep-visual, include=FALSE}
 # visualize--------------------------
+## COLORS ##
+papaya <- "#F25922"
+peridot <- "#CEEA01"
+lavender <- "#CEC4E2"
+meteorite <- "#3A207D"
+ccblue <- "#0860BC"
+
+black <- "#000000"
+alabaster<-"#FBFBFB"
+gainsboro <- "#DEDEDE"
+
+ ## FONTS ##
+main_font <- "Inter"
+regular_font_weight <- 400
+black_font_weight <- 800
+semi_bold_font_weight <- 600
 
 
-  ## COLORS ##
-  papaya <- "#F25922"
-  peridot <- "#CEEA01"
-  lavender <- "#CEC4E2"
-  meteorite <- "#3A207D"
-  ccblue <- "#0860BC"
-
-  black <- "#000000"
-  alabaster<-"#FBFBFB"
-  gainsboro <- "#DEDEDE"
-
-   ## FONTS ##
-  main_font <- "Inter"
-  regular_font_weight <- 400
-  black_font_weight <- 800
-  semi_bold_font_weight <- 600
-
-  
-  ##### highchart theme #####
-  cc_theme <- hc_theme(
-    colors = c(meteorite, lavender, papaya, peridot),
-    chart = list(
-      backgroundColor = alabaster,
-      style = list(
-        fontFamily = main_font, # font_subtitle
-        color=alabaster)),
-    title = list(widthAdjust = -50,
-                 style = list(
-                   color = black,
-                   fontFamily = main_font, # font_title
-                   fontWeight = black_font_weight,
-                   textAlign="left",
-                   fontSize='21px'),
+##### highchart theme #####
+cc_theme <- hc_theme(
+  colors = c(meteorite, lavender, papaya, peridot),
+  chart = list(
+    backgroundColor = alabaster,
+    style = list(
+      fontFamily = main_font, # font_subtitle
+      color=alabaster)),
+  title = list(widthAdjust = -50,
+               style = list(
+                 color = black,
+                 fontFamily = main_font, # font_title
+                 fontWeight = black_font_weight,
+                 textAlign="left",
+                 fontSize='21px'),
                  align = "left"),
-    subtitle = list(
-      style = list(
-        color = black,
-        fontFamily = main_font, # font_subtitle
-        fontWeight = regular_font_weight,
-        fontSize='14px'),
+  subtitle = list(
+    style = list(
+      color = black,
+      fontFamily = main_font, # font_subtitle
+      fontWeight = regular_font_weight,
+      fontSize='14px'),
       align='left'),
-    caption = list(
-      style = list(
-        color = black,
-        fontFamily = main_font, # font_caption
-        fontWeight = regular_font_weight,
-        fontSize = "10px",
-        textAlign = "left",
-        width = 50),
-      useHTML = TRUE,
-      floating = FALSE),
-
-    xAxis=list(
-      labels=list(
-        style=list(
-          color=black,
-          fontFamily = main_font, # font_x_label
-          fontWeight = semi_bold_font_weight,
-          width=120,  #argument to modify the width of the labels
-          min=0,
-          fontSize="10px")),
-      lineColor=gainsboro),
-
-    yAxis=list(
-      labels=list(
-        style=list(
-          color=black,
-          fontFamily = main_font, # font_axis_label
-          fontWeight = regular_font_weight,
-          fontSize="10px",
-          margin = 50)),
-      gridLineWidth=0, # removes vertical grid lines
-      visible=TRUE, # makes axis line visible
-      lineWidth=1,
-      lineColor=gainsboro,
-      min=0,
-      tickAmount=6,
-      tickWidth=1),
-
-    legend = list(
-      itemStyle = list(
+  caption = list(
+    style = list(
+      color = black,
+      fontFamily = main_font, # font_caption
+      fontWeight = regular_font_weight,
+      fontSize = "10px",
+      textAlign = "left",
+      width = 50),
+    useHTML = TRUE,
+    floating = FALSE),
+  xAxis=list(
+    labels=list(
+      style=list(
+        color=black,
+        fontFamily = main_font, # font_x_label
+        fontWeight = semi_bold_font_weight,
+        width=120,  #argument to modify the width of the labels
+        min=0,
+        fontSize="10px")),
+    lineColor=gainsboro),
+  yAxis=list(
+    labels=list(
+      style=list(
+        color=black,
         fontFamily = main_font, # font_axis_label
         fontWeight = regular_font_weight,
-        color = black,
-        fontSize = '12px'),
-
-      itemHoverStyle = list(
-        fontFamily = main_font, # font_table_text
-        fontWeight = regular_font_weight,
-        color = black),
-      plotLines=list(color=gainsboro)))
+        fontSize="10px",
+        margin = 50)),
+    gridLineWidth=0, # removes vertical grid lines
+    visible=TRUE, # makes axis line visible
+    lineWidth=1,
+    lineColor=gainsboro,
+    min=0,
+    tickAmount=6,
+    tickWidth=1),
+  legend = list(
+    itemStyle = list(
+      fontFamily = main_font, # font_axis_label
+      fontWeight = regular_font_weight,
+      color = black,
+      fontSize = '12px'),
+    itemHoverStyle = list(
+      fontFamily = main_font, # font_table_text
+      fontWeight = regular_font_weight,
+      color = black),
+    plotLines=list(color=gainsboro)))
   
 #   # create boxplot dataframe
 # data<-data_to_boxplot(df,variable=stop_duration_capped,group_var=bipoc, color="#3A207D")
@@ -194,31 +181,34 @@ sourcenote<-"Each dot is a person stopped. Catalyst California calculations base
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in citation for infraction, warning, or no action. People of Color includes all individuals perceived as non-White by officers."
 
 caption_text <- paste("<br>", sourcenote, methodnote)
-  
+```
+
+```{r create-visual, include=FALSE}
 jitter_chart<-highchart() %>%
    hc_xAxis(type = "category") %>%
    hc_add_series(
     data = df,
     type = "scatter",
     hcaes(x = "bipoc", y = "df$stop_duration_capped", group = "bipoc"),
-    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")
-  ) %>%
+    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")) %>%
   hc_plotOptions(scatter = list(
     color = meteorite,
     marker = list(
       radius = 2,
       symbol = "circle",
-      lineWidth = .5
-    )
-  ))  %>%
+      lineWidth = .5)))  %>%
   hc_plotOptions(scatter = list(jitter = list(x = .1, y = 0)))%>%
-  hc_yAxis(min=0,max=60)%>%
+  hc_yAxis(min=0)%>%
   hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
     hc_subtitle(text = "Each dot represents the time spent stopping a person cited for an infraction and/or given a warning or no action")%>%
   hc_add_theme(cc_theme)
 
+jitter_chart
 
+```
+
+```{r alternate-visual, echo=FALSE}
 # sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time)%>%
 #   pivot_longer(!race,names_to="measure", values_to="time")%>%
 #   filter(!race %in% c('nh_aian','nh_multiracial','nh_nhpi','White','BIPOC'))%>%
@@ -259,15 +249,6 @@ jitter_chart<-highchart() %>%
 #     hc_subtitle(text = "Range of time spent on traffic stops resulting in a citation for infraction, warning, or no action by race")%>%
 #   hc_add_theme(cc_theme)
 
-
-```
-
-```{r, echo=FALSE}
-
-jitter_chart
-
-```
-```{r, echo=FALSE}
 
 # sum_chart
 
