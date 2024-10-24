@@ -183,7 +183,7 @@ methodnote <- "Analysis for all officer-initiated traffic stops made by officers
 caption_text <- paste("<br>", sourcenote, methodnote)
 ```
 
-```{r create-visual, include=FALSE}
+```{r create-visual, echo=FALSE}
 jitter_chart <- highchart() %>%
    hc_add_series(
     data = df,
@@ -198,17 +198,17 @@ jitter_chart <- highchart() %>%
       lineWidth = .5),
     jitter = list(x = .1, y = 0))) %>%
   hc_xAxis(type="category") %>%
-  hc_yAxis(min=0,max=60)%>%
+  hc_yAxis(min=0, max=60)%>%
   hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
-    hc_subtitle(text = "Each dot represents the time spent stopping a person cited for an infraction and/or given a warning or no action")%>%
+  hc_subtitle(text = "Each dot represents the time spent stopping a person cited for an infraction and/or given a warning or no action")%>%
   hc_add_theme(cc_theme)
 
 jitter_chart
 
 ```
 
-```{r alternate-visual, echo=FALSE}
+```{r alternate-visual, include=FALSE}
 # sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time)%>%
 #   pivot_longer(!race,names_to="measure", values_to="time")%>%
 #   filter(!race %in% c('nh_aian','nh_multiracial','nh_nhpi','White','BIPOC'))%>%
