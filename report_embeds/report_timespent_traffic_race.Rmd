@@ -39,6 +39,8 @@ p_races <- dbGetQuery(con, "SELECT * FROM data.rel_races_recode")
 races <- dbGetQuery(con, "SELECT * FROM data.rel_stops_race")
 p_results <- dbGetQuery(con, "SELECT * FROM data.rel_persons_result")
 summary <- dbGetQuery(con, "SELECT * FROM data.report_timespent_traffic_race")
+
+dbDisconnect(con)
 ```
 
 
@@ -53,11 +55,11 @@ ois_traffic_race <- ois_traffic %>%
   # add bipoc column 
 # ois_traffic_race <- ois_traffic_race %>%
   mutate(bipoc=
-           ifelse(nh_race=='nh_white', 'Persons Perceived as White', 'Persons of Color'),
+           ifelse(nh_race=='nh_white', 'White', 'People of Color'),
          bipoc_label=
            ifelse(nh_race=='nh_white', 'White', 'a Person of Color')) %>%
   mutate(bipoc_flag=
-           ifelse(bipoc=='Persons of Color', 1, 0))
+           ifelse(bipoc=='People of Color', 1, 0))
 
 # filter just for stops that resulted in one or more of the three: citation for infraction, warning, no action
 target <- list("citation for infraction", "no action", "warning verbal or written")
@@ -79,6 +81,9 @@ df <- ois_traffic_race %>%
 
 cor.test(df$bipoc_flag, df$stop_duration_capped)
 # significantly correlated, p-value = 0.008005
+# 95 percent confidence interval:
+#  0.01035004 0.06886528
+
 ```
 
 ```{r prep-visual, include=FALSE}
@@ -178,62 +183,110 @@ cc_theme <- hc_theme(
 
 sourcenote<-"Each dot is a person stopped. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in citation for infraction, warning, or no action. People of Color includes all individuals perceived as non-White by officers."
+methodnote <- "Analysis for all officer-initiated traffic stops made in 2022 that resulted in citation for infraction, warning, or no action."
 
-caption_text <- paste("<br>", sourcenote, methodnote)
+racenote <- "Race is based on officer perception. People of Color includes all individuals perceived as non-White by officers."
+
+caption_text <- paste("<br>", sourcenote, methodnote, racenote)
 ```
 
 ```{r create-visual, echo=FALSE}
 jitter_chart <- highchart() %>%
-   hc_add_series(
+  hc_chart(inverted = TRUE) %>%
+  hc_add_series(
     data = df,
-    type = "scatter",
+    type = "scatter", 
     hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
-    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")) %>%
-  hc_plotOptions(scatter = list(
-    color = meteorite,
-    marker = list(
-      radius = 2,
-      symbol = "circle",
-      lineWidth = .5),
-    jitter = list(x = .1, y = 0))) %>%
+    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"),
+    color=paste0(meteorite)) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_plotOptions(
+    scatter = list(
+      marker = list(
+        radius = 3,
+        symbol = "circle",
+        lineWidth = .2),
+      jitter = list(x = .345, y = 0))) %>%
   hc_xAxis(type="category") %>%
-  hc_yAxis(min=0, max=60)%>%
-  hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People of Color") %>%
+  hc_yAxis(min=0, max=120, 
+           title = list(text = "Time Spent on Stop (minutes)"))%>%
+  hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
-  hc_subtitle(text = "Each dot represents the time spent stopping a person cited for an infraction and/or given a warning or no action")%>%
+  hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
   hc_add_theme(cc_theme)
 
 jitter_chart
 
 ```
 
-```{r alternate-visual, include=FALSE}
+
+```{r create-visual2, include=FALSE}
+# stop_result_list is not an actual list - need to convert and then can create  
+# column that checks if elements in that list are not in our target list 
+df_qa <- ois_traffic_race %>%
+  filter(stop_result_list == "citation for infraction") 
+
+cor.test(df_qa$bipoc_flag, df_qa$stop_duration_capped)
+# significantly correlated, p-value = 0.00402
+# 95 percent confidence interval:
+#  0.01443254 0.07598923
+
+jitter_chart <- highchart() %>%
+  hc_chart(inverted = TRUE) %>%
+  hc_add_series(
+    data = df_qa,
+    type = "scatter", 
+    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
+    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"),
+    color=paste0(meteorite)) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_plotOptions(
+    scatter = list(
+      marker = list(
+        radius = 3,
+        symbol = "circle",
+        lineWidth = .2),
+      jitter = list(x = .345, y = 0))) %>%
+  hc_xAxis(type="category") %>%
+  hc_yAxis(min=0, max=120, 
+           title = list(text = "Time Spent on Stop (minutes)"))%>%
+  hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
+  hc_caption(text=caption_text)%>%
+  hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
+  hc_add_theme(cc_theme)
+
+jitter_chart
+
+```
+
+```{r alternate-visual, include = FALSE}
 # sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time)%>%
 #   pivot_longer(!race,names_to="measure", values_to="time")%>%
 #   filter(!race %in% c('nh_aian','nh_multiracial','nh_nhpi','White','BIPOC'))%>%
 #   mutate(race_label = case_when(
-#     race == 'latinx' ~ "Latinx", 
+#     race == 'latinx' ~ "Latinx",
 #     race =='nh_white' ~ 'White',
 #     race =='nh_black' ~ 'Black',
 #     race == 'nh_asian' ~ 'Asian',
-#     race == 'nh_sswana' ~ 'SWANA/SA', 
-#     TRUE ~ as.character(race)),
+#     race == 'nh_sswana' ~ 'SWANA/SA',
+#     .default = as.character(race)),
 #     measure=case_when(measure=='min_time' ~ 'Minimum Time',
 #                       measure=='q25_time' ~ '25% of Stops',
 #                       measure=='median_time' ~ '50% of Stops',
 #                       measure=='q75_time' ~ '75% of Stops',
 #                       measure=='q95_time' ~ '95% of Stops',
-#                       TRUE ~ as.character(measure)))
+#                       .default = as.character(measure)))
 # 
-# sum_df$race_label <- factor(x=sum_df$race_label, levels = c('Asian','Black','Latinx','SWANA/SA','White')) # factor levels to order plot by
+# sum_df$race_label <- factor(x=sum_df$race_label, levels = c('Asian','Black', 'Latinx', 'White', 'SWANA/SA')) # factor levels to order plot by
+# sum_df$measure <- factor(x=sum_df$measure, levels = c('Minimum Time', '25% of Stops', '50% of Stops', '75% of Stops', '95% of Stops', 'Maximum Time'))
 # 
 # sum_chart<-highchart() %>%
+#   hc_chart(inverted = TRUE) %>%
 #    hc_xAxis(type = "category") %>%
 #    hc_add_series(
 #     data = sum_df,
 #     type = "scatter",
-#     hcaes(x = "race_label", y = "time", group = "measure"),
+#     hcaes(x = race_label, y = time, group = measure),
 #     tooltip = list(headerFormat="", pointFormat = "{point.time:.0f} minutes spent on {point.measure} of people perceived as {point.race_label}")
 #   ) %>%
 #   hc_plotOptions(scatter = list(
@@ -248,11 +301,102 @@ jitter_chart
 #   hc_caption(text=caption_text)%>%
 #     hc_subtitle(text = "Range of time spent on traffic stops resulting in a citation for infraction, warning, or no action by race")%>%
 #   hc_add_theme(cc_theme)
-
-
+# 
+# 
 # sum_chart
+# 
+# 
+# bipoc_sum_df<-summary%>%select(race,min_time,,q25_time,median_time,q75_time,q95_time,max_time)%>%
+#   pivot_longer(!race,names_to="measure", values_to="time")%>%
+#   filter(race %in% c('White','BIPOC'))%>%
+#   mutate(race_label = case_when(
+#     race == 'BIPOC' ~ "People of Color",
+#     .default = as.character(race)),
+#     measure=case_when(measure=='min_time' ~ 'Minimum Time',
+#                       measure=='q25_time' ~ '25% of Stops',
+#                       measure=='median_time' ~ '50% of Stops',
+#                       measure=='q75_time' ~ '75% of Stops',
+#                       measure=='q95_time' ~ '95% of Stops',
+#                       measure=='max_time' ~ 'Maximum Time',
+#                       .default = as.character(measure)))
+# 
+# bipoc_sum_df$race_label <- factor(x=bipoc_sum_df$race_label, levels = c('People of Color','White')) # factor levels to order plot by
+# bipoc_sum_df$measure <- factor(x=bipoc_sum_df$measure, levels = c('Minimum Time', '25% of Stops', '50% of Stops', '75% of Stops', '95% of Stops', 'Maximum Time'))
+# 
+# bipoc_sum_chart<-highchart() %>%
+#   hc_chart(inverted = TRUE) %>%
+#    hc_xAxis(type = "category") %>%
+#    hc_add_series(
+#     data = bipoc_sum_df,
+#     type = "scatter",
+#     hcaes(x = "race_label", y = "time", group = "measure"),
+#     tooltip = list(headerFormat="", pointFormat = "{point.time:.0f} minutes spent on {point.measure} of people perceived as {point.race_label}")
+#   ) %>%
+#   hc_plotOptions(scatter = list(
+#     marker = list(
+#       radius = 5,
+#       symbol = "circle",
+#       lineWidth = .5
+#     )
+#   ))  %>%
+#   hc_colors(list("#372278", "#5F3B63","#A8683C", "#D58424", "#FF9900", "#E76C30"))%>%
+#   hc_title(text = "Fresno PD Often Spends More Time on Traffic Stops Involving People Perceived as Black or Asian") %>%
+#   hc_caption(text=caption_text)%>%
+#     hc_subtitle(text = "Range of time spent on traffic stops resulting in a citation for infraction, warning, or no action by race")%>%
+#   hc_add_theme(cc_theme)
+# 
+# bipoc_sum_chart
+
+
+# # try relative freq histogram
+# hist_a <- hist(df$stop_duration_capped[df$bipoc == "White"], breaks = 100, plot = FALSE)
+# hist_a$counts <- hist_a$counts/sum(hist_a$counts)
+# hist_b <- hist(df$stop_duration_capped[df$bipoc == "People of Color"], breaks = 100, plot = FALSE)
+# hist_b$counts <- hist_b$counts/sum(hist_b$counts)
+# 
+# # Create data for highcharter
+# series_a <- data.frame(
+#   x = hist_a$mids,
+#   y = hist_a$counts
+# )
+# 
+# series_b <- data.frame(
+#   x = hist_b$mids,
+#   y = hist_b$counts
+# )
+# 
+# # Create the plot
+# highchart() %>%
+#   hc_chart(type = "column") %>%  # Use column instead of histogram
+#   hc_add_series(
+#     data = list_parse(series_a),  # Convert data to highcharter format
+#     name = "White",
+#     color = "#4682B480"  # Steel blue with 50% opacity
+#   ) %>%
+#   hc_add_series(
+#     data = list_parse(series_b),
+#     name = "People of Color",
+#     color = "#CD5C5C80"  # Indian red with 50% opacity
+#   ) %>%
+#   hc_title(text = "Distribution by Group") %>%
+#   hc_xAxis(title = list(text = "Value"), max=60) %>%
+#   hc_yAxis(title = list(text = "Frequency")) %>%
+#   hc_plotOptions(
+#     column = list(
+#       grouping = FALSE,  # Allows overlapping
+#       pointPadding = 0,
+#       groupPadding = 0,
+#       borderWidth = 0
+#     )
+#   ) %>%
+#   hc_tooltip(
+#     shared = TRUE,
+#     headerFormat = "<b>Bin center: {point.x:.2f}</b><br/>",
+#     pointFormat = "{series.name}: {point.y}"
+#   )
 
 ```
+
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
   for (let i = 0; i < widg.length; i++) { //loop through
