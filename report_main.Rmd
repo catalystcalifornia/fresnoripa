@@ -124,6 +124,7 @@ Traffic citations given for speeding show less racial disparities compared to ci
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
 
+<br>
 The graph below focuses specifically on the percentage of people who were stopped by Fresno PD in a traffic stop and given a ‘Driving without a License’ citation as a result of the traffic stop. This citation can be viewed as a proxy for Fresno PD’s profiling activities towards immigrants. Fresno community members have expressed that Fresno PD will especially target immigrants. Harassing people in traffic for a valid license is a way to try and identify if a person of color is documented or not. A combined 264 people perceived as Latinx, Black or Asian were stopped in traffic and given a ‘Driving without a License’ citation by Fresno PD in 2022 compared to only 40 people who were given this citation and perceived by Fresno PD as White. 
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}

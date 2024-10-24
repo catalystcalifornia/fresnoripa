@@ -108,7 +108,7 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
     hc_add_theme(hc_theme_smpl()) %>% 
     hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race")) %>% 
     hc_yAxis(title = list(text = ""))%>%
-    hc_xAxis(title = list(text = ""))%>%
+    hc_xAxis(title = list(text = "Percent (%)"))%>%
    hc_tooltip(pointFormat = tooltip_text)
 })
 
