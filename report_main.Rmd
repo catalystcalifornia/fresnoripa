@@ -50,28 +50,40 @@ orange <- "#F25922"
 
 ```
 
-*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
-
 
 # ACKNOWLEDGEMENTS
 
+The research and analysis of this project was guided by invaluable input given by Fresno Building Healthy Communities (FBHC) and their coalition partners. Their perspectives as community members of Fresno are the driving force behind the data narrative we are seeking to illustrate in this research. 
+
 # CONTEXT
+
+All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.
 
 # BRIEF METHODOLOGY
 
+This report evaluates Fresno PD police activity by analyzing 2022 data collected and reported by Fresno PD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. For each stop made by law enforcement, RIPA data includes information that can be analyzed for evidence of profiling—including characteristics about the person stopped (e.g., race, gender, and age), the stop location, the length of the stop, the reason for the stop, and the result of the stop. This report uses RIPA data to analyze Fresno PD’s police activity during traffic stops and their actions towards Fresno community members. 
+
+Among information that RIPA data includes is the perceived race of a person being stopped. However, all RIPA data is input by officers and therefore is solely based on the officer’s perception. Officers are also selecting a person’s perceived race from a selection of choices, as opposed to writing down a racial identity themselves. One of the options that RIPA has for a person’s race is “Middle Eastern/South Asian” (MESA), a term that is not widely recognized among BIPOC communities. For this report, we use “Southwest Asia, North Africa and South Asian” (SWANA/SA) as a more inclusive and accurate representation of these groups that are being stopped by Fresno PD. 
+
+
 # FINDINGS
 
+The overwhelming majority of police activity conducted by Fresno PD is during officer-initiated traffic stops. In 2022, only 5.4% of all police stops were in response to calls for service, or a call initiated by a community member. In contrast, 94.6% of all police stops made in 2022 were for an officer-initiated stop, with 99% of those people stopped in an officer-initiated stop being stopped for a perceived traffic violation. 
 
-## 1. Fresno PD disproportionately stops people and men of color for traffic stops 
+## 1. Fresno PD disproportionately stops people of color, especially men of color for traffic stops
 
 
-### A. People of color disproportionately stopped generally for traffic stop
+### A. People of color disproportionately subjected to traffic stops
+
+Approximately half of the total population living in Fresno city is Latinx, while a quarter of the population is White. Yet Black and SWANA/SA people in Fresno city are disproportionately being stopped in traffic by Fresno PD despite only making up 6.2% and 6.1% of the total population respectively. Out of 1,000 Black people who live in Fresno city, 16.7 of people perceived as Black by Fresno PD were stopped in traffic. Meanwhile, only 9.6 people perceived as White by Fresno PD were stopped in a traffic stop for every 1,000 White people living in Fresno city. 
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_race.Rmd'}
 ```
 
 
-### B.Men of color especially targeted during these stops  
+### B.Men of color are especially targeted for traffic stops  
+
+Across all perceived racial groups, people who were perceived as Male by Fresno PD are stopped in a traffic stop at similar or higher rates than people perceived as Female. The disparity in traffic stops between perceived Males and Females is highest among BIPOC groups, especially people perceived by Fresno PD as AIAN and SWANA/SA. 
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
 ```
@@ -79,13 +91,18 @@ orange <- "#F25922"
 
 ### C. People of color are targeted across all types of traffic stops  
 
+There are three types of traffic stops that can occur: 1) Equipment 2) Non-Moving and 3) Moving. The majority of traffic stops made by Fresno PD are for moving traffic stops. However, across all three types of traffic stops, BIPOC people are disproportionately burdened by Fresno PD with stops relative to their total population in Fresno city. People perceived as Black are stopped at high rates in moving, non-moving and equipment traffic stops relative to their total population. Out of 1,000 Black people living in Fresno city, four people perceived as Black by Fresno PD were stopped for a non-moving or equipment traffic stop in 2022. Conversely, only 1.7 people perceived as White by Fresno PD were stopped for a non-moving or equipment traffic stop out of 1,000 White people who live in Fresno city. 
+
 ```{r stacked-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
 ```
 
-## 2.  These stops do not advance safety and are a means to profile people of color   
+## 2.  These stops do not advance safety and are a means to profile people of color  
 
-### A. Officers use minor reasons to pull over people of color
+Despite nearly all of Fresno PD’s police activity being conducted through traffic stops, a deeper analysis into these traffic stops show that traffic stops are racially biased and often conducted for reasons that do not improve public safety. It is also important to note that an officer can list a reason for pulling someone over in traffic that does not align with the actual result of the traffic stop.
 
+### A. Officer use non-public safety reasons to pull over people of color
+
+The charts below show three of the most common reasons why Fresno PD pulls someone over in traffic. When analyzing people who were pulled over in traffic for speeding, rates are comparable across all perceived racial groups, although people perceived as White are pulled over for speeding at higher rates than people perceived as Black, Asian and Latinx. However, after speeding, the two most common reasons for someone being pulled over in traffic is an obstructed window or no vehicle registration . These are traffic stop reasons that do not improve public safety. Additionally, racial disparities increase across people who are pulled over for these reasons. People perceived as Latinx are pulled over in traffic at more than double the rate of people perceived as White for an obstructed window, while people perceived as Black are pulled over in traffic for vehicle registration at higher rates than all other groups. 
 
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
@@ -94,59 +111,107 @@ orange <- "#F25922"
 
 ### B. These stops most commonly result in citations that could be better addressed through non-law enforcement alternatives 
 
-```{r bubble-chart, child= 'report_embeds/report_traffic_result.Rmd'}
+Approximately 80% of all traffic stops result in a citation. But when analyzing what the citations were given for, it becomes clear that many citations are not related to public safety. The overwhelming majority of traffic citations given out during equipment and non-moving traffic stops were for obstructed windows (66%) and no vehicle registration (80%) respectively. 
+
+```{r bubble-chart, child= 'report_embeds/report_traffic_result_stop.Rmd'}
 ```
 
 
-### C. Furthermore, use of citations is biased against people of color 
+### C. Furthermore, Fresno PD's ticketing practices are biased against people of color 
+
+Traffic citations given for speeding show less racial disparities compared to citations that are not related to public safety. People perceived as Latinx were 3 times more likely to be given a citation for an obstructed window compared to people perceived as White, while over 25% of citations given for no vehicle registration were given to a person of color.  
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
+
+<br>
+The graph below focuses specifically on the percentage of people who were stopped by Fresno PD in a traffic stop and given a ‘Driving without a License’ citation as a result of the traffic stop. This citation can be viewed as a proxy for Fresno PD’s profiling activities towards immigrants. Fresno community members have expressed that Fresno PD will especially target immigrants. Harassing people in traffic for a valid license is a way to try and identify if a person of color is documented or not. A combined 264 people perceived as Latinx, Black or Asian were stopped in traffic and given a ‘Driving without a License’ citation by Fresno PD in 2022 compared to only 40 people who were given this citation and perceived by Fresno PD as White. 
 
 ```{r bubble-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
 ```
 
 ## 3.  These traffic stops inflict additional harms on people of color, especially men of color. 
 
-### A. Actions taken during traffic stops are biased toward men of color 
+Fresno PD’s use of traffic stops also causes physical harm and trauma to communities. During traffic stops, officers may choose to take additional actions against the people they stop. They may physically remove people from their vehicles, use weapons or other devices against them to cause physical harm, or detain them. These actions taken by officers' result in long-term physical and mental harm and trauma to the people and communities impacted. Additionally, they often are taken during stops that do not indicate a threat to community safety.
+
+### A. Actions taken during traffic stops are biased against men of color 
+
+People perceived as males of color comprised 78.6% of all people against officers used force. Latinx and Asian men comprised most of these instances of force. All uses of force inflicted by officers during officer-initiated stops occurred during stops started for traffic reasons.  Officers initiated half of these stops for reasons that did not indicate an imminent threat to community or traffic safety, including no vehicle or trailer registration, parking violation, bike headlight violation, and displayed license plates wrong.
 
 ```{r stacked-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
 ```
+
+One of the most common actions Fresno PD officers decide to take during a stop is detaining a person. An officer may choose to detain a person if they suspect a crime and to investigate and question the person further. One in two people (49.1%) officers detained during officer-initiated traffic stops were Latinx men. And while Latinx men are more likely to be detained during officer-initiated traffic stops compared to White men, they are no more likely to be arrested. Officers arrested about 19.2% of Latinx men they detained and 20% of White men they detained. Comparatively, officers were more likely to find no cause or evidence of a crime among Latinx men they detained. Over half (51.9%) of Latinx men they detained were released with no action or a warning.
+
 
 ```{r bar-chart, child= 'report_embeds/report_traffic_detained_visual.Rmd'}
 ```
 
 ## 4. Fresno PD spends a disproportionate amount of time on traffic stops and wastes further resources based on their racial bias. 
 
+A common narrative is officers’ presence and time in the community increases public safety. However, when the time officers spend during patrol is investigated, it reveals that most of their time spent on stops in the community are rarely an urgent threat to public safety.
+
 ### A. Most of Fresno PD time is spent on traffic stops
 
+Fresno PD spends nearly all their patrol time on stops for traffic violations. Out of the time spent on officer-initiated stops, officers spent 97.8% of their minutes on stops for traffic violations compared to just 0.4% on time on stops conducted for knowledge of an outstanding arrest.
 
 ```{r bar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
 ```
 
 ### B. They are biased in how they spend their time during these stops
 
+Officers demonstrate bias in how they spend their time during these traffic stops. Controlling for the type of stop and result of the stop, officers spend a wider range of time on stops of people of color compared to White people. The chart below shows the time spent by officers on every person they stopped for a traffic violation and gave a citation for infraction, warning, and/or no action. 
+
+While officers spent less than 10 minutes on many people perceived as White, they spent more than 15 minutes on many stops of people they perceived as people of color. Whether or not a person was White or a person of color was significantly associated with how much time officers spent on the stop. This relationship persists controlling for stop reason, result, and actions taken. Specifically, officers were more likely to spend more time stopping people perceived as Black and SWANA/SA compared to the same type of stop for people perceived as White. While 95% of traffic stops of White people resulting in a citation, warning, or no action of took less than 14 minutes, the 95% threshold for Black people was 19 minutes. 
 
 ```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
 ```
 
 ## 5. The City of Fresno annually wastes millions of dollars on Fresno PD’s harmful and biased practice
 
+Fresno PD’s police practices are not only harmful to communities of color but they are costly to everyone in Fresno city. 
+
 ### A. The City of Fresno spends more money on Fresno PD than on things that promote safety
+
+Fresno PD’s total proposed expenditures budget is 155.2 million dollars (an increase of 1 million dollars from last budget cycle), compared to 59.1 million dollars for parks, after school programs, recreation and community services (PARCs). 
+
+Additionally, the total general fund dollars proposed for PARCs in 2025 is 24 million dollars, compared to 255.9 million dollars being proposed for Fresno PD. In other words, the Fresno PD general fund budget is 10 times that of parks, after school programs, recreation and community services. 
+
 
 # RECOMMENDATIONS
 
+It has long been understood by community residents of Fresno that the city of Fresno’s Police Department does not create environments that makes community feel safe. In fact, Fresno PD demonstrates the opposite and is attributed with making BIPOC communities feel unsafe through over-policing and harassment in these communities. Interactions with Fresno PD does not inspire reassurance but instead result in higher rates of being stopped, longer interactions, detainments, and use of force against BIPOC residents. To address these issues, below is a comprehensive set of equity-centered recommendations that should be considered and adopted that advances community safety without the violence and harm of traditional police practices. 
+1.	Reinvest Dollars Wasted Non-moving and equipment traffic stops to equity centered Safety programs 
+a.	Fund community organizations that keep communities safe 
+b.	Fund community organizations that provide resources to ensure communities have stable and healthy jobs that can avoid equipment violations 
+c.	Create opportunities that move away from punishing a faulty break light that leads to pretextual stops that harms community. 
+2.	Enhance FPD Accountability 
+a.	When harms to the community are committed by the police department there needs to be policy in place that holds the department accountable for their acts. 
+b.	Avoid shifts to different departments, under reporting, or no actions 
+3.	Increase FPD Transparency 
+a.	Create systems such a public facing dashboards that remove the shield of bad acting cops or police and procedures that are within the department. Dashboards can reveal data that can aid in making the department accountable. This will also establish public trust. 
+4.	Establish care-centered community safety infrastructure
+a.	Removing traffic enforcement functions that include non-moving and equipment violations—from law enforcement and allowing for civilian county employees to oversee this function instead. 
+b.	Removing law enforcement’s authority to stop residents for non-moving and equipment violations to stop decriminalizing BIPOC communities. 
+c.	Remove local policies or ordinances that are weaponized to allow for profiling that is used to prevent community safety. 
+5.	Find an elected champion 
+a.	To push funding allocation that supports a care-centered community safety infrastructure 
+
+
+
 # AUTHORS
 
-**Research and Data Analysis**
+__Equity in Community Investments__
 
-Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
+Mayanna Khalfani-King, Manager, Equity in Community Investments, Catalyst California
 
-Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
+__Research and Data Analysis__
 
-Hillary Khan, Data Architect, Catalyst California
+* Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
+* Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
+* Hillary Khan, Data Architect, Catalyst California
+* Alicia Võ, Research and Data Analyst
 
-Alicia Võ, Research and Data Analyst
 
 # METHODOLOGY
 

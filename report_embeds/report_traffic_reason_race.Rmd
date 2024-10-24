@@ -121,7 +121,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$h3("Officer Use Non-Public Safety Reasons to Pull Over People of Color"), # Main title
+    tags$h3("Officers are biased in when they pull people over for reasons not related to public safety"), # Main title
     list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
   )
 )
