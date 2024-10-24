@@ -50,14 +50,14 @@ orange <- "#F25922"
 
 ```
 
-*All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.*  
-
 
 # ACKNOWLEDGEMENTS
 
 The research and analysis of this project was guided by invaluable input given by Fresno Building Healthy Communities (FBHC) and their coalition partners. Their perspectives as community members of Fresno are the driving force behind the data narrative we are seeking to illustrate in this research. 
 
 # CONTEXT
+
+All people in Fresno deserve to feel safe. However, Fresno PD uses traffic stops to profile people of color. This biased practice does not advance safety rather it wastes time and inflicts harm on BIPOC communities. We need a new vision of community safety and reinvestment to keep our families of color safe and together.
 
 # BRIEF METHODOLOGY
 
