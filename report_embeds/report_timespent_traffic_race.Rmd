@@ -212,7 +212,20 @@ jitter_chart <- highchart() %>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
   hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
-  hc_add_theme(cc_theme)
+  hc_add_theme(cc_theme) %>%
+  hc_exporting(
+      enabled = TRUE,
+      sourceWidth=900,
+      sourceHeight=600,
+      chartOptions=list(
+        plotOptions=list(
+          series=list(
+            dataLabels=list(
+              enabled=TRUE,
+              format=list(pointFormat="{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"))))),
+      filename = paste0("Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.","_Catalyst California, catalystcalifornia.org, 2024."),
+      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+                                                     'downloadXLS', 'downloadCSV'))))
 
 jitter_chart
 
@@ -251,7 +264,20 @@ jitter_chart2 <- highchart() %>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
   hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
-  hc_add_theme(cc_theme)
+  hc_add_theme(cc_theme) %>%
+  hc_exporting(
+      enabled = TRUE,
+      sourceWidth=900,
+      sourceHeight=600,
+      chartOptions=list(
+        plotOptions=list(
+          series=list(
+            dataLabels=list(
+              enabled=TRUE,
+              format=list(pointFormat="{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"))))),
+      filename = paste0("Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.","_Catalyst California, catalystcalifornia.org, 2024."),
+      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+                                                     'downloadXLS', 'downloadCSV'))))
 
 jitter_chart2
 
