@@ -147,23 +147,23 @@ tooltip_text <- "Out of all of time spent on officer-initiated stops, Fresno PD 
 ```
 
 ```{r, echo=FALSE}
-# Visualizing as table --------------------------
-chart <- rdaBar(
-  df,
-  "reason_label",
-  "hours_rate",
-  title="Fresno PD Spends Most of Their Patrol Time on Traffic Stops",
-  subtitle="Percent of time spent on officer-initiated stops by stop reason",
-  tooltip_text=tooltip_text,
-  caption=caption_text,
-  export_data_label=list(pointFormat='{point.hours_rate:.1f}%'))
-
-chart
+# Visualizing as bar chart --------------------------
+# chart <- rdaBar(
+#   df,
+#   "reason_label",
+#   "hours_rate",
+#   title="Fresno PD Spends Most of Their Patrol Time on Traffic Stops",
+#   subtitle="Percent of time spent on officer-initiated stops by stop reason",
+#   tooltip_text=tooltip_text,
+#   caption=caption_text,
+#   export_data_label=list(pointFormat='{point.hours_rate:.1f}%'))
+# 
+# chart
 
 ```
 
 ```{r, echo=FALSE}
-# Visualizing as table --------------------------
+# Visualizing as stacked bar --------------------------
 df$x <- "x"
 
 reason_levels <- c("Traffic violation", "Reasonable suspicion", "Knowledge of outstanding arrest",
