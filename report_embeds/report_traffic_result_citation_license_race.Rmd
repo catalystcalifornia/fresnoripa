@@ -52,13 +52,12 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_license_race")
   filter(race!="nh_sswana")%>%
   arrange(-rate)
 
-# split up the df by the denominator options
+# Pull out the result denominator for visualizing
 
 df_result<-df%>%
   filter(denom=="citation_result")
 
-df_race<-df%>%
-  filter(denom=="citation_race")
+
 
 ```
 
@@ -78,7 +77,7 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> were for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people cited."
+tooltip_text <- "Out of 100  <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
 
 # Run bubblechart function
@@ -107,8 +106,8 @@ chart<-rdaStackedBar(
   "rate",
   race_label,
  bar_colors=list( gainsboro, "#949494", lavender, "#8E7ACA", "#362178"),
-  title = "Fresno PD Is Twice as Likely to Cite Perceived Latinx Drivers for Driving Without a License Compared to Perceived White Drivers",
-  subtitle = "Rate of traffic stops that result in a citation for driving without a license by perceived race",
+  title = "Fresno PD gives 75% of their Citations for Driving Without a License to People of Color",
+  subtitle = "Percent of people ticketed for driving without a license by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,
   export_data_label = list(pointFormat='{point.rate:.1f}%') 
