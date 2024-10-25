@@ -213,7 +213,7 @@ jitter_chart <- highchart() %>%
            title = list(text = "Time Spent on Stop (minutes)"))%>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
-  hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
+  hc_subtitle(text = "Officer time spent on each person they stopped and gave a citation or warning or took no action.")%>%
   hc_add_theme(cc_theme) %>%
   hc_exporting(
       enabled = TRUE,
@@ -234,54 +234,54 @@ jitter_chart
 ```
 
 ```{r, include=FALSE}
-# stop_result_list is not an actual list - need to convert and then can create  
-# column that checks if elements in that list are not in our target list 
-df_qa <- ois_traffic_race %>%
-  filter(stop_result_list == "citation for infraction") 
-
-cor.test(df_qa$bipoc_flag, df_qa$stop_duration_capped)
-# significantly correlated, p-value = 0.00402
-# 95 percent confidence interval:
-#  0.01443254 0.07598923
-
-jitter_chart2 <- highchart() %>%
-  hc_chart(inverted = TRUE) %>%
-  hc_add_series(
-    data = df_qa,
-    type = "scatter", 
-    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
-    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"),
-    color=paste0(meteorite)) %>%
-  hc_legend(enabled = FALSE) %>%
-  hc_plotOptions(
-    scatter = list(
-      marker = list(
-        radius = 3,
-        symbol = "circle",
-        lineWidth = .2),
-      jitter = list(x = .345, y = 0))) %>%
-  hc_xAxis(type="category") %>%
-  hc_yAxis(min=0, max=120, 
-           title = list(text = "Time Spent on Stop (minutes)"))%>%
-  hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
-  hc_caption(text=caption_text)%>%
-  hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
-  hc_add_theme(cc_theme) %>%
-  hc_exporting(
-      enabled = TRUE,
-      sourceWidth=900,
-      sourceHeight=600,
-      chartOptions=list(
-        plotOptions=list(
-          series=list(
-            dataLabels=list(
-              enabled=TRUE,
-              format=list(pointFormat="{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"))))),
-      filename = paste0("Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.","_Catalyst California, catalystcalifornia.org, 2024."),
-      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-                                                     'downloadXLS', 'downloadCSV'))))
-
-jitter_chart2
+# # stop_result_list is not an actual list - need to convert and then can create  
+# # column that checks if elements in that list are not in our target list 
+# df_qa <- ois_traffic_race %>%
+#   filter(stop_result_list == "citation for infraction") 
+# 
+# cor.test(df_qa$bipoc_flag, df_qa$stop_duration_capped)
+# # significantly correlated, p-value = 0.00402
+# # 95 percent confidence interval:
+# #  0.01443254 0.07598923
+# 
+# jitter_chart2 <- highchart() %>%
+#   hc_chart(inverted = TRUE) %>%
+#   hc_add_series(
+#     data = df_qa,
+#     type = "scatter", 
+#     hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
+#     tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"),
+#     color=paste0(meteorite)) %>%
+#   hc_legend(enabled = FALSE) %>%
+#   hc_plotOptions(
+#     scatter = list(
+#       marker = list(
+#         radius = 3,
+#         symbol = "circle",
+#         lineWidth = .2),
+#       jitter = list(x = .345, y = 0))) %>%
+#   hc_xAxis(type="category") %>%
+#   hc_yAxis(min=0, max=120, 
+#            title = list(text = "Time Spent on Stop (minutes)"))%>%
+#   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
+#   hc_caption(text=caption_text)%>%
+#   hc_subtitle(text = "Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.")%>%
+#   hc_add_theme(cc_theme) %>%
+#   hc_exporting(
+#       enabled = TRUE,
+#       sourceWidth=900,
+#       sourceHeight=600,
+#       chartOptions=list(
+#         plotOptions=list(
+#           series=list(
+#             dataLabels=list(
+#               enabled=TRUE,
+#               format=list(pointFormat="{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"))))),
+#       filename = paste0("Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.","_Catalyst California, catalystcalifornia.org, 2024."),
+#       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+#                                                      'downloadXLS', 'downloadCSV'))))
+# 
+# jitter_chart2
 
 ```
 
