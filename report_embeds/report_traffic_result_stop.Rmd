@@ -66,7 +66,7 @@ chart<-rdaBar(
   "stop_result_simple",
   "rate",
   
-  title = "The Majority of Traffic Stops made by Fresno PD Result in a Citation",
+  title = "The Majority of Traffic Stops Made by Fresno PD Result in a Citation",
   subtitle = "Percent of officer-initiated traffic stops by stop result",
   tooltip_text = tooltip_text,
   caption = caption_text,
