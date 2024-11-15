@@ -48,14 +48,30 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
                                                                                    ifelse(race %in% 'nh_asian', "Asian", race)))))))))))))%>%
   filter(race!="nh_sswana")
 
-# filter dataframes for population denominator which is the one I want to visualize
+# set up factors to customize the order of the categories that get visualized
 
+factors<-c("Moving", "Non-moving", "Equipment" ) 
+
+# filter dataframes for population denominator which is the one I want to visualize
 
 df_pop<-df%>%
   filter(denom=="population_per_1k")%>%
   filter(!grepl("nh_aian|nh_nhpi", race))%>%
   filter(race!="nh_asian")%>% # I want to use the Asian calc that omits South Asian from the denominator
-  arrange( -rate)
+   # mutate(traffic_violation_type = factor(traffic_violation_type, levels = factors))%>%
+  group_by(race)%>%
+ mutate(rate_comb = ifelse(
+    traffic_violation_type %in% c("Non-moving", "Equipment"),
+    sum(rate[traffic_violation_type %in% c("Non-moving", "Equipment")]),  # Sum only relevant rows
+    0  # set moving rates to 0 just for this column since we are using it to sort
+  )) %>%
+  ungroup()%>%
+  arrange(-rate_comb)
+
+
+
+df_pop <- df_pop %>%
+  mutate(traffic_violation_type = factor(traffic_violation_type, levels = factors))
 
 
 
@@ -67,7 +83,7 @@ df_pop<-df%>%
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
 
@@ -89,7 +105,7 @@ chart_pop<-rdaStackedBar(
   "rate",
   "traffic_violation_type",
   title = "Fresno PD Disproportionately Burdens Black People in Fresno with Traffic Stops Across all Stop Types",
-  subtitle = "Rate of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population",
+  subtitle = "Percent of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population",
   tooltip_text = tooltip_text,
   caption = caption_text,
   export_data_label = list(pointFormat='{point.rate:.1f}') 
