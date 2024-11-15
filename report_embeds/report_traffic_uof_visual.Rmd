@@ -84,7 +84,7 @@ df <- within(df, label <- factor(label, levels=c("White Males","White Females","
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops that included an officer using force against a person in 2022. Genders are based identification by officers. According to the data source, officers reported no uses of force against people perceived as transgender or gender nonconforming."
 
@@ -105,7 +105,7 @@ chart_race<-rdaStackedBar(df,
                           "label",
                           bar_colors=list("#949494",gainsboro,lavender,meteorite),
   title="Fresno PD Uses Force Mostly Against Men of Color",
-  subtitle="Percent of uses of force by officers during officer-initiated traffic stops",
+  subtitle=" Percent of people subjected to officer use of force during traffic stops by perceived race",
   tooltip_text=tooltip_text,
   caption=caption_text,
   export_data_label=list(pointFormat='{point.uof_rate:.1f}%'))

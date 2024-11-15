@@ -45,7 +45,7 @@ df<-df%>%
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Stop results that had a rate of 0.5% or less were combined and defined as 'Other Stop Result in this data visualization.'"
 

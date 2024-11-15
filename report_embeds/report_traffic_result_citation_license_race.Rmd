@@ -67,13 +67,13 @@ df_result<-df%>%
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in a citation for infraction."
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", racenote, sourcenote, methodnote)
+caption_text <- paste("<br>", sourcenote, methodnote, racenote)
 
 # create tooltip text
 
@@ -105,8 +105,8 @@ chart<-rdaStackedBar(
  statute_literal_25,
   "rate",
   race_label,
- bar_colors=list( gainsboro, "#949494", lavender, "#8E7ACA", "#362178"),
-  title = "Fresno PD gives 75% of their Citations for Driving Without a License to People of Color",
+ bar_colors=list(  "#949494", gainsboro, lavender, "#8E7ACA", "#362178"),
+  title =  paste("Fresno PD gives  ", "<span style='color:#362178;'>75%</span>", "of their Citations for Driving Without a License to People of Color"),
   subtitle = "Percent of people ticketed for driving without a license by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,

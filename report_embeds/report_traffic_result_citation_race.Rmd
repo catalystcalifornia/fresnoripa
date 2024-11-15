@@ -104,22 +104,40 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
    hchart(filtered_data, "bar", hcaes(x = race, y = rate),
            showInLegend = FALSE,
            , color = "#3A207D") %>% 
+    #      hc_chart(
+    #   margin = list(40, 20, 20, 80), # Add margins for tooltip space
+    #   spacing = list(10, 10, 10, 10) # Add spacing around the chart
+    # ) %>% 
     hc_plotOptions(column = list(stacking = "normal")) %>% 
     hc_add_theme(hc_theme_smpl()) %>% 
     hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race")) %>% 
     hc_yAxis(title = list(text = "Percent (%)"))%>%
     hc_xAxis(title = list(text = ""))%>%
-   hc_tooltip(pointFormat = tooltip_text)
+   hc_tooltip(pointFormat = tooltip_text,
+               outside = TRUE)%>%
+       hc_exporting(
+      enabled = TRUE,
+      sourceWidth=900,
+      sourceHeight=600,
+      chartOptions=list(
+        plotOptions=list(
+          series=list(
+            dataLabels=list(
+              enabled=TRUE,
+              format=list(pointFormat="{point.rate:.0f}%"))))),
+      filename = paste0("Percent of traffic stops by traffic citation result and race","_Catalyst California, catalystcalifornia.org, 2024."),
+      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+                                                     'downloadXLS', 'downloadCSV'))))
 })
 
   
 browsable(
   tagList(
     tags$h3("Officers Show More Bias in Citations Unrelated to Public Safety"), # Main title
-    list_of_plots %>% hw_grid(rowheight = 350)       # Faceted charts
+    list_of_plots %>% hw_grid(rowheight = 450)       # Faceted charts
   )
 )
 
 ```
 
-<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br>  Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024.  Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart.</span> </div>
+<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br> Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. </span> </div>

@@ -74,7 +74,7 @@ df$gender <- factor(x=df$gender, levels = gender_factors) # factor levels to ord
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Officers stopped a total of 6 individuals perceived as transgender or gender nonconforming. 67% of these people were perceived as Latinx. Officers stopped fewer than 5 people perceived as Native Hawaiian/Pacific Islander or multiracial."
 

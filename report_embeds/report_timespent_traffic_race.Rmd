@@ -181,7 +181,7 @@ cc_theme <- hc_theme(
 
 # create caption 
 
-sourcenote<-"Each dot is a person stopped. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Each dot is a person stopped. Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made in 2022 that resulted in citation for infraction, warning, or no action."
 
