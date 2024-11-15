@@ -10,26 +10,20 @@ output:
 ```{r, include=FALSE}
 
 # set up -----------------------------
-
 library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
-# 
-# source("W:\\RDA Team\\Packages\\rdaCharts\\HK\\R\\rdaBubblepop.R") # sourcing one of the visual files so I can get color codes
-
 # library(devtools)
  # remotes::install_github("catalystcalifornia/rdaCharts")
 library(rdaCharts)
-# library(stringr)
 library(htmltools) 
-# library(htmlwidgets)
 # remotes::install_github("jthomasmock/gtExtras")
 library(gtExtras)
 library(gt)
 library(extrafont)
 library(usethis)
 
-#connect to postgres
 
+#connect to postgres
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
@@ -82,6 +76,7 @@ chart_race<-rdaBar(
   df,
   "label",
   "detained_total_rate",
+  theme="theme_fbhc",
   title="Fresno PD Disproportionately Detains Latinx Males During Traffic Stops",
   subtitle="Percent of people detained during officer-initiated traffic stops by perceived race and gender",
   tooltip_text=tooltip_text,

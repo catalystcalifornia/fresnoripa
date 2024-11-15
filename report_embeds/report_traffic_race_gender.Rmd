@@ -12,38 +12,20 @@ output:
 # set up -----------------------------
 
 library(RPostgreSQL)
-source("W:\\RDA Team\\R\\credentials_source.R")
-
-library(devtools)
-remotes::install_github("catalystcalifornia/rdaCharts")
+# remotes::install_github("catalystcalifornia/rdaCharts")
 library(rdaCharts)
-# library(stringr)
 library(htmltools) 
-# library(htmlwidgets)
-# remotes::install_github("jthomasmock/gtExtras")
 library(gtExtras)
 library(gt)
 library(extrafont)
 library(usethis)
 
-  papaya <- "#F25922"
-  peridot <- "#CEEA01"
-  lavender <- "#CEC4E2"
-  meteorite <- "#3A207D"
-  ccblue <- "#0860BC"
-
-  black <- "#000000"
-  alabaster<-"#FBFBFB"
-  gainsboro <- "#DEDEDE"
-
 #connect to postgres
-
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
 
 # pull and clean analysis tables for visualizing ----
-
 df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_race_gender")
 
 # filter groups being visualized and select rate and counts to be visualized
@@ -88,12 +70,15 @@ caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 tooltip_text <- "Out of the {point.traffic_race_total} people Fresno PD stopped for traffic reasons and perceived as {point.race_label}, <b>{point.traffic_race_rate:.1f}%</b> were perceived as <b>{point.gender}</b> by Fresno PD, a total of <b>{point.traffic_count:.0f}</b> people."
 
 # Visualizing as table --------------------------
-chart_race_gender<-rdaGroupedBar(df,"race_label","traffic_race_rate","gender",bar_colors=list(meteorite,lavender),title="Fresno PD Stops a Higher Share of Men of Color During Traffic Stops",
-  subtitle = "Percent of officer-initiated traffic stops by perceived gender out of stops of same race",
-  tooltip_text = tooltip_text,
-  caption = caption_text,
-  export_data_label = list(pointFormat='{point.traffic_race_rate:.1f}%')
-)
+chart_race_gender<-rdaGroupedBar(df,
+                                 "race_label",
+                                 "traffic_race_rate","gender",
+                                 theme="theme_fbhc",
+                                 title="Fresno PD Stops a Higher Share of Men of Color During Traffic Stops",
+                                 subtitle = "Percent of officer-initiated traffic stops by perceived gender out of stops of same race",
+                                 tooltip_text = tooltip_text,
+                                 caption = caption_text,
+                                 export_data_label = list(pointFormat='{point.traffic_race_rate:.1f}%'))
 
 ```
 

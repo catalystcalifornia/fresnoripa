@@ -92,6 +92,10 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 # create tooltip text
 tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
 
+# get rdaCharts themese
+data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
+
 ```
 
 ```{r create-visual, echo=FALSE, message=FALSE}
@@ -106,9 +110,9 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
   }
   
   hchart(filtered_data, "bar", hcaes(x = race_label, y = rate),
-         showInLegend = FALSE, color = "#3A207D") %>%
+         showInLegend = FALSE) %>%
     hc_plotOptions(column = list(stacking = "normal")) %>%
-    hc_add_theme(hc_theme_smpl()) %>%
+    hc_add_theme(theme_fbhc) %>%
     hc_subtitle(text = paste0("Rate of traffic stops made for  ", x," reason out of all traffic stops by race")) %>% 
     hc_yAxis(title = list(text = "Percent (%)"))%>%
     hc_xAxis(title = list(text = ""))%>%

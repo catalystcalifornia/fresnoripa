@@ -13,15 +13,10 @@ output:
 
 library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
-# 
-# source("W:\\RDA Team\\Packages\\rdaCharts\\HK\\R\\rdaBubblepop.R") # sourcing one of the visual files so I can get color codes
-
 # library(devtools)
  # remotes::install_github("catalystcalifornia/rdaCharts")
 library(rdaCharts)
-# library(stringr)
 library(htmltools) 
-# library(htmlwidgets)
 # remotes::install_github("jthomasmock/gtExtras")
 library(gtExtras)
 library(gt)
@@ -33,17 +28,6 @@ library(usethis)
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
-
-  ## COLORS ##
-  papaya <- "#F25922"
-  peridot <- "#CEEA01"
-  lavender <- "#CEC4E2"
-  meteorite <- "#3A207D"
-  ccblue <- "#0860BC"
-
-  black <- "#000000"
-  alabaster<-"#FBFBFB"
-  gainsboro <- "#DEDEDE"
 
   
 # pull and clean analysis tables for visualizing ----
@@ -103,7 +87,7 @@ chart_race<-rdaStackedBar(df,
                           "x",
                           "uof_rate",
                           "label",
-                          bar_colors=list("#949494",gainsboro,lavender,meteorite),
+                          theme="theme_fbhc",
   title="Fresno PD Uses Force Mostly Against Men of Color",
   subtitle="Percent of uses of force by officers during officer-initiated traffic stops",
   tooltip_text=tooltip_text,

@@ -38,26 +38,25 @@ con <- connect_to_db("eci_fresno_ripa")
 
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_license_race")%>%
     mutate(statute_literal_25 = "Driving Without a License")%>% # convert text for offense to be title case
-  mutate(race_label=ifelse(race %in% "latinx", "Latinx",
-                           ifelse(race %in% "nh_aian", "AIAN NH",
-                                  ifelse(race %in% "nh_black", "Black",
-                                         ifelse(race %in% "nh_multiracial", "Multiracial",
-                                                ifelse(race %in% "nh_nhpi", "NHPI NH",
-                                                       ifelse(race %in% "nh_sswana", "SSWANA NH",
-                                                              ifelse(race %in% "nh_white", "White",
-                                                              ifelse(race %in% "aiain_aoic", "AIAN",
-                                                                     ifelse(race %in% "nhpia_aoic", "NHPI",
-                                                                            ifelse(race %in% "sswana_aoic","SWANA/SA",
-                                                                                   ifelse(race %in% 'nh_asian', "Asian", race))))))))))))%>%
-  filter(race!="nh_sswana")%>%
+  mutate(race_label=case_when(
+    race == "latinx" ~ "Latinx",
+    race == "nh_aian" ~ "AIAN NH",
+    race == "nh_black" ~ "Black",
+    race == "nh_multiracial" ~ "Multiracial",
+    race == "nh_nhpi" ~ "NHPI NH",
+    race == "nh_sswana" ~ "SSWANA NH",
+    race == "nh_white" ~ "White",
+    race == "aiain_aoic" ~ "AIAN",
+    race == "nhpia_aoic" ~ "NHPI",
+    race == "sswana_aoic" ~ "SWANA/SA",
+    race == 'nh_asian' ~ "Asian", 
+    .default = race)) %>%
+  filter(race!="nh_sswana") %>%
   arrange(-rate)
 
 # Pull out the result denominator for visualizing
-
 df_result<-df%>%
   filter(denom=="citation_result")
-
-
 
 ```
 
@@ -79,22 +78,6 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 tooltip_text <- "Out of 100  <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
-
-# Run bubblechart function
-
-  ## COLORS ##
-  papaya <- "#F25922"
-  peridot <- "#CEEA01"
-  lavender <- "#CEC4E2"
-  meteorite <- "#3A207D"
-  ccblue <- "#0860BC"
-
-  black <- "#000000"
-  alabaster<-"#FBFBFB"
-  gainsboro <- "#DEDEDE"
-
-  # add custom ordering on stacked bar
-  
   
 # add factors for sorting
 df_result <- within(df_result, race_label <- factor(race_label, levels=c("White","SWANA/SA", "Asian","Black", "Latinx")))
@@ -102,10 +85,10 @@ df_result <- within(df_result, race_label <- factor(race_label, levels=c("White"
 
 chart<-rdaStackedBar(
   df_result,
- statute_literal_25,
-  "rate",
-  race_label,
- bar_colors=list( gainsboro, "#949494", lavender, "#8E7ACA", "#362178"),
+ x=statute_literal_25,
+  y="rate",
+  z=race_label,
+ theme="theme_fbhc",
   title = "Fresno PD gives 75% of their Citations for Driving Without a License to People of Color",
   subtitle = "Percent of people ticketed for driving without a license by perceived race",
   tooltip_text = tooltip_text,

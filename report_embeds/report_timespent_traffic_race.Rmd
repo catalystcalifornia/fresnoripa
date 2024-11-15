@@ -86,95 +86,6 @@ cor.test(df$bipoc_flag, df$stop_duration_capped)
 ```
 
 ```{r, include=FALSE}
-
-# visualize--------------------------
-## COLORS ##
-papaya <- "#F25922"
-peridot <- "#CEEA01"
-lavender <- "#CEC4E2"
-meteorite <- "#3A207D"
-ccblue <- "#0860BC"
-
-black <- "#000000"
-alabaster<-"#FBFBFB"
-gainsboro <- "#DEDEDE"
-
- ## FONTS ##
-main_font <- "Inter"
-regular_font_weight <- 400
-black_font_weight <- 800
-semi_bold_font_weight <- 600
-
-
-##### highchart theme #####
-cc_theme <- hc_theme(
-  colors = c(meteorite, lavender, papaya, peridot),
-  chart = list(
-    backgroundColor = alabaster,
-    style = list(
-      fontFamily = main_font, # font_subtitle
-      color=alabaster)),
-  title = list(widthAdjust = -50,
-               style = list(
-                 color = black,
-                 fontFamily = main_font, # font_title
-                 fontWeight = black_font_weight,
-                 textAlign="left",
-                 fontSize='21px'),
-                 align = "left"),
-  subtitle = list(
-    style = list(
-      color = black,
-      fontFamily = main_font, # font_subtitle
-      fontWeight = regular_font_weight,
-      fontSize='14px'),
-      align='left'),
-  caption = list(
-    style = list(
-      color = black,
-      fontFamily = main_font, # font_caption
-      fontWeight = regular_font_weight,
-      fontSize = "10px",
-      textAlign = "left",
-      width = 50),
-    useHTML = TRUE,
-    floating = FALSE),
-  xAxis=list(
-    labels=list(
-      style=list(
-        color=black,
-        fontFamily = main_font, # font_x_label
-        fontWeight = semi_bold_font_weight,
-        width=120,  #argument to modify the width of the labels
-        min=0,
-        fontSize="10px")),
-    lineColor=gainsboro),
-  yAxis=list(
-    labels=list(
-      style=list(
-        color=black,
-        fontFamily = main_font, # font_axis_label
-        fontWeight = regular_font_weight,
-        fontSize="10px",
-        margin = 50)),
-    gridLineWidth=0, # removes vertical grid lines
-    visible=TRUE, # makes axis line visible
-    lineWidth=1,
-    lineColor=gainsboro,
-    min=0,
-    tickAmount=6,
-    tickWidth=1),
-  legend = list(
-    itemStyle = list(
-      fontFamily = main_font, # font_axis_label
-      fontWeight = regular_font_weight,
-      color = black,
-      fontSize = '12px'),
-    itemHoverStyle = list(
-      fontFamily = main_font, # font_table_text
-      fontWeight = regular_font_weight,
-      color = black),
-    plotLines=list(color=gainsboro)))
   
 #   # create boxplot dataframe
 # data<-data_to_boxplot(df,variable=stop_duration_capped,group_var=bipoc, color="#3A207D")
@@ -188,6 +99,11 @@ methodnote <- "Analysis for all officer-initiated traffic stops made in 2022 tha
 racenote <- "Race is based on officer perception. People of Color includes all individuals perceived as non-White by officers."
 
 caption_text <- paste("<br>", sourcenote, methodnote, racenote)
+
+# get theme_fbhc 
+data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
+
 ```
 
 ```{r, echo=FALSE}
@@ -198,8 +114,7 @@ jitter_chart <- highchart() %>%
     data = df,
     type = "scatter", 
     hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
-    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"),
-    color=paste0(meteorite)) %>%
+    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")) %>%
   hc_legend(enabled = FALSE) %>%
   hc_plotOptions(
     scatter = list(
@@ -214,7 +129,7 @@ jitter_chart <- highchart() %>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
   hc_subtitle(text = "Officer time spent on each person they stopped and gave a citation or warning or took no action.")%>%
-  hc_add_theme(cc_theme) %>%
+  hc_add_theme(theme_fbhc) %>%
   hc_exporting(
       enabled = TRUE,
       sourceWidth=900,

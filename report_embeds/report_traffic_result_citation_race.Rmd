@@ -82,6 +82,10 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race}</b>, <b>{point.rate:.1f}%</b> were for a <b>{point.statute_literal_25} citation</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
+# get theme_fbhc
+data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
+
 ```
 
 
@@ -102,10 +106,9 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
   }
 
    hchart(filtered_data, "bar", hcaes(x = race, y = rate),
-           showInLegend = FALSE,
-           , color = "#3A207D") %>% 
+           showInLegend = FALSE) %>% 
     hc_plotOptions(column = list(stacking = "normal")) %>% 
-    hc_add_theme(hc_theme_smpl()) %>% 
+    hc_add_theme(theme_fbhc) %>% 
     hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race")) %>% 
     hc_yAxis(title = list(text = "Percent (%)"))%>%
     hc_xAxis(title = list(text = ""))%>%

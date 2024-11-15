@@ -10,34 +10,27 @@ output:
 ```{r, include=FALSE}
 
 # set up -----------------------------
-
 library(RPostgreSQL)
-source("W:\\RDA Team\\R\\credentials_source.R")
-
-# library(devtools)
 # remotes::install_github("catalystcalifornia/rdaCharts") 
 library(rdaCharts)
 library(stringr)
 
-#connect to postgres
 
+#connect to postgres
 source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
 
 # pull analysis table for visualizing
-
-
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_person")%>%
   mutate(stop_result_simple = str_to_title(stop_result_simple))
 
 # Combine stop results that are under .5% to 'Other' category
 
-df<-df%>%
+df <- df%>%
   mutate(stop_result_simple=ifelse(rate<=0.5, "Other Stop Result", stop_result_simple),
         count=ifelse(rate<=0.5, sum(count[rate<=0.5]), count),
-        rate=count/total*100
-         )%>%
+        rate=count/total*100)%>%
   slice(1:6)
 
 
@@ -61,16 +54,15 @@ tooltip_text <- "Out of 100 people stopped in traffic stops,  <b>{point.rate:.1f
 
 # run function
 
-chart<-rdaBar(
+chart <-rdaBar(
   df,
   "stop_result_simple",
   "rate",
-  
+  theme="theme_fbhc",
   title = "The Majority of Traffic Stops Made by Fresno PD Result in a Citation",
   subtitle = "Percent of officer-initiated traffic stops by stop result",
   tooltip_text = tooltip_text,
   caption = caption_text,
-  
   export_data_label = list(pointFormat='{point.rate:.1f}%')
 )
 
