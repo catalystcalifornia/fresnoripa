@@ -34,6 +34,8 @@ con <- connect_to_db("eci_fresno_ripa")
 
 df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_uof")
 
+dbDisconnect(con)
+
 # filter groups being visualized and select rate and counts to be visualized
 df<-df_p%>%  
   select(race,gender,uof_count,uof_total,uof_total_rate)%>%

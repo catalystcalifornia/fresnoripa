@@ -54,6 +54,8 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_license_race")
   filter(race!="nh_sswana") %>%
   arrange(-rate)
 
+dbDisconnect(con)
+
 # Pull out the result denominator for visualizing
 df_result<-df%>%
   filter(denom=="citation_result")

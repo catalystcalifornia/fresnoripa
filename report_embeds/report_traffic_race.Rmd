@@ -8,11 +8,10 @@ output:
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 ```{r, include=FALSE}
-
 # set up -----------------------------
-library(RPostgreSQL)
-remotes::install_github("catalystcalifornia/rdaCharts")
+remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
+library(RPostgreSQL)
 library(htmltools) 
 library(gtExtras)
 library(gt)
@@ -27,6 +26,12 @@ con <- connect_to_db("eci_fresno_ripa")
 # pull and clean analysis tables for visualizing ----
 
 df_p<-dbGetQuery(con, "SELECT * FROM report_traffic_race")
+
+dbDisconnect(con)
+```
+
+```{r, include=FALSE}
+# prep-data
 
 # filter groups being visualized and select rate and counts to be visualized
 df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian_wo_sa","aian","nhpi","nh_multiracial","nh_black","sswana"))%>%
@@ -45,10 +50,10 @@ df<-df%>%mutate(race_label = case_when(
     race == 'sswana' ~ 'SWANA/SA', 
     TRUE ~ as.character(race)))
 
-# visualize--------------------------
+```
 
-# create caption 
-
+```{r, include=FALSE}
+# prep-chart --------------------------
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
@@ -57,12 +62,7 @@ racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native 
 
 caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 
-
-# create tooltip text
-
 tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
-
-# Visualizing as table --------------------------
 
 chart_race<-rdaBubblepop(
   df,

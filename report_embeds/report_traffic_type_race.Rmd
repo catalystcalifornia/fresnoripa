@@ -43,6 +43,8 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
     .default = race)) %>%
   filter(race!="nh_sswana")
 
+dbDisconnect(con)
+
 
 # filter dataframes for population denominator which is the one I want to visualize
 df_pop<-df%>%
