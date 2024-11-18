@@ -29,6 +29,12 @@ source("W:\\RDA Team\\R\\credentials_source.R")
 
 con <- connect_to_db("eci_fresno_ripa")
 
+# get theme options for manual visualization of graph later
+
+data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
+
+
 # pull analysis table for visualizing
 
 
@@ -51,6 +57,7 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
 # set up factors to customize the order of the categories that get visualized
 
 factors<-c("Moving", "Non-moving", "Equipment" ) 
+race_factors<-c("Black", "Latinx", "SWANA/SA", "White", "Asian", "NHPI", "AIAN", "Multiracial" ) 
 
 # filter dataframes for population denominator which is the one I want to visualize
 
@@ -58,20 +65,19 @@ df_pop<-df%>%
   filter(denom=="population_per_1k")%>%
   filter(!grepl("nh_aian|nh_nhpi", race))%>%
   filter(race!="nh_asian")%>% # I want to use the Asian calc that omits South Asian from the denominator
-   # mutate(traffic_violation_type = factor(traffic_violation_type, levels = factors))%>%
-  group_by(race)%>%
- mutate(rate_comb = ifelse(
-    traffic_violation_type %in% c("Non-moving", "Equipment"),
-    sum(rate[traffic_violation_type %in% c("Non-moving", "Equipment")]),  # Sum only relevant rows
-    0  # set moving rates to 0 just for this column since we are using it to sort
-  )) %>%
-  ungroup()%>%
-  arrange(-rate_comb)
+ #  group_by(race)%>%
+ # mutate(rate_comb = ifelse(
+ #    traffic_violation_type %in% c("Non-moving", "Equipment"),
+ #    sum(rate[traffic_violation_type %in% c("Non-moving", "Equipment")]),  # Sum only relevant rows
+ #    0  # set moving rates to 0 just for this column since we are using it to sort
+ #  )) %>%
+  arrange(-rate)
 
 
 
 df_pop <- df_pop %>%
-  mutate(traffic_violation_type = factor(traffic_violation_type, levels = factors))
+  mutate(traffic_violation_type = factor(traffic_violation_type, levels = factors))%>%
+  mutate(race_label=factor(race_label, levels = race_factors))
 
 
 
@@ -113,7 +119,79 @@ chart_pop<-rdaStackedBar(
 
 ```
 
-```{r, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
+
+
+
+#Create manual stacked bar graph for this report embed that does not use the rda chart package
+
+
+  # bar_colors <- list("#dddee2", "#acadb1", "#7e7f82", "#525357", "#2b2b2e")
+
+ subtitle<-"Percent of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population"
+
+hchart(df_pop,
+         "bar",
+         stacking = "normal",
+         hcaes(
+           x = race_label,
+           y = rate,
+           group = traffic_violation_type))%>%
+  
+ hc_xAxis(
+    categories = list("Black", "Latinx", "SWANA/SA", "White", 
+                      "Asian", "NHPI", "AIAN", "Multiracial")
+  )%>%
+  hc_chart(events = list(load = JS("function() {
+  var chart = this;
+  chart.series[0].setVisible(false)
+
+  }"))) %>%
+  hc_plotOptions(bar = list(stacking = "rate")) %>%
+  
+    hc_tooltip(crosshairs = TRUE,
+                pointFormat = tooltip_text)%>%
+
+
+    # hc_colors(bar_colors)%>%
+
+    hc_title(text = "Fresno PD Disproportionately Burdens Black People in Fresno with Traffic Stops Across all Stop Types") %>%
+
+    hc_subtitle(text = "Percent of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population") %>%
+
+    hc_caption(text = caption_text) %>%
+
+    hc_yAxis(title = list(text = "")) %>%
+
+    hc_xAxis(title = list(text = "",
+                          labels=list(position="bottom"))) %>%
+ hc_legend(enabled = TRUE,
+              reversed =  TRUE,
+              x=20) %>%
+
+     hc_add_theme(theme_fbhc) %>%
+
+    hc_chart(marginRight=120,
+             height=480) %>%
+
+    hc_exporting(
+      enabled = TRUE,
+      sourceWidth=900,
+      sourceHeight=600,
+      chartOptions=list(
+        plotOptions=list(
+          series=list(
+            dataLabels=list(
+              enabled=TRUE,
+              format=list(pointFormat='{point.rate:.1f}') )))),
+      filename = paste0(subtitle,"_Catalyst California, catalystcalifornia.org, 2023."),
+      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+                                                     'downloadXLS', 'downloadCSV'))))
+
+
+```
+
+```{r, echo=FALSE, include=FALSE}
 
 chart_pop
 
