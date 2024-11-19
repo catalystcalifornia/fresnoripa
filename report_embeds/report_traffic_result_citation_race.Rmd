@@ -95,15 +95,15 @@ library(purrr)
 list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
   filtered_data <- df_race %>%
     filter(statute_literal_25 == x) %>%
-    arrange(desc(rate))  # Sort by descending y-values
+    arrange(desc(rate))%>%  # Sort by descending y-values
+    mutate(bar_color = ifelse(race == "White",  "#053451","#FDB913"))  # Custom color for "White"  # Sort by descending y-values
   
   if (nrow(filtered_data) == 0) {
     return(NULL)  # Skip this group if there are no rows
   }
 
-   hchart(filtered_data, "bar", hcaes(x = race, y = rate),
-           showInLegend = FALSE,
-           , color = "#3A207D") %>% 
+   hchart(filtered_data, "bar", hcaes(x = race, y = rate, color = bar_color),
+           showInLegend = FALSE) %>% 
     #      hc_chart(
     #   margin = list(40, 20, 20, 80), # Add margins for tooltip space
     #   spacing = list(10, 10, 10, 10) # Add spacing around the chart

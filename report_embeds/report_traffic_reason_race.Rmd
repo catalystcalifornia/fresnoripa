@@ -98,14 +98,15 @@ tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceive
 list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
   filtered_data <- df_final %>%
     filter(statute_literal_25 == x) %>%
-    arrange(desc(rate))  # Sort by descending y-values
+    arrange(desc(rate)) %>%  # Sort by descending y-values
+    mutate(bar_color = ifelse(race_label == "White", "#053451","#FDB913"))  # Custom color for "White"
   
   if (nrow(filtered_data) == 0) {
     return(NULL)  # Skip this group if there are no rows
   }
   
-  hchart(filtered_data, "bar", hcaes(x = race_label, y = rate),
-         showInLegend = FALSE, color = "#3A207D") %>%
+  hchart(filtered_data, "bar", hcaes(x = race_label, y = rate, color=bar_color),
+         showInLegend = FALSE) %>%
     hc_plotOptions(column = list(stacking = "normal")) %>%
     hc_add_theme(hc_theme_smpl()) %>%
     hc_subtitle(text = paste0("Percent of traffic stops made for  ", x," reason out of all traffic stops by race")) %>% 
