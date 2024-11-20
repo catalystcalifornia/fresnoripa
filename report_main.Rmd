@@ -5,13 +5,13 @@ author: "Catalyst California and Fresno BHC"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\cc_brandguide.css"
+    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
     toc: yes
     toc_depth: 2
     toc_float: yes
 ---
-  
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
+<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
@@ -44,9 +44,6 @@ con <- connect_to_db("eci_fresno_ripa")
 
 ## Reknit all embeds so git will recognize file changes
 # source("report_embeds/run_embeds.R")
-
-peridot <- "#CEEA01"
-orange <- "#F25922"
 
 ```
 

@@ -14,10 +14,8 @@ output:
 library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
 
-source("W:\\RDA Team\\Packages\\rdaCharts\\HK\\R\\rdaBubblepop.R") # sourcing one of the visual files so I can get color codes
-
 # library(devtools)
-#  remotes::install_github("catalystcalifornia/rdaCharts") 
+#  remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(stringr)
 library(htmltools) 
@@ -87,10 +85,10 @@ df_result <- within(df_result, race_label <- factor(race_label, levels=c("White"
 
 chart<-rdaStackedBar(
   df_result,
- x=statute_literal_25,
+  x="statute_literal_25",
   y="rate",
-  z=race_label,
- theme="theme_fbhc",
+  z="race_label",
+  theme="theme_fbhc",
   title = "Fresno PD gives 75% of their Citations for Driving Without a License to People of Color",
   subtitle = "Percent of people ticketed for driving without a license by perceived race",
   tooltip_text = tooltip_text,
