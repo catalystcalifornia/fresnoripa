@@ -2,22 +2,18 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\cc_charts.css"
+    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
 ---
-<!-- link to Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
+<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
 
 ```{r, include=FALSE}
 
 # set up -----------------------------
-
 library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
-
-source("W:\\RDA Team\\Packages\\rdaCharts\\HK\\R\\rdaBubblepop.R") # sourcing one of the visual files so I can get color codes
-
 # library(devtools)
-#  remotes::install_github("catalystcalifornia/rdaCharts") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(stringr)
 library(htmltools) 
@@ -67,7 +63,7 @@ df<-df%>%
 
 # create caption 
 
-sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
 
@@ -84,13 +80,15 @@ table<-df%>%
   # filter(!grepl("Moving", traffic_violation_type))%>% 
   group_by(traffic_violation_type)%>%
   slice(1:3)%>%
-  mutate(statute_literal_25=ifelse(statute_literal_25 %in% "Opr Veh:window Obstructed", "Obstructed Window",
-                         ifelse(statute_literal_25 %in% "Drive W/O License", "Driving Without a License",
-                                   ifelse(statute_literal_25 %in% "Fail Prove Fin Rsp:po Req", "Failure to Prove Financial Responsibility (i.e. Insurance)",
-                                   ifelse(statute_literal_25 %in% "Display Lic Plates Wrong", "Incorrect License Plate Displayed",
-                                          ifelse(statute_literal_25 %in% "No Reg:veh/Trailer/Etc", "No Vehicle Registration",
-                                                 ifelse(statute_literal_25 %in% "Unlaw Dirct Drv Opr/Hwy", "Unlawful Direction of Driving on a Highway",
-                                                        ifelse(statute_literal_25 %in% "Unsafe Speed:prevail Cond", "Operating Vehicle at Unsafe Speed",statute_literal_25))))))))%>%
+  mutate(statute_literal_25=
+           case_when(statute_literal_25 == "Opr Veh:window Obstructed" ~ "Obstructed Window",
+                     statute_literal_25 == "Drive W/O License" ~ "Driving Without a License",
+                     statute_literal_25 == "Fail Prove Fin Rsp:po Req" ~ "Failure to Prove Financial Responsibility (i.e. Insurance)",
+                     statute_literal_25 == "Display Lic Plates Wrong" ~ "Incorrect License Plate Displayed",
+                     statute_literal_25 == "No Reg:veh/Trailer/Etc" ~ "No Vehicle Registration",
+                     statute_literal_25 == "Unlaw Dirct Drv Opr/Hwy" ~ "Unlawful Direction of Driving on a Highway",
+                     statute_literal_25 == "Unsafe Speed:prevail Cond" ~ "Operating Vehicle at Unsafe Speed",
+                     .default = statute_literal_25))%>%
   mutate("Count (%)"=paste0(count," (",round(rate,0),"%)"),
          " "=rate,
          "Traffic Violation Type"=traffic_violation_type,
@@ -103,18 +101,18 @@ table<-df%>%
              subtitle="Most common traffic citation results by traffic stop type")%>%
   # any data notes in footer
   tab_footnote(footnote=html(caption_text),placement="left")%>%
-  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#3A207D",background="transparent")%>%
+  gt_plt_bar_pct(column=" ", scaled=FALSE, fill="#FDB913",background="transparent")%>%
   # if needed modify column widths here
   cols_width(1~px(175),2~px(160),
              3~px(250))%>%
   opt_align_table_header("left")%>%
-  opt_table_font(font=c(google_font(name="Inter"),locations=NULL,default_fonts()))%>%
+  opt_table_font(font=c(google_font(name="Open Sans"),locations=NULL,default_fonts()))%>%
   tab_options(table.background.color="#FBFBFB",
     column_labels.background.color = "transparent",
     table.font.size = px(12),
     column_labels.font.size = px(12),
     heading.align = "left",
-    table.font.names = "Inter",
+    table.font.names = "Open Sans",
     heading.title.font.size = px(20),
     heading.subtitle.font.size = px(13),
     heading.border.bottom.color = "transparent",
@@ -130,7 +128,7 @@ table<-df%>%
   tab_style(style=
             cell_borders(sides=c("top","bottom"),color="#DEDEDE",style="solid",weight=px(1)),locations=cells_body())%>%
    tab_style(style=
-            cell_text(font=c(google_font(name="Inter"),default_fonts()),weight=900, color="black"),locations=cells_title())
+            cell_text(font=c(google_font(name="Open Sans"),default_fonts()),weight=900, color="black"),locations=cells_title())
 
 
 ```

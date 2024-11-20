@@ -12,12 +12,13 @@ output:
 ---
 <!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
 <link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
 
 
-list.of.packages <- c("usethis", "highcharter", "tidyverse", "sf", "leaflet", "sp", "htmltools", "magrittr", "flextable", "lorem",  "htmlwidgets", "vembedr", "knitr")
+list.of.packages <- c("usethis", "highcharter", "dplyr", "htmltools", "knitr")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -25,16 +26,8 @@ if(length(new.packages)) install.packages(new.packages)
 #### Load libraries ####
 library(usethis)
 library(highcharter)
-library(tidyverse)
-library(sf)
-library(leaflet)
-library(sp)
+library(dplyr)
 library(htmltools) # for html escape
-library(magrittr)
-library(flextable)
-library(lorem)
-library(htmlwidgets)
-library(vembedr)
 library(knitr)
 
 #### Add database connection ####
