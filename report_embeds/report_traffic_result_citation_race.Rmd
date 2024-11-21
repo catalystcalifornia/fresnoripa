@@ -13,9 +13,8 @@ output:
 
 library(RPostgreSQL)
 source("W:\\RDA Team\\R\\credentials_source.R")
-
- # library(devtools)
- # remotes::install_github("catalystcalifornia/rdaCharts") 
+library(devtools)
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(stringr)
 library(htmltools)
