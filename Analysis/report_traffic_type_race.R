@@ -266,9 +266,9 @@ charvect <- replace(charvect, c(4,5,6), c("numeric"))
 
 names(charvect) <- colnames(df_final)
 
-dbWriteTable(con,  "report_traffic_type_race", df_final,
-             overwrite = FALSE, row.names = FALSE,
-             field.types = charvect)
+# dbWriteTable(con,  "report_traffic_type_race", df_final,
+#              overwrite = FALSE, row.names = FALSE,
+#              field.types = charvect)
 
 
 # # write comment to table, and column metadata
@@ -291,7 +291,7 @@ COMMENT ON COLUMN report_traffic_type_race.count IS 'Count of officer-initiated 
 COMMENT ON COLUMN report_traffic_type_race.rate IS 'Rate of traffic stop types for each racial group. Please note that where denom==population that the rate is per 1k of the total population.
 All other denom rates are multiplied by 100.';
 ")
-
-# send table comment + column metadata
-dbSendQuery(conn = con, table_comment)
+# 
+# # send table comment + column metadata
+# dbSendQuery(conn = con, table_comment)
 
