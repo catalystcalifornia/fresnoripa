@@ -167,19 +167,27 @@ df1.2<-rbind(df1.2, df1.2_aian, df1.2_nhpi, df1.2_sswana)
 
 # join the population table
 
+# nh_race population counts
 df_pop<-df%>%
   left_join(pop%>%mutate(race=ifelse( race %in% "nh_twoormor", "nh_multiracial", race)),
                          by=c("nh_race"="race"))%>%
-  rename("total"="count")%>%
-  mutate(total=ifelse(aian_flag==1, 16015,
-                      ifelse(nhpi_flag==1, 3192, 
-                             ifelse(sswana_flag==1, 33158,  total))))%>%
-  mutate(total = case_when(
-    nh_race == "nh_multiracial" & sswana_flag==1 ~ 33158,
-    TRUE ~ total)) # hard code the one person who is sswana and multiracial to use the multiracial denominator:
+  rename("total"="count")
+
+check<-df_pop%>%
+  group_by(nh_race,total)%>%
+  count() # nh_sswana is empty because we do not have that population denominator in the table and we don't want to deflate rates by including aoic as pop denominator for nh_sswana
+
+# nhpi aoic
+nhpi_pop<-pop$count[pop$race=='nhpi']
+
+# aian aoic
+aian_pop<-pop$count[pop$race=='aian']
+
+# sswana aoic
+sswana_pop<-pop$count[pop$race=='sswana']
 
 ##### NH #####
-
+# nh race uses all nh race denominators so we don't artifically deflate rates for nh_aian and nh_nhpi and nh_sswana
 df1.3<-df_pop%>%
   group_by(nh_race, traffic_violation_type)%>%
   mutate(count=n(),
@@ -193,9 +201,9 @@ df1.3<-df_pop%>%
 df1.3_aian<-df_pop%>%
   filter(aian_flag==1)%>%
   group_by(traffic_violation_type)%>%
-  mutate(count=n(),
-         rate=count/total*1000)%>%
-  slice(1)%>%
+  summarise(count=n(),
+         rate=count/aian_pop*1000,
+         total=aian_pop)%>%
   mutate(denom="population_per_1k",
          nh_race="aian_aoic")%>%
   select(nh_race, traffic_violation_type, denom, total, count,rate)
@@ -205,9 +213,9 @@ df1.3_aian<-df_pop%>%
 df1.3_nhpi<-df_pop%>%
   filter(nhpi_flag==1)%>%
   group_by(traffic_violation_type)%>%
-  mutate(count=n(),
-         rate=count/total*1000)%>%
-  slice(1)%>%
+  summarise(count=n(),
+         rate=count/nhpi_pop*1000,
+         total=nhpi_pop)%>%
   mutate(denom="population_per_1k",
          nh_race="nhpi_aoic")%>%
   select(nh_race, traffic_violation_type, denom, total, count,rate)
@@ -217,9 +225,9 @@ df1.3_nhpi<-df_pop%>%
 df1.3_sswana<-df_pop%>%
   filter(sswana_flag==1)%>%
   group_by(traffic_violation_type)%>%
-  mutate(count=n(),
-         rate=count/total*1000)%>%
-  slice(1)%>%
+  summarise(count=n(),
+         rate=count/sswana_pop*1000,
+         total=sswana_pop)%>%
   mutate(denom="population_per_1k",
          nh_race="sswana_aoic")%>%
   select(nh_race, traffic_violation_type, denom, total, count,rate)
@@ -233,8 +241,7 @@ df1.3_asian<-df%>%
   group_by(nh_race, traffic_violation_type)%>%
   mutate(count=n(),
          rate=count/total*1000,
-         denom="population_per_1k"
-  )%>%
+         denom="population_per_1k")%>%
   slice(1)%>%
   select(nh_race, traffic_violation_type, denom, total, count,rate)%>%
 filter(grepl("nh_asian_wo_sa", nh_race))
@@ -260,7 +267,7 @@ charvect <- replace(charvect, c(4,5,6), c("numeric"))
 names(charvect) <- colnames(df_final)
 
 dbWriteTable(con,  "report_traffic_type_race", df_final,
-             overwrite = TRUE, row.names = FALSE,
+             overwrite = FALSE, row.names = FALSE,
              field.types = charvect)
 
 
