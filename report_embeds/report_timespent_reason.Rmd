@@ -84,7 +84,7 @@ chart <-highchart() %>%
   hc_legend(reversed=TRUE) %>%
   hc_plotOptions(series=list(stacking='normal')) %>%
   hc_title(useHTML=TRUE,
-           text = paste("Fresno PD Spends Nearly ", "<span style='color:#FDB913;'>98%</span>", "of Their Patrol Time on Traffic Stops")) %>%
+           text = paste("Fresno PD Spends Nearly 98% of Their Patrol Time on Traffic Stops")) %>%
   hc_subtitle(text = "Percent of time spent on officer-initiated stops by stop reason") %>%
   hc_caption(text=caption_text)%>%
   hc_add_theme(theme_fbhc)  %>%
