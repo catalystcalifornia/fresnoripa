@@ -73,7 +73,7 @@ chart<-rdaStackedBar(
   "statute_literal_25",
   "rate",
   "race_label",
-  bar_colors=list("#949494", "#DEDEDE", "#FFE8B3", "#FED163", "#FDB913"),
+  bar_colors=list("#DDDEE2", "#FEE4B1", "#FDD789", "#FDCB61", "#FDB913"),
   theme="theme_fbhc",
   title =  paste("Fresno PD gives  ", "<span style='color:#FDB913;'>75%</span>", "of their Citations for Driving Without a License to People of Color"),
   subtitle = "Percent of people ticketed for driving without a license by perceived race",
