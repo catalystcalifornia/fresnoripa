@@ -73,7 +73,7 @@ df_combined <- rbind(df_race, summed)
 
 # rearrange df and remove the previous separate cell phone citations
 df_final <- df_combined %>%
-  filter(grepl("Unsafe Speed while Driving Vehicle|Obstructed Window|No Vehicle Registration", statute_literal_25)) %>%
+  filter(grepl("Obstructed Window|No Vehicle Registration", statute_literal_25)) %>%
   arrange(race, -rate)
 
 ```

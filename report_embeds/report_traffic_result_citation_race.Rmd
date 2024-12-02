@@ -38,7 +38,7 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_race")%>%
                             ifelse(statute_literal_25 %in% "Unsafe Speed:prevail Cond",
                                    "Unsafe Speed while Driving Vehicle", statute_literal_25))))))%>%
   
-   filter(grepl("Unsafe Speed while Driving Vehicle|Obstructed Window|No Vehicle Registration",statute_literal_25))%>%
+   filter(grepl("Obstructed Window|No Vehicle Registration",statute_literal_25))%>%
   
    mutate(race = case_when(
     race == 'latinx' ~ "Latinx",
@@ -80,7 +80,7 @@ caption_text <- paste("<br>", racenote, sourcenote, methodnote)
 
 # create tooltip text
 
-tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race}</b>, <b>{point.rate:.1f}%</b> were for a <b>{point.statute_literal_25} citation</b>, or a total of <b>{point.count:.1f}</b> people cited."
+tooltip_text <- "Out of 100 citations Fresno PD gave to people perceived as <b>{point.race}</b>, <b>{point.rate:.1f}%</b> were for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
 ```
 
@@ -122,4 +122,4 @@ browsable(
 
 ```
 
-<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br>  Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. Catalyst California calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024.  Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart.</span> </div>
+<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br> Catalyst California calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022 that resulted in a citation for infraction. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop that resulted in a citation for infraction in 2022. For data masking purposes the data for these groups is suppressed from this chart.<br>Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. .</span> </div>
