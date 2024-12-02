@@ -106,7 +106,7 @@ highchart() %>%
   
   hc_title(text = "Fresno PD Disproportionately Burdens Black People in Fresno with Traffic Stops Across all Stop Types") %>%
   
-  hc_subtitle(text = "Percent of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population") %>%
+  hc_subtitle(text = "Officer-initiated traffic stops by traffic stop type and perceived race per 1K people of same race") %>%
   
   hc_caption(text = caption_text) %>%
   
