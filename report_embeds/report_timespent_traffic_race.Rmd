@@ -127,7 +127,7 @@ jitter_chart <- highchart() %>%
       jitter = list(x = .345, y = 0))) %>%
   hc_xAxis(type="category") %>%
   hc_yAxis(min=0, max=120, 
-           title = list(text = "Time Spent on Stop (minutes)"))%>%
+           title = list(text = "Time Spent on Each Stop in Minutes"))%>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
   hc_subtitle(text = "Officer time spent on each person they stopped and gave a citation or warning or took no action.")%>%
