@@ -40,6 +40,9 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
     .default = race)) %>%
   filter(race!="nh_sswana")
 
+threshold<-df[df$denom =="traffic_race" & df$total>=5, ]
+  
+
 dbDisconnect(con)
 
 # set up factors to customize the order of the categories that get visualized
@@ -49,8 +52,10 @@ race_factors<-c("Black", "Latinx", "SWANA/SA", "White", "Asian", "NHPI", "AIAN",
 # filter dataframes for population denominator which is the one I want to visualize
 df_pop<-df%>%
   filter(denom=="population_per_1k")%>%
+  filter(race %in% threshold$race)%>%
   filter(!grepl("nh_aian|nh_nhpi", race))%>%
   filter(race!="nh_asian")%>% # I want to use the Asian calc that omits South Asian from the denominator
+  rbind(df%>%filter(denom=="population_per_1k" & race=="nh_asian_wo_sa"))%>%
   arrange(-rate)
 
 df_pop <- df_pop %>%
@@ -65,7 +70,7 @@ df_pop <- df_pop %>%
 # create caption 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or Multiracial were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
@@ -106,7 +111,7 @@ highchart() %>%
   
   hc_title(text = "Fresno PD Disproportionately Burdens Black People in Fresno with Traffic Stops Across all Stop Types") %>%
   
-  hc_subtitle(text = "Percent of officer-initiated traffic stops by traffic stop type and perceived race per 1k of total population") %>%
+  hc_subtitle(text = "Officer-initiated traffic stops by traffic stop type and perceived race per 1K people of same race") %>%
   
   hc_caption(text = caption_text) %>%
   

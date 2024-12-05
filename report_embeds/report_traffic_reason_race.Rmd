@@ -89,7 +89,7 @@ racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North Af
 caption_text <- paste("<br>", sourcenote, methodnote,racenote)
 
 # create tooltip text
-tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of all the people Fresno PD stopped for traffic reasons and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
 
 ```
 
@@ -137,7 +137,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$h3("Officers are biased in when they pull people over for reasons not related to public safety"), # Main title
+    tags$h3("Officers are biased in when they stop people for reasons not related to public safety"), # Main title
     list_of_plots %>% hw_grid(rowheight = 450)       # Faceted charts
   )
 )
