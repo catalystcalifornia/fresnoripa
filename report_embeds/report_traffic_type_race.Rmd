@@ -125,6 +125,8 @@ highchart() %>%
             reversed =  TRUE,
             x=20) %>%
   
+  hc_colors(c("#FFE8B3", "#FED163", "#FDB913")) %>%
+  
   hc_add_theme(theme_fbhc) %>%
   
   hc_chart(marginRight=120,
