@@ -99,7 +99,7 @@ highchart() %>%
                   y = rate,
                   group = traffic_violation_type)) %>%
   
-  # Revert to the original event handling for initial visibility
+  # Event handling for initial visibility
   hc_chart(events = list(load = JS("function() {
     var chart = this;
     chart.series[0].setVisible(false, true);  // Added true for immediate redraw
