@@ -99,12 +99,46 @@ highchart() %>%
                   y = rate,
                   group = traffic_violation_type)) %>%
   
-  # hide "Moving" category by default
+  # Revert to the original event handling for initial visibility
   hc_chart(events = list(load = JS("function() {
-  var chart = this;
-  chart.series[0].setVisible(false)}"))) %>%
+    var chart = this;
+    chart.series[0].setVisible(false, true);  // Added true for immediate redraw
+  }"))) %>%
   
-  hc_plotOptions(bar = list(stacking = "rate")) %>%
+  hc_plotOptions(
+    bar = list(
+      stacking = "normal",
+      events = list(
+        legendItemClick = JS("
+          function(event) {
+            var chart = this.chart;
+            // Force layout recalculation
+            chart.isDirtyLegend = true;
+            chart.isDirtyBox = true;
+            return true;
+          }
+        ")
+      )
+    )
+  ) %>%
+  
+  # Stabilize the layout
+  hc_chart(
+    marginRight = 120,
+    height = 480,
+    spacingBottom = 40,  # Add extra space at bottom
+    reflow = FALSE  # Prevent automatic reflowing
+  ) %>%
+  
+  # Adjust legend position and spacing
+  hc_legend(
+    enabled = TRUE,
+    reversed = TRUE,
+    x = 20,
+    y = 0,
+    floating = FALSE,  # Keep legend position fixed
+    verticalAlign = 'bottom',
+    align = 'center') %>%
   
   hc_tooltip(crosshairs = TRUE,
              pointFormat = tooltip_text) %>%
@@ -121,16 +155,9 @@ highchart() %>%
                         labels=list(position="bottom")),
            type="category") %>%
   
-  hc_legend(enabled = TRUE,
-            reversed =  TRUE,
-            x=20) %>%
-  
   hc_colors(c("#FFE8B3", "#FED163", "#FDB913")) %>%
   
   hc_add_theme(theme_fbhc) %>%
-  
-  hc_chart(marginRight=120,
-             height=480) %>%
   
   hc_exporting(
       enabled = TRUE,
