@@ -100,7 +100,7 @@ methodnote <- "Analysis for all officer-initiated traffic stops made in 2022 tha
 
 racenote <- "Race is based on officer perception. People of Color includes all individuals perceived as non-White by officers."
 
-caption_text <- paste("<br>", timedot, "<br>", sourcenote, methodnote, racenote)
+caption_text <- paste(timedot, "<br>", sourcenote, methodnote, racenote)
 
 # get theme_fbhc 
 data(theme_options)

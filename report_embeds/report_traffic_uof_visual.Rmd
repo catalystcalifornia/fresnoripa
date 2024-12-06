@@ -64,7 +64,7 @@ methodnote <- "Analysis for all officer-initiated traffic stops that included an
 
 racenote <- "Race/ethnicity: Person of color includes any person perceived as non-White."
 
-caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
 # create tooltip text
 tooltip_text <- "Fresno PD used force against {point.uof_total} people during officer-initiated traffic stops. <b>{point.uof_rate:.1f}%</b> of these people were perceived as <b>{point.label}</b> by officers."

@@ -59,7 +59,7 @@ methodnote <- "Analysis for all officer-initiated traffic stops made by officers
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
 tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
 

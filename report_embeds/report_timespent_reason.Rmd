@@ -49,7 +49,7 @@ sourcenote<-"Catalyst California's calculations based on City of Fresno's Police
 
 methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Other reasons include stops for probation or parole and stops made for two or more reasons."
 
-caption_text <- paste("<br>", sourcenote, methodnote)
+caption_text <- paste(sourcenote, methodnote)
 
 # create tooltip text
 tooltip_text <- "Out of all of time spent on officer-initiated stops, Fresno PD spent <b>{point.hours_rate:.1f}%</b> of their time on stops for <b>{point.reason_label}</b>. "
