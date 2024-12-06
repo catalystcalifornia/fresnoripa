@@ -92,7 +92,7 @@ cor.test(df$bipoc_flag, df$stop_duration_capped)
 
 # create caption 
 
-timedot<-"<b style='font-size:10px;'>Each dot is a person stopped.</b>"
+timedot<-"<b>Each dot is a person stopped.</b>"
 
 sourcenote<-"<br>Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
@@ -127,7 +127,12 @@ jitter_chart <- highchart() %>%
       jitter = list(x = .345, y = 0))) %>%
   hc_xAxis(type="category") %>%
   hc_yAxis(min=0, max=120, 
-           title = list(text = "Time Spent on Each Stop in Minutes"))%>%
+           title = list(text = "Time Spent on Each Stop in Minutes",
+                        style=list(
+                          color="#0A0A0A",
+                          fontFamily = "Open Sans",
+                          fontWeight = 400,
+                          fontSize="14px"))) %>%
   hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
   hc_caption(text=caption_text)%>%
   hc_subtitle(text = "Officer time spent on each person they stopped and gave a citation or warning or took no action.")%>%
