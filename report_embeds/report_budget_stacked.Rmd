@@ -1,0 +1,156 @@
+---
+title: ""
+output:
+  html_document:
+    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+---
+<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
+<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
+```{r, include=FALSE}
+
+# set up -----------------------------
+
+library(RPostgreSQL)
+library(devtools)
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+library(rdaCharts)
+library(stringr)
+
+#connect to postgres
+source("W:\\RDA Team\\R\\credentials_source.R")
+
+# get hc themes
+
+ data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
+options(highcharter.lang = list(thousandsSep = ","))
+
+con <- connect_to_db("eci_fresno_ripa")
+
+# Manually create the budget data as a df----------------------------
+## reference (from My): W:\Project\ECI\Fresno RIPA\Data\fresno_budget_data.xlsx
+
+df_budget <- data.frame(
+  fundee  = c("Fresno PD",
+"PARCS",
+"Fresno PD",
+"PARCS"
+),
+
+budget = c( 255932800, 20918800, 288364100, 155293200 
+),
+
+category=c("General Fund Operating Budget", "General Fund Operating Budget", "Total Budget", "Total Budget"),
+
+color=c("#FDB913", "#053451","#FDB913", "#053451")
+)
+
+```
+
+```{r, include=FALSE}
+
+# Set up for visualizing ----------------------------------
+
+sourcenote<-"Catalyst California's calculations based on City of Fresno's FY25 Proposed Budget, catalystcalifornia.org, 2024. "
+
+methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. Retrieved from https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget_1.pdf"
+
+caption <- paste("<br>", sourcenote, methodnote)
+
+title <- "Fresno PD is allocated 12 times more General Operating Funds than Parks, Libraries, and other Community Programs combined "
+
+subtitle <-"FY25 Proposed Budget Allocation Comparative Analysis for Police versus PARCS"
+
+# create tooltip text
+
+tooltip_text <- "Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.category}</b> funding to <b>{point.fundee}</b> in FY2025."
+
+export_data_label <- "list(pointFormat='{point.budget:.1f}$')" 
+
+
+
+## stacked----------------
+
+chart_stacked<-rdaStackedBar(df_budget,
+              "fundee",
+              "budget",
+              "category",
+  theme = "theme_fbhc",
+  title = title,
+  subtitle = subtitle,
+  tooltip_text = tooltip_text,
+  caption = caption,
+  export_data_label = export_data_label)
+
+```
+
+```{r, include=FALSE}
+
+## Manually create bar graph -----------------------------
+# 
+# chart_bar<-highchart() %>%
+#     hc_add_series(df_budget,
+#                "bar",
+#                name="",
+#                hcaes(x = fund_description,
+#                      y = budget,
+#                      color = color))%>%
+#     hc_plotOptions(
+#     series = list(
+#       dataLabels = list(enabled = TRUE,
+#                         format = "${point.y:,.0f}")  # Enable per-point color customization
+#     )
+#   ) %>%
+#     hc_tooltip(headerFormat='', # removes series label from top of tooltip
+#                pointFormat = tooltip_text,
+#                useHTML=TRUE) %>%  # allows tooltip to read <br> html in reformatted tooltip_text
+# 
+#     hc_title(text = title,
+#              style = list(useHTML = TRUE)) %>%
+# 
+#     hc_subtitle(text = subtitle) %>%
+# 
+#     hc_caption(text = caption) %>%
+# 
+#     hc_yAxis(title = list(text = paste0(""))) %>%
+# 
+#     hc_xAxis(title = list(text = paste0(""),
+#                           labels=list(position="bottom")),
+#              type = "category") %>%
+# 
+#     hc_legend(enabled=FALSE) %>%
+# 
+#      hc_add_theme(theme_fbhc) %>%
+#   
+#     hc_chart(marginRight=120) %>%
+# 
+#     hc_exporting(
+#       enabled = TRUE,
+#       sourceWidth=900,
+#       sourceHeight=600,
+#       chartOptions=list(plotOptions=list(
+#         series=list(
+#           dataLabels=list(
+#             enabled=TRUE,
+#             format=paste0(export_data_label))))),
+#       filename = paste0(subtitle,"_Catalyst California, catalystcalifornia.org, ", format(Sys.Date(), "%Y"), "."),
+#       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
+#                                                      'downloadXLS', 'downloadCSV')))
+#     )
+
+
+```
+
+```{r, echo=FALSE}
+
+chart_stacked
+
+```
+<script>
+  widg = document.getElementsByClassName('html-widget'); //find widgets
+  for (let i = 0; i < widg.length; i++) { //loop through
+    document.getElementsByClassName('highchart')[i].style.width = '100%'; //adjust width
+    document.getElementsByClassName('highchart')[i].style.height = '100%'; //adjust height
+  }
+</script>
