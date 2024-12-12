@@ -84,7 +84,7 @@ Out of all traffic stops Fresno PD conducted for each perceived racial group, of
 
 There are three types of traffic stops that can occur: 1) equipment 2) non-moving and 3) moving. The majority of traffic stops made by Fresno PD are for moving traffic stops. However, across all three types of traffic stops, Fresno PD disproportionately targets people of color with traffic stops relative to their total population in Fresno city. The disparities are particularly acute in Fresno PD’s use of equipment and non-moving stops. Out of 1,000 Black people living in Fresno city, Fresno PD stopped four people perceived as Black for a non-moving or equipment traffic stop. Similarly, for every 1,000 Latinx people in Fresno, Fresno PD stopped 2.5 people they perceived as Latinx for equipment or non-moving traffic reasons. Conversely, Fresno PD stopped only 1.7 people perceived as White for a non-moving or equipment traffic stop out of 1,000 White people who live in Fresno city.
 
-```{r rdaStackedbar-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
+```{r stackedbar-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
 ```
 
 ## 2.  These stops do not advance safety and are a means to profile people of color  

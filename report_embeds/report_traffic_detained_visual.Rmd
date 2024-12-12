@@ -57,7 +57,7 @@ methodnote <- "Analysis for all officer-initiated traffic stops that included an
 
 racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
 
 # create tooltip text
