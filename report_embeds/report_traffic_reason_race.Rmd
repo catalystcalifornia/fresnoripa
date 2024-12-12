@@ -13,6 +13,8 @@ output:
 library(RPostgreSQL)
 library(dplyr)
 library(highcharter)
+remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+library(rdaCharts)
 library(purrr) # facet charts
 library(htmltools)
 
@@ -86,10 +88,14 @@ methodnote <- "Analysis for all officer-initiated traffic stops made by officers
 
 racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
 # create tooltip text
-tooltip_text <- "Out of all the people Fresno PD stopped in traffic and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for the reason of <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of all the people Fresno PD stopped for traffic reasons and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+
+# get rdaCharts theme for custom chart
+data(theme_options)
+list2env(theme_options, envir = .GlobalEnv)
 
 ```
 
@@ -113,7 +119,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
                         color=bar_color),
                   showInLegend = FALSE) %>%
     hc_plotOptions(column = list(stacking = "normal")) %>%
-    hc_add_theme(hc_theme_smpl()) %>%
+    hc_add_theme(theme_fbhc) %>%
     hc_subtitle(text = paste0("Percent of traffic stops made for  ", x," reason out of all traffic stops by race")) %>% 
     hc_yAxis(title = list(text = "Percent (%)"))%>%
     hc_xAxis(title = list(text = ""),
@@ -134,16 +140,24 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
                                                      'downloadXLS', 'downloadCSV'))))
 })
-  
+
 browsable(
   tagList(
-    tags$h3("Officers are biased in when they pull people over for reasons not related to public safety"), # Main title
+    tags$text("Officers are biased in when they stop people for reasons not related to public safety", # Main title
+              class="highcharts-title",
+              style=css(
+                color="#0A0A0A",
+                font.size="21px",
+                font.family="Montserrat",
+                font.weight="800",
+                text.align="left",
+                fill="#0A0A0A")), # Main title
     list_of_plots %>% hw_grid(rowheight = 450)       # Faceted charts
   )
 )
 
 ```
-<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br> Catalyst California's calculations based on City of Fresno's Police Stop Data (2022); <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North African, or South Asian. </span> </div>
+<span class="highcharts-caption" style="font-size: 14px;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022); <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North African, or South Asian. </span>
 
 
 <script>

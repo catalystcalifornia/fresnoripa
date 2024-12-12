@@ -102,7 +102,7 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
                   showInLegend = FALSE) %>% 
 
     hc_plotOptions(column = list(stacking = "normal")) %>% 
-    hc_add_theme(hc_theme_smpl()) %>%
+    hc_add_theme(theme_fbhc) %>%
     hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race")) %>% 
     hc_yAxis(title = list(text = "Percent (%)")) %>%
     hc_xAxis(title = list(text = ""),
@@ -127,11 +127,18 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
   
 browsable(
   tagList(
-    tags$h3("Officers Show More Bias in Citations Unrelated to Public Safety"), # Main title
+    tags$text("Officers Show More Bias in Citations Unrelated to Public Safety", # Main title
+              class="highcharts-title",
+              style=css(
+                color="#0A0A0A",
+                font.size="21px",
+                font.family="Montserrat",
+                font.weight="800",
+                text.align="left",
+                fill="#0A0A0A")), # Main title
     list_of_plots %>% hw_grid(rowheight = 450)       # Faceted charts
   )
 )
 
 ```
-
-<div align="left" style="line-height: 12px;"><span style="font-size: 10px;"><br> Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. </span> </div>
+<span class="highcharts-caption" style="font-size: 14px;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. </span>

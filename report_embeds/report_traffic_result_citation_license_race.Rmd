@@ -59,10 +59,10 @@ methodnote <- "Analysis for all officer-initiated traffic stops made by officers
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote, racenote)
+caption_text <- paste(sourcenote, methodnote, racenote)
 
 # create tooltip text
-tooltip_text <- "Out of 100  <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people cited."
+tooltip_text <- "Out of all <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people cited."
 
   
 # add factors for sorting
@@ -73,9 +73,9 @@ chart<-rdaStackedBar(
   "statute_literal_25",
   "rate",
   "race_label",
-  bar_colors=list("#949494", "#DEDEDE", "#FFE8B3", "#FED163", "#FDB913"),
+  bar_colors=list("#DDDEE2", "#FEE4B1", "#FDD789", "#FDCB61", "#FDB913"),
   theme="theme_fbhc",
-  title =  paste("Fresno PD gives  ", "<span style='color:#FDB913;'>75%</span>", "of their Citations for Driving Without a License to People of Color"),
+  title =  paste("Fresno PD gives 87% of their Citations for Driving Without a License to People of Color"),
   subtitle = "Percent of people ticketed for driving without a license by perceived race",
   tooltip_text = tooltip_text,
   caption = caption_text,

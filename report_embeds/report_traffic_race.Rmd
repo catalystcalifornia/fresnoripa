@@ -34,6 +34,7 @@ dbDisconnect(con)
 # filter groups being visualized and select rate and counts to be visualized
 df<-df_p%>%filter(race %in% c("nh_white","latinx","nh_asian_wo_sa","aian","nhpi","nh_multiracial","nh_black","sswana"))%>%
   select(race,traffic_count,pop_count,pop_1k_rate)%>%
+  filter(traffic_count>=5)%>%
   arrange(-pop_1k_rate)
 
 # create race label
@@ -54,11 +55,11 @@ df<-df%>%mutate(race_label = case_when(
 # prep-chart --------------------------
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022."
+methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or Multiracial were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."
 
 racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
-caption_text <- paste("<br>", sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
 tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
 
