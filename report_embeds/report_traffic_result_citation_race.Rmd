@@ -33,7 +33,7 @@ df<-dbGetQuery(con, "SELECT * FROM report_traffic_result_citation_race")%>%
                                        statute_literal_25 == "Unsafe Speed:prevail Cond" ~ "Unsafe Speed while Driving Vehicle", 
                                        .default = statute_literal_25))%>%
   
-   filter(grepl("Unsafe Speed while Driving Vehicle|Obstructed Window|No Vehicle Registration", statute_literal_25)) %>%
+   filter(grepl("Obstructed Window|No Vehicle Registration", statute_literal_25)) %>%
   
    mutate(race = case_when(
     race == 'latinx' ~ "Latinx",
