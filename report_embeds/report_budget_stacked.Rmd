@@ -58,7 +58,7 @@ methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. 
 
 caption <- paste("<br>", sourcenote, methodnote)
 
-title <- "Fresno PD is allocated 12 times more General Operating Funds than Parks, Libraries, and other Community Programs combined "
+title <- "Fresno PD is allocated 12 Times More General Operating Funds than Parks, Libraries, and Other Community Programs Combined "
 
 subtitle <-"FY25 Proposed Budget Allocation Comparative Analysis for Police versus PARCS"
 
