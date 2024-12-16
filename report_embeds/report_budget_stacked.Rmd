@@ -38,13 +38,11 @@ df_budget <- data.frame(
 "PARCS"
 ),
 
-budget = c( 255932800, 20918800, 288364100, 155293200 
+budget = c( 255932800, 20918800, 288364100-255932800, 155293200-20918800
 ),
 
-category=c("General Fund Operating Budget", "General Fund Operating Budget", "Total Budget", "Total Budget"),
+type=c("Dollars From General Fund", "Dollars From General Fund", "Dollars From Other Sources", "Dollars From Other Sources"))
 
-color=c("#FDB913", "#053451","#FDB913", "#053451")
-)
 
 ```
 
@@ -58,13 +56,13 @@ methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. 
 
 caption <- paste("<br>", sourcenote, methodnote)
 
-title <- "Fresno PD is allocated 12 Times More General Operating Funds than Parks, Libraries, and Other Community Programs Combined "
+title <- "89% of Fresno PD's Budget is General Fund Dollars Compared to only 13% of the PARCS Budget"
 
-subtitle <-"FY25 Proposed Budget Allocation Comparative Analysis for Police versus PARCS"
+subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS (Parks, After School, Recreation, and Community Services Department)"
 
 # create tooltip text
 
-tooltip_text <- "Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.category}</b> funding to <b>{point.fundee}</b> in FY2025."
+tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025.")
 
 export_data_label <- "list(pointFormat='{point.budget:.1f}$')" 
 
@@ -75,7 +73,7 @@ export_data_label <- "list(pointFormat='{point.budget:.1f}$')"
 chart_stacked<-rdaStackedBar(df_budget,
               "fundee",
               "budget",
-              "category",
+              "type",
   theme = "theme_fbhc",
   title = title,
   subtitle = subtitle,
