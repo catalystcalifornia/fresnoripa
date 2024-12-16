@@ -56,7 +56,7 @@ methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. 
 
 caption <- paste("<br>", sourcenote, methodnote)
 
-title <- "Fresno PD receives 85% of General Fund Dollars Compard to only 15% for PARCS"
+title <- "Fresno PD receives 85% of General Fund Dollars while PARCS only receives 15%"
 
 subtitle <-"FY25 Proposed Budget Allocation Comparative Analysis for Police versus PARCS"
 
