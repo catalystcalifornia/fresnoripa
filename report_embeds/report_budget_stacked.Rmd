@@ -13,7 +13,7 @@ output:
 
 library(RPostgreSQL)
 library(devtools)
-# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(stringr)
 
@@ -55,6 +55,10 @@ df_budget<-df_budget%>%
               fundee=='Fresno PD' ~ "Fresno PD's")
   )
 
+#factors to order plot by
+type_factors<-c("Dollars From the City's General Fund","Dollars From Other Sources") 
+
+df_budget$type <- factor(x=df_budget$type, levels = type_factors) # factor levels to order plot by
 
 ```
 
@@ -70,13 +74,13 @@ methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. 
 
 caption <- paste(acronym,"<br>",sourcenote, methodnote)
 
-title <- "89% of Fresno PD's Budget Is From the City's General Fund Dollars Compared to Only 13% of the PARCS Budget"
+title <- "89% of Fresno PD's Budget Is From the City's General Fund Compared to Only 13% of the PARCS Budget"
 
 subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS"
 
 # create tooltip text
 
-tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025, equal to <b>{point.rate:,.1f}</b> of <b>{point.fundee}</b> budget.")
+tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025, equal to <b>{point.rate:,.1f}%</b> of <b>{point.fundee}</b> budget.")
 
 
 ## stacked----------------
@@ -85,12 +89,12 @@ chart_stacked<-rdaStackedBar(df_budget,
               "fundee",
               "budget",
               "type",
-  # theme = "theme_fbhc",
+  theme = "theme_fbhc",
   title = title,
   subtitle = subtitle,
   tooltip_text = tooltip_text,
   caption = caption,
-  export_data_label = list(pointFormat='${point.budget:.1f}'))
+  export_data_label = list(pointFormat='${point.budget:,.0f}'))
 
 ```
 
