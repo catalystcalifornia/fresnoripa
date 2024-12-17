@@ -41,7 +41,19 @@ df_budget <- data.frame(
 budget = c( 255932800, 20918800, 288364100-255932800, 155293200-20918800
 ),
 
-type=c("Dollars From General Fund", "Dollars From General Fund", "Dollars From Other Sources", "Dollars From Other Sources"))
+type=c("Dollars From the City's General Fund", "Dollars From the City's General Fund", "Dollars From Other Sources", "Dollars From Other Sources"))
+
+# add budget rate
+df_budget<-df_budget%>%
+  group_by(fundee)%>%
+  mutate(rate=budget/sum(budget)*100)
+
+# add some additional customization to pop-up labels
+df_budget<-df_budget%>%
+  mutate(fundee_label=
+    case_when(fundee=='PARCS' ~ "PARCS'",
+              fundee=='Fresno PD' ~ "Fresno PD's")
+  )
 
 
 ```
@@ -50,22 +62,21 @@ type=c("Dollars From General Fund", "Dollars From General Fund", "Dollars From O
 
 # Set up for visualizing ----------------------------------
 
+acronym<-"<b>PARCS=Parks, After School, Recreation, and Community Services Department</b>"
+
 sourcenote<-"Catalyst California's calculations based on City of Fresno's FY25 Proposed Budget, catalystcalifornia.org, 2024. "
 
 methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. Retrieved from https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget_1.pdf"
 
-caption <- paste("<br>", sourcenote, methodnote)
+caption <- paste(acronym,"<br>",sourcenote, methodnote)
 
-title <- "89% of Fresno PD's Budget is General Fund Dollars Compared to only 13% of the PARCS Budget"
+title <- "89% of Fresno PD's Budget Is From the City's General Fund Dollars Compared to Only 13% of the PARCS Budget"
 
-subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS (Parks, After School, Recreation, and Community Services Department)"
+subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS"
 
 # create tooltip text
 
-tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025.")
-
-export_data_label <- "list(pointFormat='{point.budget:.1f}$')" 
-
+tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025, equal to <b>{point.rate:,.1f}</b> of <b>{point.fundee}</b> budget.")
 
 
 ## stacked----------------
@@ -74,68 +85,16 @@ chart_stacked<-rdaStackedBar(df_budget,
               "fundee",
               "budget",
               "type",
-  theme = "theme_fbhc",
+  # theme = "theme_fbhc",
   title = title,
   subtitle = subtitle,
   tooltip_text = tooltip_text,
   caption = caption,
-  export_data_label = export_data_label)
+  export_data_label = list(pointFormat='${point.budget:.1f}'))
 
 ```
 
 ```{r, include=FALSE}
-
-## Manually create bar graph -----------------------------
-# 
-# chart_bar<-highchart() %>%
-#     hc_add_series(df_budget,
-#                "bar",
-#                name="",
-#                hcaes(x = fund_description,
-#                      y = budget,
-#                      color = color))%>%
-#     hc_plotOptions(
-#     series = list(
-#       dataLabels = list(enabled = TRUE,
-#                         format = "${point.y:,.0f}")  # Enable per-point color customization
-#     )
-#   ) %>%
-#     hc_tooltip(headerFormat='', # removes series label from top of tooltip
-#                pointFormat = tooltip_text,
-#                useHTML=TRUE) %>%  # allows tooltip to read <br> html in reformatted tooltip_text
-# 
-#     hc_title(text = title,
-#              style = list(useHTML = TRUE)) %>%
-# 
-#     hc_subtitle(text = subtitle) %>%
-# 
-#     hc_caption(text = caption) %>%
-# 
-#     hc_yAxis(title = list(text = paste0(""))) %>%
-# 
-#     hc_xAxis(title = list(text = paste0(""),
-#                           labels=list(position="bottom")),
-#              type = "category") %>%
-# 
-#     hc_legend(enabled=FALSE) %>%
-# 
-#      hc_add_theme(theme_fbhc) %>%
-#   
-#     hc_chart(marginRight=120) %>%
-# 
-#     hc_exporting(
-#       enabled = TRUE,
-#       sourceWidth=900,
-#       sourceHeight=600,
-#       chartOptions=list(plotOptions=list(
-#         series=list(
-#           dataLabels=list(
-#             enabled=TRUE,
-#             format=paste0(export_data_label))))),
-#       filename = paste0(subtitle,"_Catalyst California, catalystcalifornia.org, ", format(Sys.Date(), "%Y"), "."),
-#       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-#                                                      'downloadXLS', 'downloadCSV')))
-#     )
 
 
 ```
