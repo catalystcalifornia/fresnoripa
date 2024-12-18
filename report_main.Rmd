@@ -172,6 +172,9 @@ Fresno PD’s total proposed expenditures budget is 155.2 million dollars (an in
 
 Additionally, the total general fund dollars proposed for PARCs in 2025 is 24 million dollars, compared to 255.9 million dollars being proposed for Fresno PD. In other words, the Fresno PD general fund budget is 10 times that of parks, after school programs, recreation and community services. 
 
+```{r stackedbar-chart, child= 'report_embeds/report_budget_stacked.Rmd'}
+```
+
 
 # RECOMMENDATIONS
 
