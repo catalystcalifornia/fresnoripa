@@ -90,8 +90,13 @@ cor.test(df$bipoc_flag, df$stop_duration_capped)
 #   # create boxplot dataframe
 # data<-data_to_boxplot(df,variable=stop_duration_capped,group_var=bipoc, color="#3A207D")
 
-# create caption 
+title_text <- "Fresno PD Spends More Time on Traffic Stops Involving People of Color"
 
+subtitle_text <- "Fresno PD Spends More Time on Traffic Stops Involving People of Color"
+
+tooltip_text <- "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"
+
+# create caption 
 timedot<-"<b>Each dot is a person stopped.</b>"
 
 sourcenote<-"<br>Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
@@ -115,8 +120,11 @@ jitter_chart <- highchart() %>%
   hc_add_series(
     data = df,
     type = "scatter", 
-    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc),
-    tooltip = list(headerFormat="", pointFormat = "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}")) %>%
+    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc)) %>%
+  hc_tooltip(headerFormat='', # removes series label from top of tooltip
+               pointFormat = tooltip_text,
+               useHTML=TRUE, # allows tooltip to read <br> html in reformatted tooltip_text
+               style = list(fontSize = "14px")) %>%
   hc_legend(enabled = FALSE) %>%
   hc_plotOptions(
     scatter = list(
@@ -125,18 +133,81 @@ jitter_chart <- highchart() %>%
         symbol = "circle",
         lineWidth = .2),
       jitter = list(x = .345, y = 0))) %>%
-  hc_xAxis(type="category") %>%
+  hc_xAxis(title = list(text = ""),
+             type = "category",
+             labels = list(style = list(
+                             fontSize = "12px")),
+             overflow = "justify") %>%
   hc_yAxis(min=0, max=120, 
            title = list(text = "Time Spent on Each Stop in Minutes",
                         style=list(
                           color="#0A0A0A",
                           fontFamily = "Open Sans",
                           fontWeight = 400,
-                          fontSize="14px"))) %>%
-  hc_title(text = "Fresno PD Spends More Time on Traffic Stops Involving People of Color") %>%
-  hc_caption(text=caption_text)%>%
-  hc_subtitle(text = "Officer time spent on each person they stopped and gave a citation or warning or took no action.")%>%
+                          fontSize="12px"))) %>%
+  hc_title(
+      text = paste0(title_text),
+      style = list(
+        useHTML = TRUE,
+        fontSize = "21px",
+        lineHeight = "28px"
+      )) %>%
+    hc_subtitle(
+      text = paste0(subtitle_text),
+      style = list(
+        fontSize = "16px",
+        lineHeight = "22px"
+      )) %>%
+    hc_caption(
+      text = caption_text,
+      useHTML = TRUE,
+      style = list(
+        fontSize = "12px",
+        lineHeight = "18px"
+      )) %>%
   hc_add_theme(theme_fbhc) %>%
+  hc_chart(
+      height = 480,
+      reflow = TRUE,
+      marginLeft = 120,
+      marginRight = 120,
+      style = list(fontFamily = "Arial, sans-serif"),
+      events = list(
+        load = JS("function() {
+          var chart = this;
+          function updateSize() {
+            var width = chart.containerWidth;
+            var height = Math.max(480, width * 0.7);
+            if (width < 500) {
+              chart.update({
+                chart: {
+                  height: height,
+                  marginLeft: 20,
+                  marginRight: 20
+                },
+                title: { style: { fontSize: '16px' } },
+                subtitle: { style: { fontSize: '14px' } },
+                caption: { style: { fontSize: '12px' } }
+              }, false);
+            } else {
+              chart.update({
+                chart: {
+                  height: height,
+                  marginLeft: 150,
+                  marginRight: 100
+                },
+                title: { style: { fontSize: '21px' } },
+                subtitle: { style: { fontSize: '16px' } },
+                caption: { style: { fontSize: '12px' } }
+              }, false);
+            }
+            chart.redraw();
+          }
+          updateSize();
+          window.addEventListener('resize', updateSize);
+        }")
+      )
+    ) %>%
   hc_exporting(
       enabled = TRUE,
       sourceWidth=900,
@@ -146,8 +217,9 @@ jitter_chart <- highchart() %>%
           series=list(
             dataLabels=list(
               enabled=TRUE,
-              format=list(pointFormat="{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"))))),
-      filename = paste0("Officer time spent stopping persons to cite an infraction and/or give a warning or take no action.","_Catalyst California, catalystcalifornia.org, 2024."),
+              format=list(pointFormat=tooltip_text),
+              style = list(fontSize = "14px"))))),
+      filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, 2024."),
       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
                                                      'downloadXLS', 'downloadCSV'))))
 
