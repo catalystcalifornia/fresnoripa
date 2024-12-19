@@ -41,7 +41,7 @@ df_budget <- data.frame(
 budget = c( 255932800, 20918800, 288364100-255932800, 155293200-20918800
 ),
 
-type=c("Dollars From the City's General Fund", "Dollars From the City's General Fund", "Dollars From Other Sources", "Dollars From Other Sources"))
+type=c("Dollars From City's General Fund Operating Budget", "Dollars From City's General Fund Operating Budget", "Dollars From Other Sources", "Dollars From Other Sources"))
 
 # add budget rate
 df_budget<-df_budget%>%
@@ -56,7 +56,7 @@ df_budget<-df_budget%>%
   )
 
 #factors to order plot by
-type_factors<-c("Dollars From the City's General Fund","Dollars From Other Sources") 
+type_factors<-c("Dollars From City's General Fund Operating Budget","Dollars From Other Sources") 
 
 df_budget$type <- factor(x=df_budget$type, levels = type_factors) # factor levels to order plot by
 
@@ -74,7 +74,7 @@ methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. 
 
 caption <- paste(acronym,"<br>",sourcenote, methodnote)
 
-title <- "89% of Fresno PD's Budget Is From the City's General Fund Compared to Only 13% of the PARCS Budget"
+title <- "89% of Fresno PD's Budget Is From the City's General Fund Operating Budget Compared to Only 13% of the PARCS Budget"
 
 subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS"
 
@@ -98,10 +98,6 @@ chart_stacked<-rdaStackedBar(df_budget,
 
 ```
 
-```{r, include=FALSE}
-
-
-```
 
 ```{r, echo=FALSE}
 
