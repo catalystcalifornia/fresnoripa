@@ -227,7 +227,7 @@ __“Para mí, seguridad en mi comunidad significa protección para mi familia, 
 Out of all time spent on officer-initiated stops, officers spent 97.8% of their minutes on stops for traffic violations compared to just 0.4% of their time on stops conducted for knowledge of an outstanding arrest. Meanwhile, Fresno residents do not feel safe in their parks or on their streets. Community members report that police do not address significant threats to safety, such as domestic violence.  Their attempts to reach Fresno PD result in long wait times or dispatchers that do not put calls through to the police. All of this contributes to the sentiment that Fresno PD does not make its community safer and instead harasses BIPOC people.  
 
 <br>
-```{r stackedbar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
+```{r rdaStackedbar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
 ```
 
 ### B. They are biased in how they spend their time during these stops
@@ -266,7 +266,7 @@ Furthermore, total staffing between these two departments also illustrates how t
 Overall, how the city of Fresno allocates dollars across these two departments demonstrates that it believes that community safety investments are better served when the police department receives more than 12 times its most flexible funding resources and more than 8 times the staff than the department that services parks, after school programs, recreational, and community services. 
  
 <br>
-```{r stackedbar-chart, child= 'report_embeds/report_budget_stacked.Rmd'}
+```{r rdaStackedbar-chart, child= 'report_embeds/report_budget_stacked.Rmd'}
 ```
 
 
