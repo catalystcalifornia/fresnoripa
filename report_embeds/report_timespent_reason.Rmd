@@ -66,7 +66,7 @@ list2env(theme_options, envir = .GlobalEnv)
 
 ```{r, include=FALSE}
 # Visualizing as stacked bar --------------------------
-df$x <- ""
+df$x <- "Officer-Initiated Stops"
 
 reason_levels <- c("Traffic violation", "Reasonable suspicion", "Knowledge of outstanding arrest",
                    "Consensual encounter & search", "Other reasons")
@@ -87,8 +87,7 @@ chart <- rdaStackedBar(df,
   subtitle = subtitle_text,
   tooltip_text = tooltip_text,
   caption = caption_text,
-  export_data_label = list(pointFormat='{point.hours_rate:.1f}%')) %>%
-  hc_yAxis(labels = list(format = "{value}%"))
+  export_data_label = list(pointFormat='{point.hours_rate:.1f}%'))
 
 ```
 
