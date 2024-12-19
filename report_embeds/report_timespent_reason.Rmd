@@ -30,7 +30,7 @@ df_p<-dbGetQuery(con, "SELECT * FROM report_timespent_reason")
 df <- df_p %>%
   select(stop_reason,hours_count,hours_total,hours_rate) %>%
   mutate(reason_label = case_when(
-    stop_reason == 'Consensual encounter resulting in search' ~ "Consensual encounter and search", 
+    stop_reason == 'Consensual encounter resulting in search' ~ "Consensual encounter & search", 
     stop_reason =='Parole/probation/PRCS/ mandatory supervision' ~ 'Other reasons',
     stop_reason =='Knowledge of outstanding arrest/wanted person' ~ 'Knowledge of outstanding arrest',
     stop_reason == 'Two or More reasons' ~ 'Other reasons',
@@ -44,6 +44,10 @@ df <- df_p %>%
 ```
 
 ```{r, include=FALSE}
+title_text <- "Fresno PD Spends Nearly 98% of Their Patrol Time on Traffic Stops"
+  
+subtitle_text <- "Percent of time spent on officer-initiated stops by stop reason"
+  
 # create caption 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
@@ -62,49 +66,33 @@ list2env(theme_options, envir = .GlobalEnv)
 
 ```{r, include=FALSE}
 # Visualizing as stacked bar --------------------------
-df$x <- "x"
+df$x <- ""
 
 reason_levels <- c("Traffic violation", "Reasonable suspicion", "Knowledge of outstanding arrest",
-                   "Consensual encounter and search", "Other reasons")
+                   "Consensual encounter & search", "Other reasons")
+
 colors_stacked <- c("#E9E9E9", "#D6D6D6", "#BABABA", "#9B9A9A", "#FDB913")
 
+# factor levels to order plot by
 df$reason_label <- factor(x=df$reason_label, 
-                          levels = rev(reason_levels)) # factor levels to order plot by
+                          levels = rev(reason_levels)) 
 
-chart <-highchart() %>%
-  hc_chart(inverted = TRUE) %>%
-  hc_add_series(data=df,
-                type="column", 
-                hcaes(x=x, y=hours_rate, group=reason_label),
-                tooltip = list(headerFormat="", pointFormat = tooltip_text),
-                color=colors_stacked) %>%
-  hc_xAxis(labels = list(enabled=FALSE),
-           visible=FALSE) %>%
-  hc_yAxis(min=0, max=100, labels = list(format = "{value}%")) %>%
-  hc_legend(reversed=TRUE) %>%
-  hc_plotOptions(series=list(stacking='normal')) %>%
-  hc_title(useHTML=TRUE,
-           text = paste("Fresno PD Spends Nearly 98% of Their Patrol Time on Traffic Stops")) %>%
-  hc_subtitle(text = "Percent of time spent on officer-initiated stops by stop reason") %>%
-  hc_caption(text=caption_text)%>%
-  hc_add_theme(theme_fbhc)  %>%
-  hc_exporting(
-      enabled = TRUE,
-      sourceWidth=900,
-      sourceHeight=600,
-      chartOptions=list(
-        plotOptions=list(
-          series=list(
-            dataLabels=list(
-              enabled=TRUE,
-              format=list(pointFormat='{point.hours_rate:.1f}%'))))),
-      filename = paste0("Percent of time spent on officer-initiated stops by stop reason","_Catalyst California, catalystcalifornia.org, 2024."),
-      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-                                                     'downloadXLS', 'downloadCSV'))))
+chart <- rdaStackedBar(df,
+              "x",
+              "hours_rate",
+              "reason_label",
+              bar_colors = colors_stacked,
+  theme = "theme_fbhc",
+  title = title_text,
+  subtitle = subtitle_text,
+  tooltip_text = tooltip_text,
+  caption = caption_text,
+  export_data_label = list(pointFormat='{point.hours_rate:.1f}%')) %>%
+  hc_yAxis(labels = list(format = "{value}%"))
 
 ```
 
-```{r, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, warning=FALSE}
 
 chart
 
