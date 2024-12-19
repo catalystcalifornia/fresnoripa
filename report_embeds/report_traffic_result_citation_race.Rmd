@@ -79,7 +79,7 @@ list2env(theme_options, envir = .GlobalEnv)
 ```
 
 
-```{r create-visual, echo=FALSE, include=FALSE, message=FALSE}
+```{r define-visual, echo=FALSE, include=FALSE, message=FALSE}
 
 # TESTING FACETED HIGHCHARTER GRAPHS: RACE DENOMINATOR
 list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
@@ -127,7 +127,7 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
                useHTML=TRUE,
                style = list(fontSize = "14px")) %>%
     hc_chart(
-      height = 480,
+      height = 600,
       reflow = TRUE,
       marginLeft = 80,
       marginRight = 80,

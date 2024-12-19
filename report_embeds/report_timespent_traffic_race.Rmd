@@ -167,7 +167,7 @@ jitter_chart <- highchart() %>%
       )) %>%
   hc_add_theme(theme_fbhc) %>%
   hc_chart(
-      height = 480,
+      height = 600,
       reflow = TRUE,
       marginLeft = 120,
       marginRight = 120,
@@ -177,7 +177,7 @@ jitter_chart <- highchart() %>%
           var chart = this;
           function updateSize() {
             var width = chart.containerWidth;
-            var height = Math.max(480, width * 0.7);
+            var height = Math.max(600, width * 0.7);
             if (width < 500) {
               chart.update({
                 chart: {
@@ -193,8 +193,8 @@ jitter_chart <- highchart() %>%
               chart.update({
                 chart: {
                   height: height,
-                  marginLeft: 150,
-                  marginRight: 100
+                  marginLeft: 120,
+                  marginRight: 120
                 },
                 title: { style: { fontSize: '21px' } },
                 subtitle: { style: { fontSize: '16px' } },

@@ -166,7 +166,7 @@ highchart() %>%
   
   hc_chart(
     # Stabilize the layout
-    height = 480,
+    height = 600,
       reflow = TRUE,
       marginLeft = 150,
       marginRight = 100,
@@ -177,7 +177,7 @@ highchart() %>%
           chart.series[0].setVisible(false, true);  // Added true for immediate redraw
           function updateSize() {
             var width = chart.containerWidth;
-            var height = Math.max(480, width * 0.7);
+            var height = Math.max(600, width * 0.7);
             if (width < 500) {
               chart.update({
                 chart: {
@@ -193,8 +193,8 @@ highchart() %>%
               chart.update({
                 chart: {
                   height: height,
-                  marginLeft: 150,
-                  marginRight: 100
+                  marginLeft: 120,
+                  marginRight: 120
                 },
                 title: { style: { fontSize: '21px' } },
                 subtitle: { style: { fontSize: '16px' } },

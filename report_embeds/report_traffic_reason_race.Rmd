@@ -145,7 +145,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
                useHTML=TRUE,
                style = list(fontSize = "14px")) %>%
     hc_chart(
-      height = 480,
+      height = 600,
       reflow = TRUE,
       marginLeft = 80,
       marginRight = 80,
