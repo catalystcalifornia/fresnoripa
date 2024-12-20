@@ -13,7 +13,7 @@ output:
 
 library(RPostgreSQL)
 library(devtools)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(stringr)
 
@@ -97,7 +97,6 @@ chart_stacked<-rdaStackedBar(df_budget,
   export_data_label = list(pointFormat='${point.budget:,.0f}'))
 
 ```
-
 
 ```{r, echo=FALSE}
 

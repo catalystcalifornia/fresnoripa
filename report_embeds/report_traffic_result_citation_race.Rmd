@@ -12,7 +12,7 @@ output:
 # set up -----------------------------
 library(RPostgreSQL)
 library(devtools)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(stringr)
 library(htmltools)
@@ -79,7 +79,7 @@ list2env(theme_options, envir = .GlobalEnv)
 ```
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r define-visual, echo=FALSE, include=FALSE, message=FALSE}
 
 # TESTING FACETED HIGHCHARTER GRAPHS: RACE DENOMINATOR
 list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
@@ -103,12 +103,35 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
 
     hc_plotOptions(column = list(stacking = "normal")) %>% 
     hc_add_theme(theme_fbhc) %>%
-    hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race")) %>% 
-    hc_yAxis(title = list(text = "Percent (%)")) %>%
+    hc_subtitle(text = paste0("Citations given for ",x," out of citations received by race"),
+                style = list(
+                  fontSize = "16px",
+                  lineHeight = "22px")) %>%
+    hc_yAxis(title = list(text = "Percent (%)",
+                          style = list(
+                            color = "#0A0A0A"
+                          )),
+             labels= list(style = list(
+                            fontSize = "12px",
+                            color = "#0A0A0A"),
+                          overflow = "justify"))%>%
     hc_xAxis(title = list(text = ""),
-             type = "category") %>%
-    hc_tooltip(pointFormat = tooltip_text,
-               outside = TRUE) %>%
+             labels= list(position="bottom",
+                          style = list(
+                            fontSize = "12px"),
+                          overflow = "justify"),
+             type = "category")%>%
+    hc_tooltip(headerFormat='', # removes series label from top of tooltip
+               pointFormat = tooltip_text,
+               outside = TRUE,
+               useHTML=TRUE,
+               style = list(fontSize = "14px")) %>%
+    hc_chart(
+      height = 600,
+      reflow = TRUE,
+      marginLeft = 80,
+      marginRight = 80,
+      style = list(fontFamily = "Arial, sans-serif")) %>%
     hc_exporting(
       enabled = TRUE,
       sourceWidth=900,
@@ -118,27 +141,34 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
           series=list(
             dataLabels=list(
               enabled=TRUE,
-              format=list(pointFormat="{point.rate:.0f}%"))))),
+              format=list(pointFormat="{point.rate:.0f}%"),
+              style = list(fontSize = "14px"))))),
       filename = paste0("Percent of traffic stops by traffic citation result and race","_Catalyst California, catalystcalifornia.org, ", format(Sys.Date(), "%Y"), "."),
       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
                                                      'downloadXLS', 'downloadCSV'))))
 })
+```
 
+```{r, echo=FALSE}
+# Display chart
+title_text <- "Officers Show More Bias in Citations Unrelated to Public Safety"
   
 browsable(
   tagList(
-    tags$text("Officers Show More Bias in Citations Unrelated to Public Safety", # Main title
+    # Main title
+    tags$text(title_text, 
               class="highcharts-title",
               style=css(
                 color="#0A0A0A",
                 font.size="21px",
+                line.height="28px",
                 font.family="Montserrat",
                 font.weight="800",
                 text.align="left",
-                fill="#0A0A0A")), # Main title
-    list_of_plots %>% hw_grid(rowheight = 450)       # Faceted charts
-  )
-)
+                fill="#0A0A0A")),
+    # Faceted charts
+    list_of_plots %>% 
+      hw_grid(rowheight = 450)))
 
 ```
-<span class="highcharts-caption" style="font-size: 14px;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. </span>
+<span class="highcharts-caption" style="font-size: 12px;line-height: 18px;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in an officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian. </span>
