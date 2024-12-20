@@ -87,7 +87,8 @@ chart <- rdaStackedBar(df,
   subtitle = subtitle_text,
   tooltip_text = tooltip_text,
   caption = caption_text,
-  export_data_label = list(pointFormat='{point.hours_rate:.1f}%'))
+  export_data_label = list(pointFormat='{point.hours_rate:.1f}%')) %>%
+  hc_legend(itemDistance=50)
 
 ```
 
