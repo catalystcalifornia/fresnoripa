@@ -51,26 +51,33 @@ Catalyst California completed this research project in collaboration with Fresno
 
 The City of Fresno has a complicated history with Fresno Police Departments (“Fresno PD”) and its interaction with the communities it is meant to protect and serve. Most specifically with marginalized communities throughout the city. The city and its police department has a lineage of creating harm to communities of color through their dangerous traffic policies and practices, use of force against members of the community, and process of gang profiling. Fresno has a large Southeast Asian population that feels the effects of how the department creates harm by gang profiling, as well as Latinx men who experience higher number of detainments as a result of traffic stops. Youth continue to be stopped and harassed walking to and from school, while having limited access to safe spaces across the city. Fresno PD states that their focus is to increase the quality of life for community members by reducing fear of crime, lowering violent crime, and decrease nuisance crime, like graffiti and petty larceny. The department adds that they do this by working with community, so they feel valued and heard. However, the majority of an officer’s time is spent conducting traffic stops throughout the city. As a result, communities of color experience the negative harms of constantly being overpoliced, harassed, and physically harmed. 
 
+<br>
 This report focuses on the harms Fresno PD perpetuates through traffic stops and the real impacts communities face as a result. Traffic stops are being used as a starting point to profile, detain, harm, and harass communities of color, while not promoting safety. All members of Fresno deserve to feel safe and thrive in their community. 
 
+<br>
 The City of Fresno must transform its approach to community safety by shifting away from an overreliance on Fresno PD and toward equity and care-centered community safety solutions.  Data show that Fresno PD is committed to a practice of disproportionately stopping and ticketing people of color for minor traffic violations—such as equipment or administrative issues—that do not meaningfully advance community safety.  These stops are an extremely harmful form of racial and identity profiling that inflict trauma and economic extraction upon BIPOC communities. 
 
+<br>
 Furthermore, Fresno PD’s commitment to such unproductive and harmful practices annually wastes millions of public dollars.  To address these issues, the City should end racially biased traffic stops, enhance Fresno PD accountability and transparency, and reinvest dollars that are currently wasted on profiling practices into programs that address the root causes of community safety risks.  They should listen to Fresno community members who have a clear picture of what safety means to them.
 
 <br>
-__“For me, safety in my community means: safe spaces for all intersectionalities, less presence of police brutality, access to the lighting in neighborhoods, community drives more sidewalks, green spaces, access to safe and clean parks, more safety in air and water, justice and safety for immigrants and access to all resources”__
+
+> __“For me, safety in my community means: safe spaces for all intersectionalities, less presence of police brutality, access to the lighting in neighborhoods, community drives more sidewalks, green spaces, access to safe and clean parks, more safety in air and water, justice and safety for immigrants and access to all resources”__
 
 <br>
-__“Que mas sientamos en confianza con las autoridades de la ley, como por ejelemplo, que tengamos a los ajentes de policia, como heroes y no que atenter con nuestras vidas”__
+
+> __“Que mas sientamos en confianza con las autoridades de la ley, como por ejelemplo, que tengamos a los ajentes de policia, como heroes y no que atenter con nuestras vidas”__
 <br>
 
 <br>
-__“Mejor calles. Menos basura mas limpieza. Mas tiendas, hospitals, basureros en paradas de autobús”__
+
+> __“Mejor calles. Menos basura mas limpieza. Mas tiendas, hospitals, basureros en paradas de autobús”__
 
 # BRIEF METHODOLOGY
 
 This report evaluates Fresno PD police activity by analyzing 2022 data collected by Fresno PD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. RIPA requires law enforcement officers to collect and report information on each stop they conduct, including the time and location, why the stop was conducted and what occurred during it, and characteristics about the person stopped (e.g., race, gender, and age). This report examines profiling by Fresno PD by analyzing RIPA data on who officers choose to stop and actions taken by officers during stops.
 
+<br>
 RIPA data is collected by officers based on officer perceptions. This is the standard approach for collecting and reporting data on racial profiling throughout the U.S. because racial and identity profiling occurs based on officers’ perceptions, not how people choose to self-identify.  Thus, data on racial profiling may be inconsistent with other demographic data sources.  One of the options that RIPA has for a person’s race is Middle Eastern/South Asian (“MESA”). For this report, we use Southwest Asian or North African, or South Asian (“SWANA/SA”) as a more inclusive and accurate representation of these groups. Throughout the report, we pair RIPA data with stories from Fresno community members to provide a more holistic perspective on police-community interactions. These community stories were collected during a Fresno community meeting in October 2024.
 
 
@@ -78,12 +85,14 @@ RIPA data is collected by officers based on officer perceptions. This is the sta
 
 Fresno PD is not responsive to community needs and fails to advance community safety. Residents say when they attempt to call Fresno PD, they experience long wait times or dispatchers that do not connect their calls. Along this line, data show that Fresno PD is primarily focused on officer-initiated stops, rather than calls for service. In 2022, only 5.7% of all people Fresno PD stopped were in response to calls for service by community members, while 94.3% were for officer-initiated stops. 
 
+<br>
 Rather than only conducting traffic stops, Fresno community members would rather have police be responsive to what they identify as real safety concerns, such as responding to instances of physical violence for kids at school or commuting to school, or domestic violence . Their vision of a safe community is free of over-policing and instead has safe parks and accessible public transit as well as investments in programs for youth and mental health and housing services. Instead, Fresno PD conducts activities that do not meaningfully advance safety but inflict harm on community members. 
 
 ## 1. Fresno PD disproportionately stops people of color, especially men, for traffic stops
 
 <br>
-__“[For me safety means being] safe and free to go about one’s business without fear or harassment. Able to walk, drive, bike to work, school church without worry”__
+
+> __“[For me safety means being] safe and free to go about one’s business without fear or harassment. Able to walk, drive, bike to work, school church without worry”__
 
 <br>
 Ninety-nine percent of all officer-initiated stops by Fresno PD in 2022 were based on an alleged traffic violation. Officers disproportionately targeted people of color, especially men, during these stops.
@@ -93,7 +102,8 @@ Ninety-nine percent of all officer-initiated stops by Fresno PD in 2022 were bas
 Approximately half (50.5%) of people living in Fresno city is Latinx, while a quarter (25.4%) are White. Fresno PD disproportionately stops Black and SWANA/SA people for traffic reasons despite these groups only making up 6.2% and 6.1% of the population, respectively. Fresno community members report feeling targeted by police based on their race, apparel and even gender, often without any evidence of crime. The data echoes this. For every 1,000 Black people who live in Fresno city, Fresno PD stopped 16.7 people they perceived as Black for traffic reasons. Meanwhile, Fresno PD only stopped 9.6 people perceived as White for traffic reasons for every 1,000 White people living in Fresno city.
 
 <br>
-__“Been targeted by the simplest things. Like by the way we are dressed. By our tattoos. Color of our skin. The company we are around with. As well as what part of town you’re in, you can be simply targeted.”__
+
+> __“Been targeted by the simplest things. Like by the way we are dressed. By our tattoos. Color of our skin. The company we are around with. As well as what part of town you’re in, you can be simply targeted.”__
 
 <br>
 ```{r rdaBubblepop-chart, child= 'report_embeds/report_traffic_race.Rmd'}
@@ -102,10 +112,12 @@ __“Been targeted by the simplest things. Like by the way we are dressed. By ou
 In addition, community members report that many racially biased stops by Fresno PD are used to document people of color—especially Latinx and Southeast Asian people—as gang members.  Also, known as “gang profiling,” this practice has devastating consequences.  For example, being documented as a gang member can subject a person to longer periods of incarceration.  It can also “negatively impact people facing relatively low charges because the threat of far more lengthy imprisonment affects plea bargaining, charging decisions, juror perspectives, and other factors in criminal cases.  For immigrant communities, this often includes potential deportation.”^[END GANG PROFILING IN SOUTHEAST SAN DIEGO: Data and Stories from Community Members (Catalyst California & Pillars of the Community 2024).]
 
 <br>
-__“Several of my cousins were assumed to be gang members because of their appearance.”__
+
+> __“Several of my cousins were assumed to be gang members because of their appearance.”__
 
 <br>
-__“Yes, I personally have been targeted by the police in a routine traffic stop. I was told to get out of my vehicle for suspicion of being involved with gang activity. When at the time, I was wearing a Fresno state sweatshirt and was in college at the time.”__
+
+> __“Yes, I personally have been targeted by the police in a routine traffic stop. I was told to get out of my vehicle for suspicion of being involved with gang activity. When at the time, I was wearing a Fresno state sweatshirt and was in college at the time.”__
 
 ### B. Men of color are especially targeted during these stops  
 
@@ -120,6 +132,7 @@ Out of all traffic stops Fresno PD conducted for each racial group, officers sto
 
 There are three general categories of traffic violations: 1) equipment 2) non-moving (i.e., administrative) and 3) moving. Moving traffic stops include violations like speeding or making an illegal turn. Equipment violations include things like tinted windows or a bumper in need of repair. Non-moving, or administrative, violations include things like registration or other paperwork issues. Most traffic stops made by Fresno PD are for moving traffic stops. However, across all three types of traffic stops, Fresno PD disproportionately targets people of color. 
 
+<br>
 The disparities are particularly acute in Fresno PD’s use of equipment and non-moving stops. For every 1,000 Black people living in Fresno city, Fresno PD stopped four Black people for a non-moving or equipment traffic stop. Similarly, for every 1,000 Latinx people in Fresno, Fresno PD stopped 2.5 Latinx people for equipment or non-moving traffic reasons. Conversely, Fresno PD stopped only 1.7 White people for a non-moving or equipment traffic stop out of 1,000 White people who live in Fresno city. 
 
 <br>
@@ -131,22 +144,26 @@ The disparities are particularly acute in Fresno PD’s use of equipment and non
 A deeper analysis of Fresno PD’s traffic stops shows that these stops are racially biased and often conducted for reasons that do not meaningfully improve community safety. They also pose physical, emotional, and financial consequences for the people stopped. Getting ticketed or having a car impounded has financial repercussions, especially since most people need their vehicle to commute to their job. Community members also expressed a growing mistrust towards the police that is passed down to younger generations as youth are often in the car witnessing a family member being stopped and harassed. 
 
 <br>
-__“Getting our cars impounded. Even getting hurt. Being harassed in front of family and our children. Impacting our children’s perception of law enforcement.”__
+
+> __“Getting our cars impounded. Even getting hurt. Being harassed in front of family and our children. Impacting our children’s perception of law enforcement.”__
 
 ### A. Officers disproportionately subject people of color to non-safety related stops
 
 While most stops by Fresno PD are for speeding, the department’s next two most common stop reasons are obstructed (or tinted) windows and vehicle registration – equipment and non-moving violations that are not directly related to safety.^[  https://www.clrc.ca.gov/CRPC/Pub/Reports/CRPC_AR2022.pdf at 30.] More specifically, Fresno PD stops Latinx people for obstructed windows three times more frequently than they stop people perceived as White for the same reason, while people perceived as Black are stopped for proof of vehicle registration at higher rates than all other groups.
 
+<br>
 When defining what safety meant to them, community members never mentioned vehicle equipment-related concerns. Additionally, racial disparities increase when people are stopped for these reasons, and they often amount to pretextual stops that indicate racial profiling. 
 
 <br>
 ```{r facet-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
 ```
 
+<br>
 This data aligns with community experiences. Fresno community members express not only that Fresno PD targets people for traffic stops based on a person’s appearance, but also that these targeted stops are being made without any evidence of crime.
 
 <br>
-__“[Safety in my community means to] drive safely without fear of being profiled. Friends and family making it safely home after [a] traffic stop. Not being scared of high-speed chases.”__
+
+> __“[Safety in my community means to] drive safely without fear of being profiled. Friends and family making it safely home after [a] traffic stop. Not being scared of high-speed chases.”__
 
 <br>
 Lastly, when it comes to traffic violations that actually pose safety risks, such as moving violations, the data indicate that people of color are less likely to involved. Specifically, Fresno PD stopped White people for speeding at higher rates than people perceived as Black, Asian, and Latinx. Out of all White people officers stopped for a traffic violation, 66.2% were stopped for speeding compared to 56.5% of Latinx people stopped.
@@ -175,7 +192,8 @@ The graph below focuses specifically on the people Fresno PD stopped for traffic
 ```
 
 <br>
-__“Harmed by traffic stops—targeting of people of color, especially youth. Poor looking vehicles. Undocumented and unlicensed drivers because of economic situations and lack of adequate public transportation.”__
+
+> __“Harmed by traffic stops—targeting of people of color, especially youth. Poor looking vehicles. Undocumented and unlicensed drivers because of economic situations and lack of adequate public transportation.”__
 <br>
 
 ## 3. These traffic stops inflict additional harms on people of color, especially men. 
@@ -183,19 +201,22 @@ __“Harmed by traffic stops—targeting of people of color, especially youth. P
 Fresno PD’s use of traffic stops also causes physical harm and trauma. During traffic stops, officers may choose to take additional actions against the people they stop. They may physically remove people from their vehicles, use weapons or other devices against them to cause physical harm, or detain them. These actions result in long-term physical and mental harm and trauma, as well as increased community mistrust and fear of law enforcement. 
 
 <br>
-__“The police tend to go straight to physical force when you don’t understand the situation. They’re forceful.”__
+
+> __“The police tend to go straight to physical force when you don’t understand the situation. They’re forceful.”__
 <br>
 
 ### A. Actions taken during traffic stops are biased against men of color 
 
 We analyzed all instances in which officers used force against people during stops made for suspected traffic reasons. Uses of force include any stop where an officer took at least one of the following actions: baton or other impact weapon used, canine bit or held a person, chemical spray uses, electronic device used, firearm pointed at a person, firearm discharged or used, person remove from vehicle by physical contact, physical or vehicle contact, impact projectile discharged or used. 
 
+<br>
 Community member experiences with Fresno PD strongly suggest that the reported use of force in the RIPA data is undercounted. Several community members spoke about themselves or their loved ones being subjected to officers’ use of force during traffic stops. Quarterly reports from the Office of Independent Review also indicate that during 2022 there were at least 7 officer-involved shootings and 10 civilian complaints of unreasonable force.^[https://www.fresno.gov/wp-content/uploads/2023/01/2022-2nd-Quarter-Report.pdf
 https://www.fresno.gov/wp-content/uploads/2023/04/2022-4th-Quarter-Report-003.pdf
 ]
 
 <br>
-__“Fui parado por la policía injustamente al igual que mi amigo. Nos bajaron de mi pickup a punta de pistola y no era un agente, eran siete policías. Nos chequearon en la computadora y no encontraron nada de nosotros y nos dejaron ir. ¡Siete policías apuntando con sus armas y nos esposaron!”__
+
+> __“Fui parado por la policía injustamente al igual que mi amigo. Nos bajaron de mi pickup a punta de pistola y no era un agente, eran siete policías. Nos chequearon en la computadora y no encontraron nada de nosotros y nos dejaron ir. ¡Siete policías apuntando con sus armas y nos esposaron!”__
 
 <br>
 People perceived as males of color comprised 78.6% of all people against whom officers used force according to RIPA data. Latinx and Asian men comprised most of these instances of force. During officer-initiated stops, officers used force exclusively during stops they started for suspected traffic reasons.  Officers initiated half of these stops for reasons that did not indicate an imminent threat to community or traffic safety, including no vehicle or trailer registration, parking violation, bike headlight violation, and license plates displayed wrong.
@@ -205,7 +226,8 @@ People perceived as males of color comprised 78.6% of all people against whom of
 ```
 
 <br>
-__“I have been stopped at gun point by multiple officers at once. My old roommate was consistently stopped by police taken behind Romains and beat. He was eventually shot and killed by an officer.”__
+
+> __“I have been stopped at gun point by multiple officers at once. My old roommate was consistently stopped by police taken behind Romains and beat. He was eventually shot and killed by an officer.”__
 
 <br>
 One of the most common actions Fresno PD officers decide to take during a stop is detaining a person. An officer may choose to detain a person if they suspect a crime and to investigate and question the person further. One in two people (49.1%) officers detained during officer-initiated traffic stops were Latinx men. And while Fresno PD is more likely to detain Latinx men during officer-initiated traffic stops compared to White men, officers are no more likely to find cause to arrest them. Officers arrested about 19.2% of Latinx men they detained and 20% of White men they detained. Comparatively, officers were more likely to find no cause or evidence of a crime among Latinx men they detained. Over half (51.9%) of Latinx men they detained were released with no action or a warning. These findings provide evidence of how Fresno PD practices are biased and result in harm to communities of color. 
@@ -219,7 +241,8 @@ One of the most common actions Fresno PD officers decide to take during a stop i
 Analyzing how officers spend their time on stops shows most of their time is spent on stops that rarely meaningfully contribute to community safety. Community members’ stories about police reflect this trend.
 
 <br>
-__“Para mí, seguridad en mi comunidad significa protección para mi familia, estar seguros sin peligros”__
+
+> __“Para mí, seguridad en mi comunidad significa protección para mi familia, estar seguros sin peligros”__
 <br>
 
 ### A.Nearly all Fresno PD patrol time is spent on traffic stops
@@ -234,35 +257,42 @@ Out of all time spent on officer-initiated stops, officers spent 97.8% of their 
 
 Officers demonstrate bias in how they spend their time during traffic stops. Controlling for the stop type and result, officers show more variation in how much time they spend on stopping a person of color compared to a White person. The chart below shows the time officers spent on every person they stopped for traffic reasons and gave a ticket, warning, and/or no action. 
 
+<br>
 While officers spent less than 10 minutes on many people perceived as White, they spent more than 15 minutes on many stops of people they perceived as people of color. Whether a person was White or of color was significantly associated with how much time officers spent on the stop. This relationship persists when controlling for stop reason, result, and actions taken. Specifically, officers were more likely to spend more time stopping a person perceived as Black and SWANA/SA compared to an equivalent stop of a person perceived as White. While 95% of traffic stops of White people resulting in a citation, warning, or no action took less than 14 minutes, the same 95% threshold for Black people was 19 minutes. 
 
 <br>
 ```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
 ```
 
-__“Safety to me means that my kids can leave the house without fear that they will be harassed by the police”__
+> __“Safety to me means that my kids can leave the house without fear that they will be harassed by the police”__
 
 
 ## 5. The City of Fresno spends far more money on Fresno PD than on programs that promote safety
 
-Fresno PD’s practices are not only harmful but also extremely costly. 
+Fresno PD’s practices are not only harmful but also extremely costly. Fresno residents make it clear that they want to see investments in community programs and built environment improvements, such as additional streetlights and more pedestrian and bike friendly transit options, instead of continuing to over-fund Fresno PD.  
 
 <br>
-__“I would like to see the money going to the police force be spent in a way that is actually helping our community instead of hurting.”__
+
+> __“I would like to see the money going to the police force be spent in a way that is actually helping our community instead of hurting.”__
 <br>
 
 ### A. The City of Fresno spends more money on Fresno PD than on things that promote safety
 
 A local budget consists of several funds that make up the full budget. Those funds generally include: a general fund, a restricted fund, and enterprise fund. The revenues –moving that comes into a local jurisdiction for a fiscal year (funding year), will be itemized into those three buckets of funds. The General Fund is where a local jurisdiction’s most flexible dollars are located. Flexible dollars mean that those dollars can be used to fund various programming and services, versus restricted fund dollars that have to be spent a particular way. Restricted dollars are designed to be spent for a specific purpose –thus there are restrictions for how they can be spent. For that reason, for community centered budget advocacy targeted general fund dollars is an effective tactic to fund community programming.  '
 
+<br>
 Diving into the City of Fresno’s Proposed budget of Fiscal Year 2024-2025 (FY25) we see that Fresno PD’s total proposed expenditures for this budget cycle is \$288.3 million (including general and special revenues in their operating budget, debt service, and capital funds). This is an increase of over \$2.8 million from the previous fiscal year. In comparison, PARCS’ (Parks, After School, Recreation, and Community Services Department) total proposed expenditures for the same budget cycle are \$155.2 million. We are comparing PARCS to Fresno PD’s departmental budgets due to services and programming coming through the PARCS department to act as a better long-term safety investment to inherently address some root cause safety risks. The PARCS department identified function is to “improves the quality of life Citywide by providing safe, clean, accessible parks and community centers, offering diverse programs and recreational activities, and fostering meaningful partnerships. In coordination with multiple City Departments and community organizations, PARCS oversees 20 community centers, over 80 parks, and multiple special-use facilities.” (FY25 Proposed Budget). The functions of the PARCs department reflects the vision and desires of the community for what effective community safety can look like. Thus, when reimaging community safety, making significant and meaningful investments into this department  can promote a real shift in actualizing building out a community care centered infrastructure that keeps communities safe. However, we see that Fresno PD’s budget was 60 percent more than the PARCS budget. 
 
+<br>
 In the context of how many flexible dollars each department receives, Fresno PD is allocated a significant amount of general fund dollars in comparison to PARCS. For Fresno PD’s operating budget, general operating fund dollars make up 89 percent. However, when looking at PARCS’ operating budget, general fund operating dollars only make up 13.8% of the PARCS’ total budget. We see a large disparity of general fund allocation between these two departments.   This is important to note because on one hand, these two departments can arguably be seen as providing programming and services that address public safety. And on the other, there is an advocacy argument to be make that how local jurisdictions allocate its general fund dollars informs the public of what that jurisdiction is prioritizing. So here, advocates can argue that the city is prioritizing policing over alternatives that can promote a different vision of community safety. 
 
+<br>
 Both departments’ general fund operating budgets –the amount of flexible dollars needed to pay staff and run the department-- follow trends of the city prioritizing Fresno PD in funding allocations. For example, while PARCS only received $20.9 million of general operating fund dollars for the FY25 proposed budget cycle, Fresno PD received $255.9 million—more than 12 times what PARCS received. 
 
+<br>
 Furthermore, total staffing between these two departments also illustrates how the city of Fresno continues to prioritize funding towards police. Fresno PD has a total of 1,330 –both sworn and civilian budgeted staffing positions for FY25 proposed budget cycle, while PARCS has a total of 162 budgeted staffing positions. For Fresno PD the general fund pays for a total of around 1,282 staff –including sworn and civilian, while PARCS has general fund dollars that pays for a total of around 73 staff. The city spends so much more of its general fund dollars on staffing up Fresno PD than it does for PARCS. 
 
+<br>
 Overall, how the city of Fresno allocates dollars across these two departments demonstrates that it believes that community safety investments are better served when the police department receives more than 12 times its most flexible funding resources and more than 8 times the staff than the department that services parks, after school programs, recreational, and community services. 
  
 <br>
@@ -272,13 +302,15 @@ Overall, how the city of Fresno allocates dollars across these two departments d
 
 # RECOMMENDATIONS
 
-__“Invest in mental health services, assist affordable housing, increase green space and community youth centers”__
+> __“Invest in mental health services, assist affordable housing, increase green space and community youth centers”__
 
 <br>
-__“New trainings for officers and how to handle situations. Better turn out times. Meetings within the different communities, to get feedback, from community members”__
+
+> __“New trainings for officers and how to handle situations. Better turn out times. Meetings within the different communities, to get feedback, from community members”__
 
 <br>
-__“Brindar más ayuda a personas sin hogar, interesarse realmente por sus necesidades”__
+
+> __“Brindar más ayuda a personas sin hogar, interesarse realmente por sus necesidades”__
 
 <br>
 It has long been understood by community residents of Fresno that Fresno PD does not create environments that makes the community feel safe. In fact, Fresno PD demonstrates the opposite and is attributed with making BIPOC communities feel unsafe through over-policing and harassment. Interactions with Fresno PD do not inspire reassurance but instead result in higher stop rates, longer interactions, detainments, and uses of force against BIPOC residents. To address these issues, below is a comprehensive set of equity-centered recommendations that advance community safety without the violence and harm of traditional police practices. 
@@ -292,10 +324,8 @@ It has long been understood by community residents of Fresno that Fresno PD does
     c. Invest in youth development services and public spaces,
     d. Support organizations that aid recidivism, diversion, and reentry programs 
     e. Support organizations that provide health services, including mental, physical and behavioral health. 
-
 2. Fund community organizations that provide resources to ensure communities have access to stable and healthy jobs where individuals can avoid unpaid registration, unfixed vehicle issues (broken mirror), and other equipment violations. This can look like: 
     a. Fresno investing in community-based organizations that focus on job expansion and training –including vocational within the community. 
-
 3. Create opportunities that move away from punishing for a faulty break light that leads to pretextual stops that harms community. 
 
 
@@ -327,7 +357,8 @@ All Fresno City residents should feel safe. This means the city should invest in
 Currently, the city of Fresno does not facilitate community safety that residents desire and deserve. The city should address these issues of harm and adopt the comprehensive set of recommendations provided above that builds out an equity-based, care-centered community safety infrastructure that places the needs of the most vulnerable populations at the forefront to correct historical harms. Until a change in policies and funding allocations occurs that reflects a system that removes violence and harm to communities of color in Fresno, we will continue to see communities suffer and not actualize the vision of all people in Fresno feeling safe. 
 
 <br>
-__“Community safety means money going to community, not police. It means prevention increase in the community services, including mental health therapists, and food, clothing and shelter. No harassment of our unhoused neighbors or criminalization of youth”__
+
+> __“Community safety means money going to community, not police. It means prevention increase in the community services, including mental health therapists, and food, clothing and shelter. No harassment of our unhoused neighbors or criminalization of youth”__
 
 # AUTHORS
 
