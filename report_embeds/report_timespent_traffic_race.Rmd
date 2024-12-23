@@ -92,7 +92,7 @@ cor.test(df$bipoc_flag, df$stop_duration_capped)
 
 title_text <- "Fresno PD Spends More Time on Traffic Stops Involving People of Color"
 
-subtitle_text <- "Fresno PD Spends More Time on Traffic Stops Involving People of Color"
+subtitle_text <- "Officer time spent on each person stopped and given a citation/warning or no action"
 
 tooltip_text <- "{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}"
 
