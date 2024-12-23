@@ -76,7 +76,7 @@ caption <- paste(acronym,"<br>",sourcenote, methodnote)
 
 title <- "89% of Fresno PD's Budget Is From the City's General Fund Operating Budget Compared to Only 13% of the PARCS Budget"
 
-subtitle <-"FY25 Proposed Budget Allocation for Fresno PD versus PARCS"
+subtitle <-"FY 2025 proposed budget allocation for Fresno PD versus PARCS"
 
 # create tooltip text
 

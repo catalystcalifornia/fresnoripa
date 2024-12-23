@@ -170,7 +170,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
 
 ```{r, echo=FALSE}
 # Display chart
-title_text <- "Officers are biased in when they stop people for reasons not related to public safety"
+title_text <- "Officers Are Biased in When They Stop People For Reasons Not Related to Public Safety"
   
 browsable(
   tagList(
