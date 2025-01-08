@@ -4,23 +4,15 @@ author: "Catalyst California in partnership with Fresno Building Healthy Communi
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    css: "fbhc_brandguide.css"
     toc: yes
     toc_depth: 2
     toc_float: yes
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
 
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
-
-
-list.of.packages <- c("usethis", "highcharter", "dplyr", "htmltools", "knitr")
-
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
 
 #### Load libraries ####
 library(usethis)
