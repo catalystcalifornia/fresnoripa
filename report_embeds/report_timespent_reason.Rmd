@@ -4,8 +4,6 @@ output:
   html_document:
     css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
 
 ```{r, include=FALSE}
 # set up -----------------------------
