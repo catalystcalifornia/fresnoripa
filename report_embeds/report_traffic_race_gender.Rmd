@@ -2,16 +2,24 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    includes:
+      in_header: header.html
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
+```{r, include=FALSE}
+# Generate header.html with CSS if running standalone
+if (is.null(knitr::opts_knit$get("child"))) {
+  css_content <- readLines("../fbhc_brandguide.css")
+  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
+} else {
+  writeLines("", "header.html")  # Empty file if running as child
+}
+```
 
 ```{r, include=FALSE}
 
 # set up -----------------------------
 library(RPostgreSQL)
-# library(devtools)
 # remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(htmltools) 

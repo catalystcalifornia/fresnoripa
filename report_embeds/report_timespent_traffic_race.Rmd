@@ -2,10 +2,19 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    includes:
+      in_header: header.html
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
+```{r, include=FALSE}
+# Generate header.html with CSS if running standalone
+if (is.null(knitr::opts_knit$get("child"))) {
+  css_content <- readLines("../fbhc_brandguide.css")
+  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
+} else {
+  writeLines("", "header.html")  # Empty file if running as child
+}
+```
 
 ```{r, include=FALSE}
 
@@ -142,7 +151,6 @@ jitter_chart <- highchart() %>%
            title = list(text = "Time Spent on Each Stop in Minutes",
                         style=list(
                           color="#0A0A0A",
-                          fontFamily = "Open Sans",
                           fontWeight = 400,
                           fontSize="12px"))) %>%
   hc_title(
@@ -171,7 +179,6 @@ jitter_chart <- highchart() %>%
       reflow = TRUE,
       marginLeft = 120,
       marginRight = 120,
-      style = list(fontFamily = "Arial, sans-serif"),
       events = list(
         load = JS("function() {
           var chart = this;

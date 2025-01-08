@@ -2,10 +2,19 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    includes:
+      in_header: header.html
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
+```{r, include=FALSE}
+# Generate header.html with CSS if running standalone
+if (is.null(knitr::opts_knit$get("child"))) {
+  css_content <- readLines("../fbhc_brandguide.css")
+  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
+} else {
+  writeLines("", "header.html")  # Empty file if running as child
+}
+```
 
 ```{r, include=FALSE}
 
@@ -130,8 +139,7 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
       height = 600,
       reflow = TRUE,
       marginLeft = 80,
-      marginRight = 80,
-      style = list(fontFamily = "Arial, sans-serif")) %>%
+      marginRight = 80) %>%
     hc_exporting(
       enabled = TRUE,
       sourceWidth=900,
