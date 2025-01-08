@@ -142,7 +142,6 @@ jitter_chart <- highchart() %>%
            title = list(text = "Time Spent on Each Stop in Minutes",
                         style=list(
                           color="#0A0A0A",
-                          fontFamily = "Open Sans",
                           fontWeight = 400,
                           fontSize="12px"))) %>%
   hc_title(
@@ -171,7 +170,6 @@ jitter_chart <- highchart() %>%
       reflow = TRUE,
       marginLeft = 120,
       marginRight = 120,
-      style = list(fontFamily = "Arial, sans-serif"),
       events = list(
         load = JS("function() {
           var chart = this;

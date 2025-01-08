@@ -148,8 +148,7 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
       height = 600,
       reflow = TRUE,
       marginLeft = 80,
-      marginRight = 80,
-      style = list(fontFamily = "Arial, sans-serif")) %>%
+      marginRight = 80) %>%
   hc_exporting(
       enabled = TRUE,
       sourceWidth=900,
