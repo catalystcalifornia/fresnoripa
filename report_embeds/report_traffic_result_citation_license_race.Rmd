@@ -2,8 +2,19 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    includes:
+      in_header: header.html
 ---
+
+```{r, include=FALSE}
+# Generate header.html with CSS if running standalone
+if (is.null(knitr::opts_knit$get("child"))) {
+  css_content <- readLines("../fbhc_brandguide.css")
+  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
+} else {
+  writeLines("", "header.html")  # Empty file if running as child
+}
+```
 
 ```{r, include=FALSE}
 
