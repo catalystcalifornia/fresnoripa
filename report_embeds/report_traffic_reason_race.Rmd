@@ -22,7 +22,7 @@ if (is.null(knitr::opts_knit$get("child"))) {
 library(RPostgreSQL)
 library(dplyr)
 library(highcharter)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(purrr) # facet charts
 library(htmltools)

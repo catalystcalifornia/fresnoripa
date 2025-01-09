@@ -20,7 +20,7 @@ if (is.null(knitr::opts_knit$get("child"))) {
 # set up -----------------------------
 library(RPostgreSQL)
 library(devtools)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(htmltools) 
 
