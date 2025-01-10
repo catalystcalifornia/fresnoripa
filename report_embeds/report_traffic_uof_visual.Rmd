@@ -11,8 +11,6 @@ output:
 if (is.null(knitr::opts_knit$get("child"))) {
   css_content <- readLines("../fbhc_brandguide.css")
   writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
 }
 ```
 
