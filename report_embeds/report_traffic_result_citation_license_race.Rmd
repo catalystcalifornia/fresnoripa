@@ -11,8 +11,6 @@ output:
 if (is.null(knitr::opts_knit$get("child"))) {
   css_content <- readLines("../fbhc_brandguide.css")
   writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
 }
 ```
 
@@ -71,7 +69,7 @@ racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native 
 caption_text <- paste(sourcenote, methodnote, racenote)
 
 # create tooltip text
-tooltip_text <- "Out of all <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:.1f}</b> people cited."
+tooltip_text <- "Out of all <b>{point.statute_literal_25}</b> citations given out by Fresno PD, <b>{point.rate:.1f}%</b> were given to people perceived as <b>{point.race_label}</b>, or a total of <b>{point.count:f}</b> people cited."
 
   
 # add factors for sorting
