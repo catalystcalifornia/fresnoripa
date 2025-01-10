@@ -135,3 +135,24 @@ column_comments <- c('Non-hispanic race or BIPOC/not bipoc',
                      'maximum minutes spent')
 
 # add_table_comments(conn, schema, table_name, indicator, source, column_names, column_comments)
+
+# percentage calcs for report 
+total_bipoc<-df%>%
+  filter(bipoc=='BIPOC')%>%
+  nrow()
+
+bipoc_over8<-df%>%
+  filter(bipoc=='BIPOC' & stop_duration_capped>8)%>%
+  nrow()
+
+bipoc_over8/total_bipoc # 31%
+
+total_white<-df%>%
+  filter(bipoc=='White')%>%
+  nrow()
+
+white_over8<-df%>%
+  filter(bipoc=='White' & stop_duration_capped>8)%>%
+  nrow()
+
+white_over8/total_white # 23%
