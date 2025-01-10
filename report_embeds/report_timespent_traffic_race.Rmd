@@ -106,13 +106,13 @@ tooltip_text <- "{point.stop_duration_capped:.0f} minutes spent on a person perc
 # create caption 
 timedot<-"<b>Each dot is a person stopped.</b>"
 
-sourcenote<-"<br>Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made in 2022 that resulted in citation for infraction, warning, or no action."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022 that resulted in citation for infraction, warning, or no action."
 
 racenote <- "Race is based on officer perception. People of Color includes all individuals perceived as non-White by officers."
 
-caption_text <- paste(timedot, "<br>", sourcenote, methodnote, racenote)
+caption_text <- paste(timedot, "<br><br>", sourcenote, methodnote, racenote)
 
 # get theme_fbhc 
 data(theme_options)
