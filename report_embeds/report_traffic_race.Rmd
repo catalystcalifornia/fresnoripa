@@ -11,8 +11,6 @@ output:
 if (is.null(knitr::opts_knit$get("child"))) {
   css_content <- readLines("../fbhc_brandguide.css")
   writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
 }
 ```
 
@@ -20,7 +18,7 @@ if (is.null(knitr::opts_knit$get("child"))) {
 
 # set up -----------------------------
 library(RPostgreSQL)
-# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
+remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(htmltools) 
 
@@ -69,7 +67,7 @@ racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native 
 
 caption_text <- "Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. Analysis covers all officer-initiated traffic stops in 2022. Groups with <5 stops (NHPI, Multiracial) were excluded. Race/ethnicity: AIAN=American Indian/Alaska Native, NHPI=Native Hawaiian/Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."#paste(sourcenote, methodnote,racenote)
 
-tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
+tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic reasons for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
 
 chart_race<-rdaBubblepop(
   df,
