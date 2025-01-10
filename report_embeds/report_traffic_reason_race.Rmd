@@ -3,15 +3,15 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} 
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
+}
 ```
 
 ```{r load, include=FALSE}

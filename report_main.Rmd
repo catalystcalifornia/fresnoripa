@@ -4,10 +4,11 @@ author: "Catalyst California in partnership with Fresno Building Healthy Communi
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
-    css: "fbhc_brandguide.css"
     toc: yes
     toc_depth: 2
     toc_float: yes
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}

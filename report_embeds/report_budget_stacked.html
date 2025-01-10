@@ -4219,6 +4219,69 @@ font-display:auto;font-style:normal;font-weight:400;font-stretch:normal;
 .tk-montserrat { font-family: "montserrat",sans-serif; }
 .tk-source-serif-pro { font-family: "source-serif-pro",serif; }
 </style>
+<!-- <link rel="stylesheet" href="fbhc_brandguide.css"> -->
+
+<style>
+
+
+* {
+color: #0A0A0A; font-family: open-sans, sans-serif;
+}
+
+h1{
+font-size: 32px;
+letter-spacing: normal;
+line-height: 1.24;
+font-weight: 700;
+}
+h2{
+font-size: 24px;
+letter-spacing: normal;
+line-height: 1.2;
+font-weight: 600;
+}
+
+p{
+font-size: 16px; 
+letter-spacing: normal;
+line-height: 1.5;
+font-weight: 400;
+}
+
+a{
+font-family: open-sans;
+}
+
+ul{
+font-family: open-sans;
+}
+
+ol{
+font-family: open-sans;
+}
+
+body{
+font-family: open-sans;
+font-size: 16px;
+background-color: #FFFFFF;
+}
+
+.image-container {
+position: static;
+left: 0;
+right: 0;
+bottom: 0;
+margin: 0;
+}
+
+.tocify, .list-group-item {
+color: #0A0A0A;
+}
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+background-color: #053451;
+border-color: #053451;
+}
+</style>
 
 <style type="text/css">
 code{white-space: pre-wrap;}
@@ -4345,8 +4408,8 @@ display: none;
 </div>
 
 
-<div class="highchart html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-07b22295cada4b8314eb" style="width:672px;height:480px;"></div>
-<script type="application/json" data-for="htmlwidget-07b22295cada4b8314eb">{"x":{"hc_opts":{"chart":{"reflow":true,"height":600,"marginLeft":120,"marginRight":120,"events":{"load":"function() {\n          var chart = this;\n          function updateSize() {\n            var width = chart.containerWidth;\n            var height = Math.max(600, width * 0.7);\n            if (width < 500) {\n              chart.update({\n                chart: {\n                  height: height,\n                  marginLeft: 10,\n                  marginRight: 10\n                },\n                title: { style: { fontSize: '16px' } },\n                subtitle: { style: { fontSize: '14px' } },\n                caption: { style: { fontSize: '12px' } }\n              }, false);\n            } else {\n              chart.update({\n                chart: {\n                  height: height,\n                  marginLeft: 120,\n                  marginRight: 120\n                },\n                title: { style: { fontSize: '21px' } },\n                subtitle: { style: { fontSize: '16px' } },\n                caption: { style: { fontSize: '12px' } }\n              }, false);\n            }\n            chart.redraw();\n          }\n          updateSize();\n          window.addEventListener('resize', updateSize);\n        }"}},"title":{"text":"89% of Fresno PD's Budget Is From the City's General Fund Operating Budget Compared to Only 13% of the PARCS Budget","style":{"useHTML":true,"fontSize":"21px","lineHeight":"28px"}},"yAxis":{"title":{"text":""}},"credits":{"enabled":false},"exporting":{"enabled":true,"sourceWidth":900,"sourceHeight":600,"chartOptions":{"plotOptions":{"series":{"dataLabels":{"enabled":true,"format":"${point.budget:,.0f}","style":{"fontSize":"14px"}}}}},"filename":"FY 2025 proposed budget allocation for Fresno PD versus PARCS_Catalyst California, catalystcalifornia.org, 2025.","buttons":{"contextButton":{"menuItems":["downloadPNG","downloadSVG","downloadXLS","downloadCSV"]}}},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"series":[{"name":"Dollars From City's General Fund Operating Budget","data":[{"fundee":"Fresno PD","budget":255932800,"type":"Dollars From City's General Fund Operating Budget","rate":88.75335036504197,"fundee_label":"Fresno PD's","y":255932800,"name":"Fresno PD"},{"fundee":"PARCS","budget":20918800,"type":"Dollars From City's General Fund Operating Budget","rate":13.47051899246071,"fundee_label":"PARCS'","y":20918800,"name":"PARCS"}],"type":"bar","stacking":"normal"},{"name":"Dollars From Other Sources","data":[{"fundee":"Fresno PD","budget":32431300,"type":"Dollars From Other Sources","rate":11.24664963495803,"fundee_label":"Fresno PD's","y":32431300,"name":"Fresno PD"},{"fundee":"PARCS","budget":134374400,"type":"Dollars From Other Sources","rate":86.52948100753929,"fundee_label":"PARCS'","y":134374400,"name":"PARCS"}],"type":"bar","stacking":"normal"}],"tooltip":{"headerFormat":"","pointFormat":"Fresno city is proposing to allocate <b>${point.budget:,.0f}<\/b> in <b>{point.type}<\/b> to <b>{point.fundee}<\/b> in FY2025, equal to <b>{point.rate:,.1f}%<\/b> of <b>{point.fundee}<\/b> budget.","useHTML":true,"style":{"fontSize":"14px"}},"colors":["#FDB913","#053451","#DDDEE2","#BABBBF","#98999D","#75767A","#525357","#0A0A0A","#B4D5FA","#88ADD0","#5D85A6","#315C7B","#053451","#FFE8B3","#FFDC8B","#FED163","#FEC53B","#FDB913","#053451","#2E4A47","#58603C","#817732","#AA8D28","#D4A31D","#FDB913"],"subtitle":{"text":"FY 2025 proposed budget allocation for Fresno PD versus PARCS","style":{"fontSize":"16px","lineHeight":"22px"}},"caption":{"text":"<b>PARCS=Parks, After School, Recreation, and Community Services Department<\/b> <br> Catalyst California's calculations based on City of Fresno's FY25 Proposed Budget, catalystcalifornia.org, 2024.  Note: General Fund dollars are the most flexible dollars a city uses to prioritize resources. Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. Retrieved from https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget_1.pdf","useHTML":true,"style":{"fontSize":"12px","lineHeight":"18px"}},"xAxis":{"title":{"text":""},"labels":{"style":{"fontSize":"12px"},"overflow":"justify"},"type":"category"},"legend":{"enabled":true,"reversed":true,"style":{"fontSize":"12px"}}},"theme":{"colors":["#FDB913","#053451","#DDDEE2","#BABBBF","#98999D","#75767A","#525357","#0A0A0A","#B4D5FA","#88ADD0","#5D85A6","#315C7B","#053451","#FFE8B3","#FFDC8B","#FED163","#FEC53B","#FDB913","#053451","#2E4A47","#58603C","#817732","#AA8D28","#D4A31D","#FDB913"],"chart":{"backgroundColor":"#FFFFFF","style":{"fontFamily":"Open Sans","color":"#FFFFFF"}},"title":{"style":{"color":"#0A0A0A","fontFamily":"Montserrat","fontWeight":800,"textAlign":"left"},"align":"left"},"subtitle":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400},"align":"left"},"caption":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400,"textAlign":"left"},"useHTML":true,"floating":false},"xAxis":{"labels":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":600,"min":0}},"lineColor":"#DDDEE2"},"yAxis":{"labels":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400}},"gridLineWidth":0,"visible":true,"lineWidth":1,"lineColor":"#DDDEE2","min":0,"tickAmount":6,"tickWidth":1},"legend":{"itemStyle":{"fontFamily":"Open Sans","fontWeight":400,"color":"#0A0A0A"},"itemHoverStyle":{"fontFamily":"Open Sans","fontWeight":400,"color":"#0A0A0A"},"borderColor":"#DDDEE2","plotLines":{"color":"#DDDEE2"},"bubbleLegend":{"borderColor":"#053451","connectorColor":"#053451","color":"#FDB913"}}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"thousandsSep":","}},"type":"chart","fonts":["Open+Sans","Montserrat"],"debug":false},"evals":["hc_opts.chart.events.load"],"jsHooks":[]}</script>
+<div class="highchart html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-06b876e46cd5fd1962ed" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-06b876e46cd5fd1962ed">{"x":{"hc_opts":{"chart":{"reflow":true,"height":600,"marginLeft":120,"marginRight":120,"events":{"load":"function() {\n          var chart = this;\n          function updateSize() {\n            var width = chart.containerWidth;\n            var height = Math.max(600, width * 0.7);\n            if (width < 500) {\n              chart.update({\n                chart: {\n                  height: height,\n                  marginLeft: 10,\n                  marginRight: 10\n                },\n                title: { style: { fontSize: '16px' } },\n                subtitle: { style: { fontSize: '14px' } },\n                caption: { style: { fontSize: '12px' } }\n              }, false);\n            } else {\n              chart.update({\n                chart: {\n                  height: height,\n                  marginLeft: 120,\n                  marginRight: 120\n                },\n                title: { style: { fontSize: '21px' } },\n                subtitle: { style: { fontSize: '16px' } },\n                caption: { style: { fontSize: '12px' } }\n              }, false);\n            }\n            chart.redraw();\n          }\n          updateSize();\n          window.addEventListener('resize', updateSize);\n        }"}},"title":{"text":"89% of Fresno PD's Budget Is From the City's General Fund Operating Budget Compared to Only 13% of the PARCS Budget","style":{"useHTML":true,"fontSize":"21px","lineHeight":"28px"}},"yAxis":{"title":{"text":""}},"credits":{"enabled":false},"exporting":{"enabled":true,"sourceWidth":900,"sourceHeight":600,"chartOptions":{"plotOptions":{"series":{"dataLabels":{"enabled":true,"format":"${point.budget:,.0f}","style":{"fontSize":"14px"}}}}},"filename":"FY 2025 proposed budget allocation for Fresno PD versus PARCS_Catalyst California, catalystcalifornia.org, 2025.","buttons":{"contextButton":{"menuItems":["downloadPNG","downloadSVG","downloadXLS","downloadCSV"]}}},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"series":[{"name":"Dollars From City's General Fund Operating Budget","data":[{"fundee":"Fresno PD","budget":255932800,"type":"Dollars From City's General Fund Operating Budget","rate":88.75335036504197,"fundee_label":"Fresno PD's","y":255932800,"name":"Fresno PD"},{"fundee":"PARCS","budget":20918800,"type":"Dollars From City's General Fund Operating Budget","rate":13.47051899246071,"fundee_label":"PARCS'","y":20918800,"name":"PARCS"}],"type":"bar","stacking":"normal"},{"name":"Dollars From Other Sources","data":[{"fundee":"Fresno PD","budget":32431300,"type":"Dollars From Other Sources","rate":11.24664963495803,"fundee_label":"Fresno PD's","y":32431300,"name":"Fresno PD"},{"fundee":"PARCS","budget":134374400,"type":"Dollars From Other Sources","rate":86.52948100753929,"fundee_label":"PARCS'","y":134374400,"name":"PARCS"}],"type":"bar","stacking":"normal"}],"tooltip":{"headerFormat":"","pointFormat":"Fresno city is proposing to allocate <b>${point.budget:,.0f}<\/b> in <b>{point.type}<\/b> to <b>{point.fundee}<\/b> in FY2025, equal to <b>{point.rate:,.1f}%<\/b> of <b>{point.fundee}<\/b> budget.","useHTML":true,"style":{"fontSize":"14px"}},"colors":["#FDB913","#053451","#DDDEE2","#BABBBF","#98999D","#75767A","#525357","#0A0A0A","#B4D5FA","#88ADD0","#5D85A6","#315C7B","#053451","#FFE8B3","#FFDC8B","#FED163","#FEC53B","#FDB913","#053451","#2E4A47","#58603C","#817732","#AA8D28","#D4A31D","#FDB913"],"subtitle":{"text":"FY 2025 proposed budget allocation for Fresno PD versus PARCS","style":{"fontSize":"16px","lineHeight":"22px"}},"caption":{"text":"<b>PARCS=Parks, After School, Recreation, and Community Services Department<\/b> <br> Catalyst California's calculations based on City of Fresno's FY25 Proposed Budget, catalystcalifornia.org, 2024.  Note: General Fund dollars are the most flexible dollars a city uses to prioritize resources. Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. Retrieved from https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget_1.pdf","useHTML":true,"style":{"fontSize":"12px","lineHeight":"18px"}},"xAxis":{"title":{"text":""},"labels":{"style":{"fontSize":"12px"},"overflow":"justify"},"type":"category"},"legend":{"enabled":true,"reversed":true,"style":{"fontSize":"12px"}}},"theme":{"colors":["#FDB913","#053451","#DDDEE2","#BABBBF","#98999D","#75767A","#525357","#0A0A0A","#B4D5FA","#88ADD0","#5D85A6","#315C7B","#053451","#FFE8B3","#FFDC8B","#FED163","#FEC53B","#FDB913","#053451","#2E4A47","#58603C","#817732","#AA8D28","#D4A31D","#FDB913"],"chart":{"backgroundColor":"#FFFFFF","style":{"fontFamily":"Open Sans","color":"#FFFFFF"}},"title":{"style":{"color":"#0A0A0A","fontFamily":"Montserrat","fontWeight":800,"textAlign":"left"},"align":"left"},"subtitle":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400},"align":"left"},"caption":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400,"textAlign":"left"},"useHTML":true,"floating":false},"xAxis":{"labels":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":600,"min":0}},"lineColor":"#DDDEE2"},"yAxis":{"labels":{"style":{"color":"#0A0A0A","fontFamily":"Open Sans","fontWeight":400}},"gridLineWidth":0,"visible":true,"lineWidth":1,"lineColor":"#DDDEE2","min":0,"tickAmount":6,"tickWidth":1},"legend":{"itemStyle":{"fontFamily":"Open Sans","fontWeight":400,"color":"#0A0A0A"},"itemHoverStyle":{"fontFamily":"Open Sans","fontWeight":400,"color":"#0A0A0A"},"borderColor":"#DDDEE2","plotLines":{"color":"#DDDEE2"},"bubbleLegend":{"borderColor":"#053451","connectorColor":"#053451","color":"#FDB913"}}},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"thousandsSep":","}},"type":"chart","fonts":["Open+Sans","Montserrat"],"debug":false},"evals":["hc_opts.chart.events.load"],"jsHooks":[]}</script>
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
   for (let i = 0; i < widg.length; i++) { //loop through
