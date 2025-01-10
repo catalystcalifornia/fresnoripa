@@ -3,16 +3,14 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
 }
 ```
 
@@ -75,12 +73,13 @@ df_budget$type <- factor(x=df_budget$type, levels = type_factors) # factor level
 # Set up for visualizing ----------------------------------
 
 acronym<-"<b>PARCS=Parks, After School, Recreation, and Community Services Department</b>"
+general_fund<-"Note: General Fund dollars are the most flexible dollars a city uses to prioritize resources."
 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's FY25 Proposed Budget, catalystcalifornia.org, 2024. "
 
 methodnote <- "Source: City of Fresno. (2024). FY 2025 mayor's proposed budget. Retrieved from https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget_1.pdf"
 
-caption <- paste(acronym,"<br>",sourcenote, methodnote)
+caption <- paste(acronym,"<br>", sourcenote, general_fund, methodnote)
 
 title <- "89% of Fresno PD's Budget Is From the City's General Fund Operating Budget Compared to Only 13% of the PARCS Budget"
 

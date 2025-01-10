@@ -3,16 +3,14 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
 }
 ```
 
@@ -58,9 +56,9 @@ title_text <- "Fresno PD Spends Nearly 98% of Their Patrol Time on Traffic Stops
 subtitle_text <- "Percent of time spent on officer-initiated stops by stop reason"
   
 # create caption 
-sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024."
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Other reasons include stops for probation or parole and stops made for two or more reasons."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022. Other reasons include stops for probation or parole and stops made for two or more reasons."
 
 caption_text <- paste(sourcenote, methodnote)
 

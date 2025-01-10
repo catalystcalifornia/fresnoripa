@@ -3,16 +3,14 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
 }
 ```
 
@@ -21,7 +19,7 @@ if (is.null(knitr::opts_knit$get("child"))) {
 # set up -----------------------------
 library(RPostgreSQL)
 library(devtools)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(stringr)
 
@@ -46,9 +44,9 @@ df <- df%>%
 # create caption 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Stop results that had a rate of 0.5% or less were combined and defined as 'Other Stop Result in this data visualization.'"
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022. Stop results with rates <= 0.5% were combined and defined as 'Other Stop Result' in the chart."
 
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+# racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
 
 caption_text <- paste(sourcenote, methodnote)
 

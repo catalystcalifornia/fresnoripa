@@ -3,16 +3,14 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
 }
 ```
 
@@ -61,9 +59,9 @@ df<-df%>%mutate(race_label = case_when(
 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis for all officer-initiated traffic stops that included an officer detaining a person in 2022. Genders are based identification by officers. According to the data source, officers did not report detaining people perceived as transgender or gender nonconforming. Officers did not report detaining people perceived as American Indian/Alaska Native or Native Hawaiian/Pacific Islander alone."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022 that included an officer detaining a person. Genders are based on identification by officers. According to the data source, officers did not report detaining people perceived as transgender or gender nonconforming. Officers did not report detaining people perceived as American Indian/Alaska Native or Native Hawaiian/Pacific Islander alone."
 
-racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."
 
 caption_text <- paste(sourcenote, methodnote,racenote)
 

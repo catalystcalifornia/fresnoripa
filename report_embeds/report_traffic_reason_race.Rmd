@@ -3,16 +3,14 @@ title: ""
 output:
   html_document:
     includes:
-      in_header: header.html
+      in_header: "../header.html"
 ---
 
 ```{r, include=FALSE}
-# Generate header.html with CSS if running standalone
-if (is.null(knitr::opts_knit$get("child"))) {
-  css_content <- readLines("../fbhc_brandguide.css")
-  writeLines(paste0("<style>\n", paste(css_content, collapse="\n"), "\n</style>"), "header.html")
-} else {
-  writeLines("", "header.html")  # Empty file if running as child
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
 }
 ```
 
@@ -22,7 +20,7 @@ if (is.null(knitr::opts_knit$get("child"))) {
 library(RPostgreSQL)
 library(dplyr)
 library(highcharter)
-remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
+# remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never") 
 library(rdaCharts)
 library(purrr) # facet charts
 library(htmltools)
@@ -91,11 +89,11 @@ df_final <- df_combined %>%
 
 ```{r prep-visual, include=FALSE}
 # create caption 
-sourcenote <- "Catalyst California's calculations based on City of Fresno's Police Stop Data (2022); <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024."
+sourcenote <- "Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024."
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 10 people Fresno PD perceived as NHPI or AIAN were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022. Groups with <10 stops (NHPI, AIAN) were excluded from the chart."
 
-racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North African, or South Asian."
+racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."
 
 caption_text <- paste(sourcenote, methodnote,racenote)
 
@@ -198,8 +196,7 @@ browsable(
       hw_grid(rowheight = 450)))
 
 ```
-<span class="highcharts-caption" style="font-size: 12px;line-height:18px;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022); <u>[Catalyst California](https://www.catalystcalifornia.org)</u>, 2024. Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or AIAN were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart. Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern), North African, or South Asian. </span>
-
+<span class="highcharts-caption" data-z-index="4" style="font-family: open-sans; font-size: 12px; white-space: normal; margin-left: 0px; margin-top: 0px; left: 10px; top: 513px; color: rgb(10, 10, 10); font-weight: 400; text-align: left; line-height: 18px; width: 100%; display: block;">Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024.  Analysis covers all officer-initiated traffic stops in 2022. Groups with <5 stops (NHPI, AIAN) were excluded from the chart. Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian.</span>
 
 <script>
   widg = document.getElementsByClassName('html-widget'); //find widgets
