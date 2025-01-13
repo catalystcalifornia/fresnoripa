@@ -38,8 +38,8 @@
 
 ## About The Project
 
-This report combines data analysis of Fresno Police Department (“Fresno PD”) patrol activities, quotes and qualitative data from community members in Fresno, and public policy research to show how Fresno PD  criminalizes community members through traffic stops and other harmful policing practices. The report unpacks how Fresno PD predominantly conducts traffic stops, and uses traffic stops as a means of profiling and disproportionately harming BIPOC communities. The harms Fresno PD inflicts on BIPOC communities are both physical and emotionally traumatizing through unnecessary stops and use of force, as well as financially damaging in the form of ticketing and citations. 
-Fresno PD's stop practices are racially biased, undermines community safety, and wastes tremendous public dollars. Their activities are also completely misaligned with the way community defines safety. 
+This report combines data analysis of Fresno Police Department (“Fresno PD”) patrol activities, quotes and qualitative data from community members in Fresno, and public policy research to show how Fresno PD  criminalizes community members through traffic stops and other harmful policing practices. The report unpacks how Fresno PD predominantly conducts traffic stops, and uses traffic stops as a means of profiling and disproportionately harming BIPOC communities. The harms Fresno PD inflicts on BIPOC communities are both physically and emotionally traumatizing, as well as financially damaging in the form of ticketing and citations. Fresno PD's racially biased stop practices undermine community safety and waste tremendous public dollars. Their police activities are in opposition to how Fresno residents define safety for their communities, which prioritizes investments in built environment improvements, programming for youth and mental health and housing services. Detailed information on how community residents define safety and how resources can be reallocated to improve real community safety can be found in the report. 
+
 This GitHub repository includes access to our methodology and scripts to analyze the data and test for racial bias in Fresno PD's profiling activity. The repository does not include access to the data tables used for analysis. We pull tables from our private PostgreSQL database. The database is accessible only by our Research & Data Analysis team. The original Racial and Identity Profiling Act (“RIPA”) data used for this project can be accessed via the [California Department of Justice Open Data Portal](https://openjustice.doj.ca.gov/data). For access to the qualitative community data gathered as a part of this project, please visit the report page.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -47,7 +47,6 @@ This GitHub repository includes access to our methodology and scripts to analyze
 ## Acknowledgements
 
 Catalyst California completed this research project in collaboration with Fresno Building Healthy Communities (“FBHC”). It was guided by invaluable input from FBHC’s coalition partners and community members. Their perspectives and lived experiences are the driving force behind the data.
-
 
 The following individuals contributed to the data analysis and visualizations that show in up in the report:
 
@@ -143,11 +142,10 @@ Police Stop Data
 Population Estimates by Age and Race 
 
 * U.S. Census Bureau, 2017-2021, American Community Survey, 5-Year Estimates. Tables DP05, B04006, B02015, B02018, S0101. Retrieved from https://data.census.gov/cedsci/.
-mote
 
 ### Data Limitations
 
-As with all data, the findings seen in this analysis are dependent on the quality of the data collected. We strongly encourage readers and data analysts to consider the limitations of RIPA data when interpreting findings or using RIPA data. For instance, RIPA data are collected under state regulations for all law enforcement agencies, but this at times limits the applicability of data elements at the local level. For this project, this translated to officer assignment types collected under RIPA poorly correlating with SDPD units that conduct gang profiling. RIPA data are also based on officers’ reports. The information attached to each stop is solely based on officer disclosure and perceptions. For example, officers report what they perceive as the race(s) of the people they stopped, rather than having the people they stopped self-report their race(s). We encourage researchers using RIPA data to ground truth trends seen in the data with community to identify discrepancies between the data collected and everyday community experiences. For a full discussion of limitations, please see our [Methodology document](https://github.com/catalystcalifornia/sdpillars/blob/main/Methodology_Gang_Profiling_SDPD.pdf)
+As with all data, the findings seen in this analysis are dependent on the quality of the data collected. We strongly encourage readers and data analysts to consider the limitations of RIPA data when interpreting findings or using RIPA data. For instance, RIPA data are collected under state regulations for all law enforcement agencies, but this at times limits the applicability of data elements at the local level. The Fresno RIPA data set does not include any geographic information for the stops, therefore any stop analysis lacks information on where the stops are occurring. RIPA data are also based on officers’ reports. The information attached to each stop is solely based on officer disclosure and perceptions. For example, officers report what they perceive as the race(s) of the people they stopped, rather than having the people they stopped self-report their race(s). We encourage researchers using RIPA data to ground truth trends seen in the data with community to identify discrepancies between the data collected and everyday community experiences. For a full discussion of limitations, please see our [Methodology document](https://github.com/catalystcalifornia/sdpillars/blob/main/Methodology_Gang_Profiling_SDPD.pdf)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -156,13 +154,12 @@ As with all data, the findings seen in this analysis are dependent on the qualit
 
 For policy-related inquiries: 
 
-* [Chauncee Smith](https://www.catalystcalifornia.org/who-we-are/staff/chauncee-smith) - csmith[at]catalystcalifornia.org
+* [Sandra Celedon](https://es.fresnobhc.org/our-team/sandra-celedon) -  sceledon[at]fresnobhc.org
 
-* [Mitchelle Woodson, Esq.](https://www.linkedin.com/in/mitchellie-woodson-esq-41064793/) - mitchelle[at]potcsd.org
+* [Myanna Khalfani-King](https://www.catalystcalifornia.org/who-we-are/staff/myanna-khalfani-king) - 
+mking[at]catalystcalifornia.org
 
-For inquiries about videos collected or advocacy in Southeast San Diego:
-
-* [Mitchelle Woodson, Esq.](https://www.linkedin.com/in/mitchellie-woodson-esq-41064793/) - mitchelle[at]potcsd.org
+* [Michael Nailat](https://www.catalystcalifornia.org/who-we-are/staff/michael-nailat) - mnailat[at]catalystcalifornia.org
 
 For data-related inquiries: 
 
@@ -187,7 +184,7 @@ A world where systems are designed for justice and support equitable access to r
 
 ## Partners
 
-[Pillars of the Community](https://www.potcsd.org/)
+[Fresno Building Healthy Communities](https://es.fresnobhc.org/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
