@@ -1,0 +1,74 @@
+/* Fresno BHC Brand Guide CSS Stylesheet for RMDs*/
+
+
+/* Setting global properties */
+* {
+  color: #0A0A0A; 
+  font-family: open-sans, sans-serif;
+}
+
+/* --Headers-- */
+h1{
+  font-size: 32px;
+  letter-spacing: normal;
+  line-height: 1.24;
+  font-weight: 700;
+}
+
+h2{
+  font-size: 24px;
+  letter-spacing: normal;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+/* p is for body content - may or may not want to use for visuals */
+p{
+  font-size: 16px; /* consider changing to 15px*/
+  letter-spacing: normal;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+
+/* --Link-- */
+a{
+  font-family: open-sans;
+}
+  
+/* --Unordered List (bullet list)-- */
+ul{
+  font-family: open-sans;
+}
+  
+/* --Ordered List (numeric list)-- */
+ol{
+  font-family: open-sans;
+}
+  
+/* --Document body-- */
+
+body{
+  font-family: open-sans;
+  font-size: 16px;
+  background-color: #FFFFFF;
+}
+
+/* --Footer Logo-- */
+.image-container {
+    position: static;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+}
+
+/* --TOC coloring-- */
+.tocify, .list-group-item {
+  color: #0A0A0A;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+  background-color: #053451;
+  border-color: #053451;
+}

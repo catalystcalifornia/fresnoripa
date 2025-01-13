@@ -2,16 +2,22 @@
 title: ""
 output:
   html_document:
-    css: "W:\\RDA Team\\R\\fbhc_brandguide.css"
+    includes:
+      in_header: "../header.html"
 ---
-<!-- link to Adobe Fonts (Source Serif Pro, Montserrat, Open Sans) -->
-<link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
+
+```{r, include=FALSE}
+# Check if document is being run as a child, if yes don't apply styling again
+is_child <- !is.null(knitr::opts_knit$get("parent.frame"))
+if (is_child) {
+  knitr::opts_chunk$set(include = FALSE)
+}
+```
 
 ```{r, include=FALSE}
 
 # set up -----------------------------
 library(RPostgreSQL)
-library(devtools)
 # remotes::install_github("catalystcalifornia/rdaCharts", upgrade="never")
 library(rdaCharts)
 library(htmltools) 
@@ -53,15 +59,15 @@ df<-df%>%mutate(race_label = case_when(
 
 ```{r, include=FALSE}
 # prep-chart --------------------------
-sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
+sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024."
 
-methodnote <- "Analysis for all officer-initiated traffic stops made by officers in 2022. Less than 5 people Fresno PD perceived as NHPI or Multiracial were stopped in officer-initiated traffic stop in 2022. For data masking purposes the data for these groups is suppressed from this chart."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022. Groups with <5 stops (NHPI, Multiracial) were excluded from the chart."
 
-racenote <- "Race/ethnicity: AIAN=American Indian or Alaska Native, NHPI=Native Hawaiian or Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern) or North African, or South Asian."
+racenote <- "Race/ethnicity: AIAN=American Indian/Alaska Native, NHPI=Native Hawaiian/Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."
 
-caption_text <- "Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. Analysis covers all officer-initiated traffic stops in 2022. Groups with <5 stops (NHPI, Multiracial) were excluded. Race/ethnicity: AIAN=American Indian/Alaska Native, NHPI=Native Hawaiian/Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."#paste(sourcenote, methodnote,racenote)
+caption_text <- paste(sourcenote, methodnote,racenote)
 
-tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic violations for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
+tooltip_text <- "Fresno PD stopped <b>{point.pop_1k_rate:.1f}</b> people they perceived as <b>{point.race_label}</b> for traffic reasons for every 1K {point.race_label} people in Fresno City. A total of <b>{point.traffic_count:.0f}</b> people stopped."
 
 chart_race<-rdaBubblepop(
   df,
