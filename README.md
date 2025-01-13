@@ -38,7 +38,9 @@
 
 ## About The Project
 
-This report combines data analysis of San Diego Police Department (“SDPD”) patrol activities, video interviews with community members in Southeast San Diego, and public policy research to show how SDPD criminalizes community members in Southeast San Diego through gang profiling. Gang profiling is a practice through which SDPD–and law enforcement agencies throughout California–document people of color as gang members and place their identities in gang databases. The report unpacks how gang profiling in Southeast San Diego inflicts devastating racially biased harms, undermines community safety, and wastes tremendous public dollars. This GitHub repository includes access to our methodology and scripts to analyze the data and test for racial bias in SDPD's gang profiling activity. The repository does not include access to the data tables used for analysis. We pull tables from our private PostgreSQL database. The database is accessible only by our Research & Data Analysis team. The original Racial and Identity Profiling Act (“RIPA”) data used for this project can be accessed via San Diego's Open Data portal. For access to the community stories gathered as a part of this project, please visit the report page.
+This report combines data analysis of Fresno Police Department (“Fresno PD”) patrol activities, quotes and qualitative data from community members in Fresno, and public policy research to show how Fresno PD  criminalizes community members through traffic stops and other harmful policing practices. The report unpacks how Fresno PD predominantly conducts traffic stops, and uses traffic stops as a means of profiling and disproportionately harming BIPOC communities. The harms Fresno PD inflicts on BIPOC communities are both physical and emotionally traumatizing through unnecessary stops and use of force, as well as financially damaging in the form of ticketing and citations. 
+Fresno PD's stop practices are racially biased, undermines community safety, and wastes tremendous public dollars. Their activities are also completely misaligned with the way community defines safety. 
+This GitHub repository includes access to our methodology and scripts to analyze the data and test for racial bias in Fresno PD's profiling activity. The repository does not include access to the data tables used for analysis. We pull tables from our private PostgreSQL database. The database is accessible only by our Research & Data Analysis team. The original Racial and Identity Profiling Act (“RIPA”) data used for this project can be accessed via the [California Department of Justice Open Data Portal](https://openjustice.doj.ca.gov/data). For access to the qualitative community data gathered as a part of this project, please visit the report page.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -59,7 +61,10 @@ A special thank you to Sandra Soria and Isaac Bushnell for their research and da
 The following individuals contributed to the framing and writing of the report:
 
 * [Myanna Khalfani-King](https://www.catalystcalifornia.org/who-we-are/staff/myanna-khalfani-king)
+* [Michael Nailat](https://www.catalystcalifornia.org/who-we-are/staff/michael-nailat)
 * [Chauncee Smith, Catalyst California](https://www.catalystcalifornia.org/who-we-are/staff/chauncee-smith)
+* [Elycia Mulholland Graves, Catalyst California](https://github.com/elyciamg)
+* [Jennifer Zhang, Catalyst California](https://github.com/jzhang514)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -90,13 +95,10 @@ We used several R packages to analyze data and perform different functions, incl
 * htmltools     
 * htmlwidgets     
 * knitr     
-* leaflet     
 * magrittr     
 * RPostgreSQL     
-* sf     
 * showtext     
 * stringr     
-* sp     
 * tidyr     
 * tidyverse     
 * usethis     
@@ -117,13 +119,10 @@ library(highcharter)
 library(htmltools)
 library(htmlwidgets)
 library(knitr)
-library(leaflet)
 library(magrittr)
 library(RPostgreSQL)
-library(sf)
 library(showtext)
 library(stringr)
-library(sp)
 library(tidyr)
 library(tidyverse)
 library(usethis)
@@ -133,27 +132,18 @@ library(usethis)
 
 ## Data Methodology
 
-This report evaluates SDPD gang profiling by analyzing 2022 data collected and reported by SDPD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. For each stop made by law enforcement, RIPA data includes information that can be analyzed for evidence of profiling—including characteristics about the person stopped (e.g., race, gender, and age), the stop location, the length of the stop, the reason for the stop, and the result of the stop. This report uses RIPA data to evaluate SDPD’s gang profiling activities. Key RIPA indicators include the officer assignment field (under “gang enforcement”), and the stop result field (under “field interview card”). You can access our full methodology [here](https://github.com/catalystcalifornia/sdpillars/blob/main/Methodology_Gang_Profiling_SDPD.pdf).
+This report evaluates Fresno PD police activity by analyzing 2022 data collected by Fresno PD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. RIPA requires law enforcement officers to collect and report information on each stop they conduct, including the time and location, why the stop was conducted and what occurred during it, and characteristics about the person stopped (e.g., race, gender, and age). This report examines profiling by Fresno PD by analyzing RIPA data on who officers choose to stop and actions taken by officers during stops. You can access our full methodology [here](https://github.com/catalystcalifornia/sdpillars/blob/main/Methodology_Gang_Profiling_SDPD.pdf).
 
 ### Data Sources
 
 Police Stop Data	 
 
-* City of San Diego, San Diego Police Department, 2022, Police Stop Data (RIPA). Retrieved from https://data.sandiego.gov/datasets/police-ripa-stops/. 
+* City of Fresno, Fresno Police Department, 2022, Police Stop Data (RIPA). Retrieved from https://openjustice.doj.ca.gov/data. 
 
 Population Estimates by Age and Race 
 
-* U.S. Census Bureau, 2017-2021, American Community Survey, 5-Year Estimates. Tables DP05, B04006, B02018. Retrieved from https://data.census.gov/cedsci/.
-
-* U.S. Census Bureau, 2020 Decennial Census, Demographic and Housing Characteristics. Table P12. Retrieved from https://data.census.gov/cedsci/.
-
-* U.S. Census Bureau, 2021, TIGER/Line Shapefiles, Census Tracts. Retrieved from https://www.census.gov/cgi-bin/geo/shapefiles/index.php?year=2021&layergroup=Census+Tracts.  
-
-Geographic Data 
-
-* City of San Diego, 2023, San Diego Police Department Beats. Retrieved from https://data.sandiego.gov/datasets/police-beats/.  
-
-* City of San Diego, 2023, San Diego Police Department and Divisions. Retrieved from https://data.sandiego.gov/datasets/pd-divisions/.  
+* U.S. Census Bureau, 2017-2021, American Community Survey, 5-Year Estimates. Tables DP05, B04006, B02015, B02018, S0101. Retrieved from https://data.census.gov/cedsci/.
+mote
 
 ### Data Limitations
 
