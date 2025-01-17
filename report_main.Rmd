@@ -1,7 +1,7 @@
 ---
 title: "Traffic Stops and Race: An Analysis of Police Stops in Fresno"
 author: "Catalyst California in partnership with Fresno Building Healthy Communities"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "24 January, 2025"
 output:
   html_document:
     toc: yes
@@ -36,9 +36,9 @@ All people in Fresno deserve to feel safe. However, the Fresno Police Department
 
 <br>
 
-> __“For me, safety in my community means: safe spaces for all intersectionalities, less presence of police brutality, access to the lighting in neighborhoods, community drives, more sidewalks, green spaces, access to safe and clean parks, more safety in air and water, justice and safety for immigrants, and access to all resources.”-Fresno Community Member__    
+> __“For me, safety in my community means: safe spaces for all intersectionalities, less presence of police brutality, access to the lighting in neighborhoods, community drives, more sidewalks, green spaces, access to safe and clean parks, more safety in air and water, justice and safety for immigrants, and access to all resources.”  -Fresno community member__    
 <br>
-__*“Para mí, la seguridad en mi comunidad significa: espacios seguros para todos sin tomar en cuenta su raza, sexo, estado civil, etcétera; menos brutalidad policíaca; más iluminación en las calles de los vecindarios; campañas comunitarias en la comunidad; más aceras, áreas verdes, acceso a parques seguros y limpios; más seguridad en el medio ambiente; justicia y seguridad para los inmigrantes; y acceso a todos los recursos.”-Miembro de la Comunidad de Fresno*__
+__*“Para mí, la seguridad en mi comunidad significa: espacios seguros para todos sin tomar en cuenta su raza, sexo, estado civil, etcétera; menos brutalidad policíaca; más iluminación en las calles de los vecindarios; campañas comunitarias en la comunidad; más aceras, áreas verdes, acceso a parques seguros y limpios; más seguridad en el medio ambiente; justicia y seguridad para los inmigrantes; y acceso a todos los recursos.” -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -67,16 +67,16 @@ The City of Fresno should end racially biased traffic stops, enhance Fresno PD�
 
 <br>
 
-> __"Que más [nos] sintamos en confianza con las autoridades de la ley, como, por ejemplo, que tengamos a los agentes de policía como héroes y no que atentan contra nuestras vidas."-Miembro de la Comunidad de Fresno__    
+> __"Que más [nos] sintamos en confianza con las autoridades de la ley, como, por ejemplo, que tengamos a los agentes de policía como héroes y no que atentan contra nuestras vidas." -Miembro de la comunidad de Fresno__    
 <br>
-__*"That we can better trust law enforcement; for example, that we can hold police officers as heroes that don’t threaten our lives."-Fresno Community Member*__
-<br>
-
+__*"That we can better trust law enforcement; for example, that we can hold police officers as heroes that don’t threaten our lives." -Fresno community member*__
 <br>
 
-> __"Mejor[es] calles. Menos basura, más limpieza. Más tiendas, hospitales, basureros en paradas de autobús."-Miembro de la Comunidad de Fresno__    
 <br>
-__*"Better streets. Less trash and more cleanliness. More stores, hospitals, trash cans at bus stops."-Fresno Community Member*__
+
+> __"Mejor[es] calles. Menos basura, más limpieza. Más tiendas, hospitales, basureros en paradas de autobús." -Miembro de la comunidad de Fresno__    
+<br>
+__*"Better streets. Less trash and more cleanliness. More stores, hospitals, trash cans at bus stops." -Fresno community member*__
 
 # BRIEF METHODOLOGY
 
@@ -103,9 +103,9 @@ Fresno community members would rather have police respond to what they identify 
 
 <br>
 
-> __"[For me safety means being] safe and free to go about one’s business without fear or harassment. Able to walk, drive, bike to work, school, or church without worry."-Fresno Community Member__    
+> __"[For me safety means being] safe and free to go about one’s business without fear or harassment. Able to walk, drive, bike to work, school, or church without worry." -Fresno community member__    
 <br>
-__*"[Para mí la seguridad significa] sentirme seguro y libre para manejar mis asuntos sin temor ni acoso. Poder caminar, manejar o ir en bicicleta al trabajo, a la iglesia o a la escuela sin preocupaciones."-Miembro de la Comunidad de Fresno*__
+__*"[Para mí la seguridad significa] sentirme seguro y libre para manejar mis asuntos sin temor ni acoso. Poder caminar, manejar o ir en bicicleta al trabajo, a la iglesia o a la escuela sin preocupaciones." -Miembro de la comunidad de Fresno*__
 
 <br>
 Ninety-nine percent of all officer-initiated stops by Fresno PD involved an alleged traffic violation. Officers disproportionately targeted people of color, especially men, during these stops.
@@ -125,9 +125,9 @@ For every 1,000 Black people who live in the city, Fresno PD stopped 16.7 people
 
 <br>
 
-> __"[I’ve] been targeted by the simplest things. Like by the way we are dressed. By our tattoos. Color of our skin. The company we are around with. As well as what part of town you’re in, you can be simply be a target for police."-Fresno Community Member__    
+> __"[I’ve] been targeted by the simplest things. Like by the way we are dressed. By our tattoos. Color of our skin. The company we are around with. As well as what part of town you’re in, you can be simply be a target for police." -Fresno community member__    
 <br>
-__*"Me han singularizado por las cosas más simples. Como por la forma en que estamos vestidos. Por nuestros tatuajes. Color de nuestra piel. La gente con quien andamos. Además de en qué parte de la ciudad nos encontramos, simplemente puedes ser un blanco para la policía."-Miembro de la Comunidad de Fresno*__
+__*"Me han singularizado por las cosas más simples. Como por la forma en que estamos vestidos. Por nuestros tatuajes. Color de nuestra piel. La gente con quien andamos. Además de en qué parte de la ciudad nos encontramos, simplemente puedes ser un blanco para la policía." -Miembro de la comunidad de Fresno*__
 
 <br>
 ```{r rdaBubblepop-chart, child= 'report_embeds/report_traffic_race.Rmd'}
@@ -137,15 +137,15 @@ In addition, community members report that Fresno PD uses many racially biased s
 
 <br>
 
-> __"They assumed that several of my cousins were gang members because of their appearance."-Fresno Community Member__    
+> __"They assumed that several of my cousins were gang members because of their appearance." -Fresno community member__    
 <br>
-__*"Asumieron que varios de mis primos eran pandilleros por su apariencia."-Miembro de la Comunidad de Fresno*__
+__*"Asumieron que varios de mis primos eran pandilleros por su apariencia." -Miembro de la comunidad de Fresno*__
 
 <br>
 
-> __"Yes, I personally have been targeted by the police in a routine traffic stop. I was told to get out of my vehicle for suspicion of being involved with gang activity, when at the time, I was wearing a Fresno state sweatshirt and was in college."-Fresno Community Member__    
+> __"Yes, I personally have been targeted by the police in a routine traffic stop. I was told to get out of my vehicle for suspicion of being involved with gang activity, when at the time, I was wearing a Fresno state sweatshirt and was in college." -Fresno community member__    
 <br>
-__*"Sí, yo personalmente he sido singularizado por la policía durante un paro de tránsito. Me ordenaron que saliera de mi auto por sospecha de estar involucrado con pandillas. En ese momento yo llevaba puesto un suéter de la universidad de Fresno State, y yo era estudiante."-Miembro de la Comunidad de Fresno*__
+__*"Sí, yo personalmente he sido singularizado por la policía durante un paro de tránsito. Me ordenaron que saliera de mi auto por sospecha de estar involucrado con pandillas. En ese momento yo llevaba puesto un suéter de la universidad de Fresno State, y yo era estudiante." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -190,9 +190,9 @@ Community members also expressed a growing mistrust towards police that is passe
  
 <br>
 
-> __"Getting our cars impounded. Even getting hurt. Being harassed in front of family and our children. Impacting our children’s perception of law enforcement."-Fresno Community Member__    
+> __"Getting our cars impounded. Even getting hurt. Being harassed in front of family and our children. Impacting our children’s perception of law enforcement." -Fresno community member__    
 <br>
-__*"Nos embargaron los autos, nos lastimaron, fuimos acosados delante de nuestra familia y nuestros hijos, que impacto la percepción que nuestros niños tienen de los oficiales de la ley."-Miembro de la Comunidad de Fresno*__
+__*"Nos embargaron los autos, nos lastimaron, fuimos acosados delante de nuestra familia y nuestros hijos, que impacto la percepción que nuestros niños tienen de los oficiales de la ley." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -218,9 +218,9 @@ These data also align with community experiences. Fresno community members say n
 
 <br>
 
-> __"[Safety in my community means to] drive safely without fear of being profiled. Friends and family making it safely home after [a] traffic stop. Not being scared of high-speed chases."-Fresno Community Member__    
+> __"[Safety in my community means to] drive safely without fear of being profiled. Friends and family making it safely home after [a] traffic stop. Not being scared of high-speed chases." -Fresno community member__    
 <br>
-__*"[La seguridad en mi comunidad significa] sentirme seguro mientras manejo, sin temor a ser discriminado. Que amigos y familiares regresen sanos y salvos a casa después de un paro de tránsito. No temer persecuciones de alta velocidad."-Miembro de la Comunidad de Fresno*__
+__*"[La seguridad en mi comunidad significa] sentirme seguro mientras manejo, sin temor a ser discriminado. Que amigos y familiares regresen sanos y salvos a casa después de un paro de tránsito. No temer persecuciones de alta velocidad." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -251,9 +251,9 @@ The chart below focuses specifically on the people Fresno PD stopped for traffic
 
 <br>
 
-> __"Harmed by traffic stops—targeting of people of color, especially youth. Poor looking vehicles. Undocumented and unlicensed drivers because of economic situations and lack of adequate public transportation."-Fresno Community Member__    
+> __"Harmed by traffic stops—targeting of people of color, especially youth. Poor looking vehicles. Undocumented and unlicensed drivers because of economic situations and lack of adequate public transportation." -Fresno community member__    
 <br>
-__*"Perjudicados por los controles de tránsito, dirigidos a las personas de color, especialmente a los jóvenes, vehículos con aspecto humilde, conductores indocumentados y sin licencia por situaciones económicas y falta de transporte público adecuado."-Miembro de la Comunidad de Fresno*__
+__*"Perjudicados por los controles de tránsito, dirigidos a las personas de color, especialmente a los jóvenes, vehículos con aspecto humilde, conductores indocumentados y sin licencia por situaciones económicas y falta de transporte público adecuado." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -263,9 +263,9 @@ Fresno PD’s use of traffic stops also causes physical harm and trauma. During 
 
 <br>
 
-> __"The police tend to go straight to physical force when you don’t understand the situation. They’re aggressive."-Fresno Community Member__    
+> __"The police tend to go straight to physical force when you don’t understand the situation. They’re aggressive." -Fresno community member__    
 <br>
-__*"La policía tiende a recurrir directamente a la violencia física cuando uno no entiende la situación. Son agresivos."-Miembro de la Comunidad de Fresno*__
+__*"La policía tiende a recurrir directamente a la violencia física cuando uno no entiende la situación. Son agresivos." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -279,9 +279,9 @@ Community member experiences with Fresno PD strongly suggest that the reported u
 
 <br>
 
-> __"Fui parado por la policía injustamente al igual que mi amigo. Nos bajaron de mi pickup a punta de pistola y no era un agente, eran siete policías. Nos chequearon en la computadora y no encontraron nada de nosotros y nos dejaron ir. ¡Siete policías apuntando con sus armas, y nos esposaron!"-Miembro de la Comunidad de Fresno__    
+> __"Fui parado por la policía injustamente al igual que mi amigo. Nos bajaron de mi pickup a punta de pistola y no era un agente, eran siete policías. Nos chequearon en la computadora y no encontraron nada de nosotros y nos dejaron ir. ¡Siete policías apuntando con sus armas, y nos esposaron!" -Miembro de la comunidad de Fresno__    
 <br>
-__*"My friend and I were unfairly stopped by the police. They made us get out of my pickup [truck] at gunpoint and it wasn’t a single officer, they were seven. They checked us out on the computer and found nothing on us and let us go. Seven police officers pointing their guns, and they handcuffed us!"-Fresno Community Member*__
+__*"My friend and I were unfairly stopped by the police. They made us get out of my pickup [truck] at gunpoint and it wasn’t a single officer, they were seven. They checked us out on the computer and found nothing on us and let us go. Seven police officers pointing their guns, and they handcuffed us!" -Fresno community member*__
 
 <br>
 People perceived as males of color comprised 78.6% of all people against whom officers used force according to RIPA data. Latinx and Asian men comprised most of these instances of force. During officer-initiated stops, officers used force exclusively during stops they started for suspected traffic reasons. Officers initiated half of these stops for reasons that did not indicate an imminent threat to community or traffic safety. These included no vehicle or trailer registration, parking violation, bike headlight violation, and license plates displayed incorrectly.
@@ -292,9 +292,9 @@ People perceived as males of color comprised 78.6% of all people against whom of
 
 <br>
 
-> __"I have been stopped at gunpoint by multiple officers at once. My old roommate was consistently stopped by police, taken behind Romains and beat. He was eventually shot and killed by an officer."-Fresno Community Member__    
+> __"I have been stopped at gunpoint by multiple officers at once. My old roommate was consistently stopped by police, taken behind Romains and beat. He was eventually shot and killed by an officer." -Fresno community member__    
 <br>
-__*"Varios agentes de policía a la vez me han detenido a punta de pistola. La policía detenía constantemente a mi antiguo compañero de cuarto, lo llevaba detrás de Romain’s y lo golpeaba. Finalmente, un oficial lo mató a tiros."-Miembro de la Comunidad de Fresno*__
+__*"Varios agentes de policía a la vez me han detenido a punta de pistola. La policía detenía constantemente a mi antiguo compañero de cuarto, lo llevaba detrás de Romain’s y lo golpeaba. Finalmente, un oficial lo mató a tiros." -Miembro de la comunidad de Fresno*__
 
 <br>
 One of the most common actions Fresno PD officers decide to take during a stop is detaining a person. An officer may detain a person if they suspect a crime and decide to investigate and question the person. One in two people (49.1%) officers detained during officer-initiated traffic stops were Latinx men. This exceeds their share of the Fresno population---comprising just   25.6% of the population. Similarly, Black men make up only 2.9% of the Fresno population but represented 11.3% of people officers decided to detain. 
@@ -317,9 +317,9 @@ Analyzing how officers spend their time on stops shows that this time rarely con
 
 <br>
 
-> __"Para mí, seguridad en mi comunidad significa protección para mi familia, estar seguros sin peligros."-Miembro de la Comunidad de Fresno__    
+> __"Para mí, seguridad en mi comunidad significa protección para mi familia, estar seguros sin peligros." -Miembro de la comunidad de Fresno__    
 <br>
-__*"For me, safety in my community means protection for my family, being safe without danger."-Fresno Community Member*__
+__*"For me, safety in my community means protection for my family, being safe without danger." -Fresno community member*__
 
 <br>
 
@@ -348,9 +348,9 @@ While 23% of stops of White people took Fresno PD more than eight minutes, 31% o
 ```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
 ```
 
-> __"Safety to me means that my kids can leave the house without fear that they will be harassed by the police."-Fresno Community Member__    
+> __"Safety to me means that my kids can leave the house without fear that they will be harassed by the police." -Fresno community member__    
 <br>
-__*"Para mí, la seguridad significa que mis hijos pueden salir de casa sin temor a ser acosados por la policía."-Miembro de la Comunidad de Fresno*__
+__*"Para mí, la seguridad significa que mis hijos pueden salir de casa sin temor a ser acosados por la policía." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -360,9 +360,9 @@ Fresno PD’s practices are not only harmful but also extremely costly. Fresno r
 
 <br>
 
-> __"I would like to see the money going to the police force be spent in a way that is actually helping our community instead of hurting."-Fresno Community Member__    
+> __"I would like to see the money going to the police force be spent in a way that is actually helping our community instead of hurting." -Fresno community member__    
 <br>
-__*"Me gustaría que el dinero que se destina a la policía se gaste de una forma que realmente ayude a nuestra comunidad, en vez de perjudicarla."-Miembro de la Comunidad de Fresno*__
+__*"Me gustaría que el dinero que se destina a la policía se gaste de una forma que realmente ayude a nuestra comunidad, en vez de perjudicarla." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -403,9 +403,9 @@ Overall, how Fresno allocates dollars across these two departments shows a disco
 
 # RECOMMENDATIONS
 
-> __"Invest in mental health services, assist affordable housing, increase green space and community youth centers."-Fresno Community Member__    
+> __"Invest in mental health services, assist affordable housing, increase green space and community youth centers." -Fresno community member__    
 <br>
-__*"Invertir en servicios de salud mental, ayudar con viviendas asequibles, aumentar las áreas verdes y centros juveniles comunitarios."-Miembro de la Comunidad de Fresno*__
+__*"Invertir en servicios de salud mental, ayudar con viviendas asequibles, aumentar las áreas verdes y centros juveniles comunitarios." -Miembro de la comunidad de Fresno*__
 
 <br>
 
@@ -423,17 +423,17 @@ b. Fund community organizations that ensure communities have access to stable an
 
 c. Leverage community budget advocacy so community members have agency over how budget dollars are spent. Ultimately, community members want to fund programs and services directly connected to their priorities and how they define safety. Policymakers and decisionmakers should be accountable to those priorities, particularly when it comes to flexible general fund dollars.  
 
-> __"Brindar más ayuda a personas sin hogar, interesarse realmente por sus necesidades."-Miembro de la Comunidad de Fresno__    
+> __"Brindar más ayuda a personas sin hogar, interesarse realmente por sus necesidades." -Miembro de la comunidad de Fresno__    
 <br>
-__*"Provide more help to unhoused people, take a real interest in their needs."-Fresno Community Member*__
+__*"Provide more help to unhoused people, take a real interest in their needs." -Fresno community member*__
 
 ## 2. Enhance Fresno PD Accountability
 
 a. When a police department or officer harms the community, there must be policies in place that hold them accountable for their acts. In cases of police misconduct, officers must experience real consequences that avoid shifts to different jurisdictions, under-reporting, or no action. Potentially adding an independent commission or oversight office that handles police misconduct is another way to promote more accountability for the department. Consequences for misconduct need to include potential termination but can also take the form of demotions, ensuring policy deters misconduct. The consequences must also be measurable and reportable to the community. 
     
-> __"New trainings for officers and how to handle situations. Better turn out times. Meetings within the different communities, to get feedback from community members."-Fresno Community Member__    
+> __"New trainings for officers and how to handle situations. Better turn out times. Meetings within the different communities, to get feedback from community members." -Fresno community member__    
 <br>
-__*"Más capacitación para los policías de cómo manejar diversas situaciones. Mejorar lapsos de respuesta y asistencia. Reuniones en las diferentes comunidades, para obtener las opiniones de los miembros de la comunidad."-Miembro de la Comunidad de Fresno*__
+__*"Más capacitación para los policías de cómo manejar diversas situaciones. Mejorar lapsos de respuesta y asistencia. Reuniones en las diferentes comunidades, para obtener las opiniones de los miembros de la comunidad." -Miembro de la comunidad de Fresno*__
 
 ## 3. Increase Fresno PD transparency 
 
@@ -459,9 +459,9 @@ The City of Fresno does not now facilitate the community safety that residents d
 
 <br>
 
-> __"Community safety means money going to community, not police. It means prevention, increase in the community services, including mental health therapists, and food, clothing, and shelter. No harassment of our unhoused neighbors or criminalization of youth."-Fresno Community Member__    
+> __"Community safety means money going to community, not police. It means prevention, increase in the community services, including mental health therapists, and food, clothing, and shelter. No harassment of our unhoused neighbors or criminalization of youth." -Fresno community member__    
 <br>
-__*"La seguridad comunitaria significa que el dinero llega a la comunidad, no a la policía. Significa prevención, aumento a los servicios comunitarios, incluyendo asesores de salud mental, y comida, ropa y vivienda. No acosen a nuestros vecinos sin hogar ni criminalicen a la juventud."-Miembro de la Comunidad de Fresno*__
+__*"La seguridad comunitaria significa que el dinero llega a la comunidad, no a la policía. Significa prevención, aumento a los servicios comunitarios, incluyendo asesores de salud mental, y comida, ropa y vivienda. No acosen a nuestros vecinos sin hogar ni criminalicen a la juventud." -Miembro de la comunidad de Fresno*__
 
 # AUTHORS
 
