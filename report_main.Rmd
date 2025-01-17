@@ -32,6 +32,7 @@ con <- connect_to_db("eci_fresno_ripa")
 
 ```
 
+<br>
 All people in Fresno deserve to feel safe. However, the Fresno Police Department uses racially biased traffic stops to profile people of color, thus denying that security to a significant number of Fresno’s residents. This practice undermines community safety, inflicts harm on Black, Indigenous, and People of Color (BIPOC) communities, and wastes time and public dollars. We need a new vision of community safety and reinvestment to keep our families safe and together.
 
 <br>
@@ -78,7 +79,7 @@ __*"That we can better trust law enforcement; for example, that we can hold poli
 <br>
 __*"Better streets. Less trash and more cleanliness. More stores, hospitals, trash cans at bus stops." -Fresno community member*__
 
-# BRIEF METHODOLOGY
+# BRIEF METHODS
 
 This report evaluates Fresno PD activity by analyzing 2022 data collected pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. RIPA requires law enforcement officers to collect and report information on each stop they conduct, including the time and location, why the stop was conducted and what occurred during it, as well as characteristics about the person stopped (e.g., race, gender, and age). This report examines profiling by Fresno PD by analyzing RIPA data on who officers choose to stop, and the actions taken by officers during stops.
 
@@ -406,41 +407,60 @@ Overall, how Fresno allocates dollars across these two departments shows a disco
 __*"Invertir en servicios de salud mental, ayudar con viviendas asequibles, aumentar las áreas verdes y centros juveniles comunitarios." -Miembro de la comunidad de Fresno*__
 
 <br>
-
 Residents have long understood that Fresno PD does not create environments that make the community feel safe. In fact, Fresno PD demonstrates the opposite: they see it making BIPOC communities feel unsafe through over-policing and harassment. Interactions with Fresno PD do not inspire reassurance but instead result in higher stop rates, longer interactions, detainments, and uses of force against BIPOC residents.
 
 <br>
 To address these issues, we present below a comprehensive set of equity-centered recommendations that advance community safety without the violence and harm of traditional police practices. 
 
+<br>
 
 ## 1. Reinvest dollars wasted on non-moving and equipment traffic stops to equity centered safety programs    
 
-a. Invest in community organizations and programming that keep communities safe. This requires making significant investments in organizations that help with food and housing insecurity; supporting transportation, built environment, and green space initiatives, including better lights on the streets; and creating more safe public spaces for youth. Youth development services and organizations that combat recidivism and provide diversion and reentry programs are two additional areas for investment. And finally, Fresno needs more investments in organizations that provide health services, including mental, physical, and behavioral health. Ultimately, community members want to fund organizations directly connected to their priorities and how they define safety.
+A. Invest in community organizations and programming that keep communities safe. This requires making significant investments in organizations that help with food and housing insecurity; supporting transportation, built environment, and green space initiatives, including better lights on the streets; and creating more safe public spaces for youth. Youth development services and organizations that combat recidivism and provide diversion and reentry programs are two additional areas for investment. 
 
-b. Fund community organizations that ensure communities have access to stable and healthy jobs and other resources that give people the income and resources that let them avoid unpaid vehicle registration, unfixed vehicle equipment, and other violations that can lead to harmful pretextual stops. This can look like Fresno investing in community organizations that focus on job expansion and vocational training in the community. It can also include creating fix-it programs that help with vehicle repairs through vouchers and/or partnering with local auto repair shops. This will increase economic activity for local shops while increasing the safe operation of vehicles. The program can be modeled after the [San Joaquin Valley Air District’s](https://ww2.valleyair.org/grants/drive-clean-in-the-san-joaquin/repair/) [Tune-In Tune-Up program](https://valleycan.org/virtual-titu/).
+And finally, Fresno needs more investments in organizations that provide health services, including mental, physical, and behavioral health. Ultimately, community members want to fund organizations directly connected to their priorities and how they define safety.
 
-c. Leverage community budget advocacy so community members have agency over how budget dollars are spent. Ultimately, community members want to fund programs and services directly connected to their priorities and how they define safety. Policymakers and decisionmakers should be accountable to those priorities, particularly when it comes to flexible general fund dollars.  
+<br>
+B. Fund community organizations that ensure communities have access to stable and healthy jobs and other resources that give people the income and resources that let them avoid unpaid vehicle registration, unfixed vehicle equipment, and other violations that can lead to harmful pretextual stops. 
+
+This can look like Fresno investing in community organizations that focus on job expansion and vocational training in the community. It can also include creating fix-it programs that help with vehicle repairs through vouchers and/or partnering with local auto repair shops. This will increase economic activity for local shops while increasing the safe operation of vehicles. The program can be modeled after the [San Joaquin Valley Air District’s](https://ww2.valleyair.org/grants/drive-clean-in-the-san-joaquin/repair/) [Tune-In Tune-Up program](https://valleycan.org/virtual-titu/).
+
+<br>
+C. Leverage community budget advocacy so community members have agency over how budget dollars are spent. Ultimately, community members want to fund programs and services directly connected to their priorities and how they define safety. Policymakers and decisionmakers should be accountable to those priorities, particularly when it comes to flexible general fund dollars.  
+
+<br>
 
 > __"Brindar más ayuda a personas sin hogar, interesarse realmente por sus necesidades." -Miembro de la comunidad de Fresno__    
 <br>
 __*"Provide more help to unhoused people, take a real interest in their needs." -Fresno community member*__
 
+<br>
+
 ## 2. Enhance Fresno PD accountability
 
-a. When a police department or officer harms the community, there must be policies in place that hold them accountable for their acts. In cases of police misconduct, officers must experience real consequences that avoid shifts to different jurisdictions, under-reporting, or no action. Potentially adding an independent commission or oversight office that handles police misconduct is another way to promote more accountability for the department. Consequences for misconduct need to include potential termination but can also take the form of demotions, ensuring policy deters misconduct. The consequences must also be measurable and reportable to the community. 
+A. When a police department or officer harms the community, there must be policies in place that hold them accountable for their acts. In cases of police misconduct, officers must experience real consequences that avoid shifts to different jurisdictions, under-reporting, or no action. Potentially adding an independent commission or oversight office that handles police misconduct is another way to promote more accountability for the department. Consequences for misconduct need to include potential termination but can also take the form of demotions, ensuring policy deters misconduct. The consequences must also be measurable and reportable to the community. 
     
+<br>
+
 > __"New trainings for officers and how to handle situations. Better turn out times. Meetings within the different communities, to get feedback from community members." -Fresno community member__    
 <br>
 __*"Más capacitación para los policías de cómo manejar diversas situaciones. Mejorar lapsos de respuesta y asistencia. Reuniones en las diferentes comunidades, para obtener las opiniones de los miembros de la comunidad." -Miembro de la comunidad de Fresno*__
 
+<br>
+
 ## 3. Increase Fresno PD transparency 
 
-a. Make Fresno PD data transparent and available to the public through public-facing dashboards and other tools, to stop shielding bad cops or procedures within the department. Dashboards can provide data that increases department accountability by providing more details about stops and the people making them. Coordinates of where stops occurred and demographic information on officers making stops are examples of data that a dashboard should provide to increase transparency and foster more public trust.
+A. Make Fresno PD data transparent and available to the public through public-facing dashboards and other tools, to stop shielding bad cops or procedures within the department. Dashboards can provide data that increases department accountability by providing more details about stops and the people making them. Coordinates of where stops occurred and demographic information on officers making stops are examples of data that a dashboard should provide to increase transparency and foster more public trust.
+
+<br>
 
 ## 4. Establish care-centered community safety infrastructure
 
-a. Re-imagining safety infrastructure should include ending stops for non-moving and equipment violations that are used to criminalize BIPOC communities. Instead, the city should take a preventative trust-building approach by conducting community trainings on how to address non-moving violations, and by offering incentives and amnesty to encourage residents to voluntarily correct equipment violations. Shifting more resources towards calls for service will also help improve responsiveness to community needs through reduced wait times and fewer dropped calls. Investigating and addressing the causes of long wait times and dropped calls will be a critical part of this shift and building more community trust.
- 
+A. Re-imagining safety infrastructure should include ending stops for non-moving and equipment violations that are used to criminalize BIPOC communities. Instead, the city should take a preventative trust-building approach by conducting community trainings on how to address non-moving violations, and by offering incentives and amnesty to encourage residents to voluntarily correct equipment violations. 
+
+Shifting more resources towards calls for service will also help improve responsiveness to community needs through reduced wait times and fewer dropped calls. Investigating and addressing the causes of long wait times and dropped calls will be a critical part of this shift and building more community trust.
+
+<br>
 
 # CONCLUSION
 
@@ -461,7 +481,9 @@ The City of Fresno does not now facilitate the community safety that residents d
 <br>
 __*"La seguridad comunitaria significa que el dinero llega a la comunidad, no a la policía. Significa prevención, aumento a los servicios comunitarios, incluyendo asesores de salud mental, y comida, ropa y vivienda. No acosen a nuestros vecinos sin hogar ni criminalicen a la juventud." -Miembro de la comunidad de Fresno*__
 
-# AUTHORS
+<br>
+
+# AUTHORS & METHODS
 
 __CATALYST CALIFORNIA__
 
@@ -487,6 +509,6 @@ __REPORT CITATION__
 
 Catalyst California and Fresno Building Healthy Communities. "Traffic Stops and Race: *An Analysis of Police Stops in Fresno*." 2025. https://fresnobhcdev.wpenginepowered.com/ripa-report/[PENDING]. 
 
-# METHODOLOGY
+__DETAILED METHODOLOGY__
 
 Click [here](https://github.com/catalystcalifornia/fresnoripa/blob/main/README.md) for access to our detailed methods.
