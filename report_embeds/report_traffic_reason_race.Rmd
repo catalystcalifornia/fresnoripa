@@ -98,7 +98,7 @@ racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern)/North Afr
 caption_text <- paste(sourcenote, methodnote,racenote)
 
 # create tooltip text
-tooltip_text <- "Out of all the people Fresno PD stopped for traffic reasons and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.1f}</b> people."
+tooltip_text <- "Out of all the people Fresno PD stopped for traffic reasons and perceived as <b>{point.race_label}</b>, <b>{point.rate:.1f}%</b> of those people were stopped for <b>{point.statute_literal_25}</b>, or a total of <b>{point.count:.f}</b> people."
 
 # get rdaCharts theme for custom chart
 data(theme_options)
