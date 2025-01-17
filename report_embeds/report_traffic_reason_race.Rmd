@@ -165,9 +165,9 @@ list_of_plots <- map(unique(df_final$statute_literal_25), function(x) {
           series=list(
             dataLabels=list(
               enabled=TRUE,
-              format=list(pointFormat="{point.rate:.0f}%"),
+              format = '{point.rate:.1f}',
               style = list(fontSize = "14px"))))),
-      filename = paste0("Percent of traffic stops by traffic reason and race","_Catalyst California, catalystcalifornia.org, ", format(Sys.Date(), "%Y"), "."),
+      filename = paste0("Percent of traffic stops made for  ", x, " reason out of all traffic stops by race","_Catalyst California, catalystcalifornia.org, ", format(Sys.Date(), "%Y"), "."),
       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
                                                      'downloadXLS', 'downloadCSV'))))
 })
