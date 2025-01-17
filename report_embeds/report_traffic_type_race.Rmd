@@ -31,20 +31,21 @@ con <- connect_to_db("eci_fresno_ripa")
 
 # pull analysis table for visualizing
 df<-dbGetQuery(con, "SELECT * FROM report_traffic_type_race")%>%
-  mutate(race_label=case_when(
-    race == "latinx" ~ "Latinx",
-    race == "nh_aian" ~ "AIAN NH",
-    race == "nh_black" ~ "Black",
-    race == "nh_multiracial" ~ "Multiracial",
-    race == "nh_nhpi" ~ "NHPI NH",
-    race == "nh_sswana" ~ "SSWANA NH",
-    race == "nh_white" ~ "White",
-    race == "aian_aoic" ~ "AIAN", 
-    race == "nhpi_aoic" ~ "NHPI",
-    race == "sswana_aoic" ~ "SWANA/SA",
-    race == "nh_asian_wo_sa" ~"Asian",
-    race == 'nh_asian' ~ "Asian", 
-    .default = race)) %>%
+  mutate(
+    race_label=case_when(
+      race == "latinx" ~ "Latinx", 
+      race == "nh_aian" ~ "AIAN NH", 
+      race == "nh_black" ~ "Black", 
+      race == "nh_multiracial" ~ "Multiracial", 
+      race == "nh_nhpi" ~ "NHPI NH", 
+      race == "nh_sswana" ~ "SSWANA NH", 
+      race == "nh_white" ~ "White", 
+      race == "aian_aoic" ~ "AIAN", 
+      race == "nhpi_aoic" ~ "NHPI", 
+      race == "sswana_aoic" ~ "SWANA/SA", 
+      race == "nh_asian_wo_sa" ~ "Asian", 
+      race == 'nh_asian' ~ "Asian", 
+      .default = race)) %>%
   filter(race!="nh_sswana")
 
 threshold<-df[df$denom =="traffic_race" & df$total>=5, ]
@@ -214,20 +215,21 @@ highchart() %>%
         }"))) %>%
 
   hc_exporting(
-      enabled = TRUE,
-      sourceWidth=900,
-      sourceHeight=600,
-      chartOptions=list(
-        plotOptions=list(
-          series=list(
-            dataLabels=list(
-              enabled=TRUE,
-              format=list(pointFormat='{point.rate:.1f}'),
-              style = list(fontSize = "14px"))))),
-      filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, ",
-                        format(Sys.Date(), "%Y"), "."),
-      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-                                                     'downloadXLS', 'downloadCSV'))))
+    enabled = TRUE,
+    sourceWidth = 900,
+    sourceHeight = 600,
+    chartOptions = list(
+      plotOptions = list(
+        series = list(
+          dataLabels = list(
+            enabled = TRUE,
+            format = '{point.rate:.1f}',  # Changed from format=list() to direct string
+            style = list(fontSize = "14px"))))),
+    filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, ",
+                      format(Sys.Date(), "%Y")),
+    buttons = list(
+      contextButton = list(
+        menuItems = list('downloadPNG', 'downloadSVG', 'downloadXLS', 'downloadCSV'))))
 
 
 ```
