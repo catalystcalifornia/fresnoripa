@@ -1,5 +1,5 @@
 ---
-title: "Traffic Stops and Race: An Analysis of Police Stops in Fresno"
+title: "Traffic Stops and Race: *An Analysis of Police Stops in Fresno*"
 author: "Catalyst California in partnership with Fresno Building Healthy Communities"
 date: "24 January, 2025"
 output:
@@ -373,7 +373,7 @@ A local budget consists of several funds that capture and categorize revenue, ba
 The City of Fresno’s proposed budget of Fiscal Year 2024-2025 (FY25) shows that Fresno PD’s total proposed expenditures for this budget cycle are \$288.3 million (including general and special revenues in the operating budget, debt service, and capital funds).^[Mayor’s Proposed Fiscal Year 2025 Budget, City of Fresno, p. B-170. https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget.pdf.] This is an increase of over \$2.8 million from the previous fiscal year. In comparison, PARCS’ (Parks, After School, Recreation, and Community Services Department) total proposed expenditures for the same budget cycle are $155.2 million.
 
 <br>
-The PARCS department is a better long-term safety investment than spending public dollars on Fresno PD because PARCS’ programs and services address the root causes of safety risks. Specifically, he PARCS’ stated purpose is to “improve the quality of life citywide by providing safe, clean, accessible parks and community centers, offering diverse programs and recreational activities, and fostering meaningful partnerships. In coordination with multiple city departments and community organizations, PARCS oversees 20 community centers, over 80 parks, and multiple special-use facilities.”^[Mayor’s Proposed Fiscal Year 2025 Budget, City of Fresno, p. B-128. https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget.pdf.]
+The PARCS department is a better long-term safety investment than spending public dollars on Fresno PD because PARCS’ programs and services address the root causes of safety risks. Specifically, the PARCS’ stated purpose is to “improve the quality of life citywide by providing safe, clean, accessible parks and community centers, offering diverse programs and recreational activities, and fostering meaningful partnerships. In coordination with multiple city departments and community organizations, PARCS oversees 20 community centers, over 80 parks, and multiple special-use facilities.”^[Mayor’s Proposed Fiscal Year 2025 Budget, City of Fresno, p. B-128. https://www.fresno.gov/wp-content/uploads/2024/05/FY-2025-Mayors-Proposed-Budget.pdf.]
 
 <br>
 The function of the PARCS department reflects the vision and desires of the community for what effective community safety can look like. Thus, when reimagining community safety, making significant and meaningful investments into this department can promote building out community-care centered infrastructure that keeps communities safe. However, we see that Fresno PD’s budget was 60 percent more than the PARCS budget. 
@@ -468,26 +468,26 @@ __CATALYST CALIFORNIA__
 
 __Equity in Community Investments__
 
-* Myanna Khalfani-King, Manager, Equity in Community Investments, Catalyst California
+* Myanna Khalfani-King, Manager
 * Michael Nailat, Associate Director
 
 __Research and Data Analysis__
 
-* Elycia Mulholland Graves, Director, Research & Data Analysis, Catalyst California
-* Jennifer Zhang, Senior Research & Data Analyst, Catalyst California
-* Hillary Khan, Data Architect, Catalyst California
+* Elycia Mulholland Graves, Director
+* Jennifer Zhang, Senior Research and Data Analyst
+* Hillary Khan, Data Architect Manager
 * Alicia Võ, Research and Data Analyst
 
 Thank you to Sandra Soria and Isaac Bushnell for their research and data analyst support early in this project.
 
 __Reimagine Justice and Safety__
 
-Chauncee Smith, Associate Director, Catalyst California
+Chauncee Smith, Associate Director
 
 __REPORT CITATION__
 
-Catalyst California and Fresno Building Healthy Communities. "In the Glare of the Blue Lights: An Analysis of Police Stops in Fresno." 2025. https://fresnobhcdev.wpenginepowered.com/ripa-report/[PENDING]. 
+Catalyst California and Fresno Building Healthy Communities. "Traffic Stops and Race: *An Analysis of Police Stops in Fresno*." 2025. https://fresnobhcdev.wpenginepowered.com/ripa-report/[PENDING]. 
 
 # METHODOLOGY
 
-Click [here](https://github.com/catalystcalifornia/fresnoripa/blob/main/report_main.Rmd) for access to our detailed methods.
+Click [here](https://github.com/catalystcalifornia/fresnoripa/blob/main/README.md) for access to our detailed methods.
