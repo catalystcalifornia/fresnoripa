@@ -194,7 +194,7 @@ A world where systems are designed for justice and support equitable access to r
 
 ## Partners
 
-[Fresno Building Healthy Communities](https://es.fresnobhc.org/)
+### [Fresno Building Healthy Communities](https://es.fresnobhc.org/)
 
 Our Mission: To foster and encourage thriving communities where all children and families can live healthy, safe and productive lives. 
 
