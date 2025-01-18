@@ -121,6 +121,8 @@ list2env(theme_options, envir = .GlobalEnv)
 ```
 
 ```{r, echo=FALSE}
+df <- df %>%
+  select(bipoc, bipoc_label, stop_duration_capped)
 
 jitter_chart <- highchart() %>%
   hc_chart(inverted = TRUE) %>%
@@ -222,11 +224,11 @@ jitter_chart <- highchart() %>%
           series=list(
             dataLabels=list(
               enabled=TRUE,
-              format=list(pointFormat=tooltip_text),
+              format=tooltip_text,
               style = list(fontSize = "14px"))))),
       filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, 2024."),
       buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-                                                     'downloadXLS', 'downloadCSV'))))
+                                                     'downloadXLS', 'downloadCSV')))) 
 
 jitter_chart
 
