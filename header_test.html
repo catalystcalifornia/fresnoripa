@@ -9,7 +9,6 @@
 * {
   color: #0A0A0A; 
   font-family: open-sans, sans-serif;
-  contain: content; /* Added for performance */
 }
 
 /* --Headers-- */
@@ -55,8 +54,7 @@ body{
   font-family: open-sans;
   font-size: 16px;
   background-color: #FFFFFF;
-  opacity: 1 !important; /* Ensure content is visible */
-  display: block !important;
+  display: block !important; /* Ensure content is visible */
 }
 
 /* --Footer Logo-- */
@@ -79,78 +77,38 @@ body{
 }
 
 /* --Performance Optimizations-- */
-.chart-container {
-    min-height: 400px;
-    background: #f5f5f5;
-    margin: 1em 0;
-    contain: layout style paint;
-}
-
+/* Optimize chart rendering */
 .highcharts-container {
-    contain: layout style paint;
+    will-change: transform;
+    transform: translateZ(0);
 }
 
-/* Ensure text content is visible immediately */
+/* Ensure text content is immediately visible */
 p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote {
-    opacity: 1 !important;
     visibility: visible !important;
 }
 
-/* Optimize rendering performance */
+/* Optimize main container */
 .main-container {
-    contain: content;
+    will-change: transform;
 }
 
-/* Ensure smooth transitions */
-.loaded {
-    transition: opacity 0.3s ease-in;
+/* Optimize scrolling */
+html {
+    scroll-behavior: smooth;
 }
 </style>
 
 <script>
-// Optimize initial load
-document.addEventListener('DOMContentLoaded', function() {
-    // Force FOUT to show content faster
-    document.documentElement.classList.add('wf-active');
-    
-    // Optimize Highcharts if it exists
-    if (window.Highcharts) {
-        Highcharts.setOptions({
-            plotOptions: {
-                series: {
-                    animation: false, // Disable animations for better performance
-                    enableMouseTracking: false, // Enable only when chart is visible
-                    turboThreshold: 0 // Optimize large datasets
-                }
-            },
-            chart: {
-                renderTo: 'container',
-                events: {
-                    load: function() {
-                        // Enable interactivity after chart loads
-                        this.series.forEach(function(s) {
-                            s.options.enableMouseTracking = true;
-                        });
-                    }
-                }
+// Basic Highcharts optimization
+if (window.Highcharts) {
+    Highcharts.setOptions({
+        plotOptions: {
+            series: {
+                animation: false,  // Disable animations for better performance
+                turboThreshold: 0  // Optimize large datasets
             }
-        });
-    }
-
-    // Notify parent when content is ready
-    if (window.parent !== window) {
-        window.parent.postMessage('iframe-loaded', '*');
-    }
-});
-
-// Optimize scroll performance
-let scrollTimeout;
-window.addEventListener('scroll', function() {
-    if (!scrollTimeout) {
-        scrollTimeout = setTimeout(function() {
-            scrollTimeout = null;
-            // Handle any scroll-based updates here
-        }, 100);
-    }
-}, { passive: true });
+        }
+    });
+}
 </script>
