@@ -78,4 +78,45 @@ body{
   border-color: #053451;
 }
 
+/* --Related to lazy loading-- */
+.chart-container {
+    min-height: 600px; /* Adjust based on your charts' typical height */
+}
+.chart-content {
+    display: none;
+}
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 600px;
+    background: #f5f5f5;
+}
+
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const container = entry.target;
+                if (!container.classList.contains('loaded')) {
+                    container.classList.add('loaded');
+                    // Show the chart content
+                    container.querySelector('.chart-content').style.display = 'block';
+                    // Hide the placeholder
+                    container.querySelector('.chart-placeholder').style.display = 'none';
+                }
+            }
+        });
+    }, {
+        rootMargin: '50px' // Load charts when they're within 50px of viewport
+    });
+
+    // Observe all chart containers
+    document.querySelectorAll('.chart-container').forEach(container => {
+        observer.observe(container);
+    });
+});
+</script>
