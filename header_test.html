@@ -86,6 +86,7 @@ body{
 /* Ensure text content is immediately visible */
 p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote {
     visibility: visible !important;
+    font-display: swap; /* Optimize font loading */
 }
 
 /* Optimize main container */
@@ -97,18 +98,64 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote {
 html {
     scroll-behavior: smooth;
 }
+
+/* Force Highcharts to use our fonts */
+.highcharts-root text {
+    font-family: open-sans, sans-serif !important;
+}
 </style>
 
 <script>
-// Basic Highcharts optimization
+// Comprehensive Highcharts optimization
 if (window.Highcharts) {
     Highcharts.setOptions({
+        chart: {
+            style: {
+                fontFamily: 'open-sans, sans-serif' // Use Adobe fonts
+            }
+        },
+        title: {
+            style: {
+                fontFamily: 'open-sans, sans-serif'
+            }
+        },
+        subtitle: {
+            style: {
+                fontFamily: 'open-sans, sans-serif'
+            }
+        },
+        legend: {
+            itemStyle: {
+                fontFamily: 'open-sans, sans-serif'
+            }
+        },
         plotOptions: {
             series: {
-                animation: false,  // Disable animations for better performance
-                turboThreshold: 0  // Optimize large datasets
+                animation: false,
+                turboThreshold: 0,
+                dataLabels: {
+                    style: {
+                        fontFamily: 'open-sans, sans-serif'
+                    }
+                }
             }
+        },
+        // Prevent Highcharts from loading any external resources
+        credits: {
+            enabled: false
         }
     });
 }
+
+// Ensure fonts are loaded before rendering
+document.fonts.ready.then(function() {
+    document.documentElement.classList.add('fonts-loaded');
+});
+
+// Add font loading timeout for mobile
+setTimeout(function() {
+    if (!document.documentElement.classList.contains('fonts-loaded')) {
+        document.documentElement.classList.add('fonts-loaded');
+    }
+}, 3000); // 3 second timeout
 </script>
