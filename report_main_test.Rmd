@@ -134,10 +134,8 @@ __*"Me han singularizado por las cosas más simples. Como por la forma en que es
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaBubblepop-chart, child= 'report_embeds/report_traffic_race.Rmd'}
 ```
-  </div>
 </div>
 
 In addition, community members report that Fresno PD uses many racially biased stops to label people of color—especially Latinx and Southeast Asian people—as gang members. Also known as gang profiling, this practice has devastating consequences. For example, a gang member classification can subject a person to longer periods in jail or prison. It can also “negatively impact people facing relatively low charges because the threat of far more lengthy imprisonment affects plea bargaining, charging decisions, juror perspectives, and other factors in criminal cases. For immigrant communities, this often includes potential deportation.”^[Catalyst California and Pillars of the Community. End Gang Profiling in Southeast San Diego: Data and Stories from Community Members. 2024. https://www.catalystcalifornia.org/campaign-tools/maps-and-data/end-gang-profiling-in-southeast-san-diego-data-and-stories-from-community-members.]
@@ -165,10 +163,8 @@ Out of all traffic stops Fresno PD conducted for each racial group, officers sto
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaGroupedbar-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -190,10 +186,8 @@ These disparities are greater than disparities observed in moving traffic stops.
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r stackedbar-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -233,10 +227,8 @@ The discrepancy between this statistic and data showing that officers are more l
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r facet-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
 ```
-  </div>
 </div>
 <br>
 These data also align with community experiences. Fresno community members say not only that Fresno PD targets people for traffic stops based on a person’s appearance, but also that these targeted stops are being made without any evidence of crime.
@@ -258,10 +250,8 @@ Analyzing the results of Fresno PD’s traffic stops further shows how these sto
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaBar-chart, child= 'report_embeds/report_traffic_result_stop.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -274,10 +264,8 @@ Fresno PD is more likely to ticket people of color for traffic violations that p
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r facet-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
-  </div>
 </div>
 <br>
 The chart below focuses specifically on the people Fresno PD stopped for traffic reasons and cited for driving without a license. This citation can indicate that Fresno PD is profiling immigrants. Community members expressed that Fresno PD targets Latinx people and harasses them to produce their license to determine whether they are undocumented. There are also reports that local law enforcement works closely with Immigration and Customs Enforcement (ICE) to target people for deportation. Fresno PD stopped 273 people perceived as Latinx, Black, Asian, or SWANA/SA and ticketed them for driving without a license, compared to only 40 White people. 
@@ -287,10 +275,8 @@ The chart below focuses specifically on the people Fresno PD stopped for traffic
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -333,10 +319,8 @@ People perceived as males of color comprised 78.6% of all people against whom of
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -358,10 +342,8 @@ Officers arrested 19.2% of Latinx men and just 8.3% of Black men they detained, 
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaBar-chart, child= 'report_embeds/report_traffic_detained_visual.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -390,10 +372,8 @@ Meanwhile, Fresno residents say they do not feel safe in community spaces. They 
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
 ```
-  </div>
 </div>
 <br>
 
@@ -409,10 +389,8 @@ While 23% of stops of White people took Fresno PD more than eight minutes, 31% o
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
 ```
-  </div>
 </div>
 
 
@@ -468,10 +446,8 @@ Overall, how Fresno allocates dollars across these two departments shows a disco
   <div class="chart-placeholder">
     Loading visualization...
   </div>
-  <div class="chart-content">
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_budget_stacked.Rmd'}
 ```
-  </div>
 </div>
 
 
