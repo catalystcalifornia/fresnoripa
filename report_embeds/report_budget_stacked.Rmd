@@ -47,7 +47,7 @@ df_budget <- data.frame(
 budget = c( 255932800, 20918800, 288364100-255932800, 155293200-20918800
 ),
 
-type=c("Dollars From City's General Fund Operating Budget", "Dollars From City's General Fund Operating Budget", "Dollars From Other Sources", "Dollars From Other Sources"))
+type=c("Dollars From The General Fund Operating Budget", "Dollars From The General Fund Operating Budget", "Dollars From Other Sources", "Dollars From Other Sources"))
 
 # add budget rate
 df_budget<-df_budget%>%
@@ -62,7 +62,7 @@ df_budget<-df_budget%>%
   )
 
 #factors to order plot by
-type_factors<-c("Dollars From City's General Fund Operating Budget","Dollars From Other Sources") 
+type_factors<-c("Dollars From The General Fund Operating Budget","Dollars From Other Sources") 
 
 df_budget$type <- factor(x=df_budget$type, levels = type_factors) # factor levels to order plot by
 
@@ -87,7 +87,7 @@ subtitle <-"FY 2025 proposed budget allocation for Fresno PD versus PARCS"
 
 # create tooltip text
 
-tooltip_text <- paste0("Fresno city is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025, equal to <b>{point.rate:,.1f}%</b> of <b>{point.fundee}</b> budget.")
+tooltip_text <- paste0("Fresno City is proposing to allocate <b>${point.budget:,.0f}</b> in <b>{point.type}</b> to <b>{point.fundee}</b> in FY2025, equal to <b>{point.rate:,.1f}%</b> of the <b>{point.fundee}</b> budget.")
 
 
 ## stacked----------------
