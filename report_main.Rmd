@@ -9,6 +9,8 @@ output:
     toc_float: yes
     includes:
       in_header: header.html
+    mathjax: null
+    
 ---
 
 ```{r setup, include=FALSE}

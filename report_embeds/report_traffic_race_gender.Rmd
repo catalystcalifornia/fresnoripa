@@ -4,6 +4,7 @@ output:
   html_document:
     includes:
       in_header: "../header.html"
+    mathjax: null
 ---
 
 ```{r, include=FALSE}
