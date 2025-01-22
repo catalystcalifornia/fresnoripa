@@ -1,9 +1,7 @@
 <!-- Import Adobe fonts -->
 <link rel="stylesheet" href="https://use.typekit.net/kjp5mnx.css">
 
-
 <style>
-  /* Fresno BHC Brand Guide CSS Stylesheet for RMDs*/
 
 /* Setting global properties */
 * {
@@ -75,7 +73,7 @@ body{
   border-color: #053451;
 }
 
-/* Force Highcharts to use our fonts */
+//* Force Highcharts to use our fonts through CSS */
 .highcharts-root,
 .highcharts-root text,
 .highcharts-container,
@@ -83,103 +81,17 @@ body{
 .highcharts-subtitle,
 .highcharts-legend-item > text,
 .highcharts-axis-labels,
-.highcharts-data-label text {
+.highcharts-data-label text,
+.highcharts-legend text {
     font-family: open-sans, sans-serif !important;
+}
+
+.highcharts-title {
+    font-weight: 700 !important;
+}
+
+.highcharts-legend-item > text {
     font-weight: 400 !important;
-}
-
-/* Chart container styles */
-.chart-container {
-    min-height: 600px;
-    margin: 1em 0;
-}
-
-.chart-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 600px;
-    background: #f5f5f5;
 }
 </style>
 
-<script>
-// Configure Highcharts before it loads
-if (window.Highcharts) {
-    // More robust style handling
-    Highcharts.SVGRenderer.prototype.getStyle = function(style) {
-        // Default styles map
-        const styles = {
-            fontFamily: 'open-sans, sans-serif',
-            fontSize: '12px',
-            fontWeight: '400',
-            // Add other potential style properties
-            color: '#0A0A0A',
-            textOverflow: 'ellipsis'
-        };
-        
-        // Return requested style or the original style if not in our map
-        return styles[style] || style;
-    };
-    
-    Highcharts.setOptions({
-        chart: {
-            style: {
-                fontFamily: 'open-sans, sans-serif',
-                fontSize: '12px',
-                fontWeight: '400'
-            },
-            events: {
-                load: function() {
-                    // Hide the placeholder when chart loads
-                    const container = this.container.parentNode.parentNode;
-                    const placeholder = container.querySelector('.chart-placeholder');
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
-                    }
-                }
-            }
-        },
-        plotOptions: {
-            series: {
-                animation: false,
-                turboThreshold: 0
-            }
-        },
-        // Add explicit styling for all text elements
-        title: {
-            style: {
-                fontFamily: 'open-sans, sans-serif',
-                fontSize: '16px',
-                fontWeight: '400'
-            }
-        },
-        subtitle: {
-            style: {
-                fontFamily: 'open-sans, sans-serif',
-                fontSize: '14px',
-                fontWeight: '400'
-            }
-        },
-        legend: {
-            itemStyle: {
-                fontFamily: 'open-sans, sans-serif',
-                fontSize: '12px',
-                fontWeight: '400'
-            }
-        }
-    });
-}
-
-// Also handle any charts that might have already loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide placeholders for any charts that are already rendered
-    document.querySelectorAll('.highcharts-container').forEach(function(chart) {
-        const container = chart.parentNode.parentNode;
-        const placeholder = container.querySelector('.chart-placeholder');
-        if (placeholder) {
-            placeholder.style.display = 'none';
-        }
-    });
-});
-</script>
