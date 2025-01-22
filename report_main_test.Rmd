@@ -30,6 +30,7 @@ con <- connect_to_db("eci_fresno_ripa")
 
 ## Reknit all embeds so git will recognize file changes
 # source("report_embeds/run_embeds.R")
+options(highcharter.google_fonts = FALSE)
 
 ```
 
@@ -131,13 +132,8 @@ For every 1,000 Black people who live in the city, Fresno PD stopped 16.7 people
 __*"Me han singularizado por las cosas más simples. Como por la forma en que estamos vestidos. Por nuestros tatuajes. Color de nuestra piel. La gente con quien andamos. Además de en qué parte de la ciudad nos encontramos, simplemente puedes ser un blanco para la policía." -Miembro de la comunidad de Fresno*__
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaBubblepop-chart, child= 'report_embeds/report_traffic_race.Rmd'}
 ```
-</div>
 
 In addition, community members report that Fresno PD uses many racially biased stops to label people of color—especially Latinx and Southeast Asian people—as gang members. Also known as gang profiling, this practice has devastating consequences. For example, a gang member classification can subject a person to longer periods in jail or prison. It can also “negatively impact people facing relatively low charges because the threat of far more lengthy imprisonment affects plea bargaining, charging decisions, juror perspectives, and other factors in criminal cases. For immigrant communities, this often includes potential deportation.”^[Catalyst California and Pillars of the Community. End Gang Profiling in Southeast San Diego: Data and Stories from Community Members. 2024. https://www.catalystcalifornia.org/campaign-tools/maps-and-data/end-gang-profiling-in-southeast-san-diego-data-and-stories-from-community-members.]
 
@@ -160,13 +156,8 @@ __*"Sí, yo personalmente he sido singularizado por la policía durante un paro 
 Out of all traffic stops Fresno PD conducted for each racial group, officers stopped people they perceived as male at higher rates than people perceived as female for all groups other than White. The disparity in traffic stops between males and females is highest among American Indian/Alaska Native (AIAN) and SWANA/SA people. Out of all SWANA/SA people Fresno PD stopped for traffic reasons, more than three of four (76.3%) were male.
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaGroupedbar-chart, child= 'report_embeds/report_traffic_race_gender.Rmd'}
 ```
-</div>
 <br>
 
 ### C. People of color are targeted across all types of traffic stops  
@@ -183,13 +174,8 @@ Similarly, for every 1,000 Latinx residents, Fresno PD stopped 2.5 Latinx people
 These disparities are greater than disparities observed in moving traffic stops. Fresno PD stopped Black people for non-moving and equipment traffic stops at a rate 2.4 times greater than the rate for White people. Comparatively, they stopped Black people for moving violations at a rate 1.6 times greater than that for White people. Here is a look at traffic stops made for alleged non-moving and equipment violations.
  
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r stackedbar-chart, child= 'report_embeds/report_traffic_type_race.Rmd'}
 ```
-</div>
 <br>
 
 ## 2. These stops do not advance safety and are used to profile people of color  
@@ -224,13 +210,8 @@ When it comes to traffic violations that may pose safety risks, such as moving v
 The discrepancy between this statistic and data showing that officers are more likely to use equipment and non-moving violations to stop people of color indicates that racial bias influences officer decisions in traffic stops.      
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r facet-chart, child= 'report_embeds/report_traffic_reason_race.Rmd'}
 ```
-</div>
 <br>
 These data also align with community experiences. Fresno community members say not only that Fresno PD targets people for traffic stops based on a person’s appearance, but also that these targeted stops are being made without any evidence of crime.
 
@@ -247,13 +228,8 @@ __*"[La seguridad en mi comunidad significa] sentirme seguro mientras manejo, si
 Analyzing the results of Fresno PD’s traffic stops further shows how these stops do not meaningfully improve safety. Approximately 80.4% of all traffic stops result in a citation for infraction compared to 0.5% that resulted in an arrest. These citations are almost always unrelated to immediate community safety risks. 
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaBar-chart, child= 'report_embeds/report_traffic_result_stop.Rmd'}
 ```
-</div>
 <br>
 
 ### C. Fresno PD’s ticketing practices are racially biased  
@@ -261,24 +237,14 @@ Analyzing the results of Fresno PD’s traffic stops further shows how these sto
 Fresno PD is more likely to ticket people of color for traffic violations that pose little to no safety risk. For example, Latinx people were three times more likely to get a citation for an obstructed window compared to White people. And nearly 75% of citations given for no vehicle registration were given to people of color. As explained in the recommendations, these citations inflict financial costs on communities for concerns that could be better addressed through non-law enforcement alternatives. Comparatively, officers are more likely to ticket White people for speeding. Approximately, 66.3% of all citations officers issued to White people were for speeding, compared to 51.3% of citations issued to Latinx people. In other words, tickets for equipment and non-moving violations that pose little safety risk inflict greater burdens on people of color.
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r facet-chart, child= 'report_embeds/report_traffic_result_citation_race.Rmd'}
 ```
-</div>
 <br>
 The chart below focuses specifically on the people Fresno PD stopped for traffic reasons and cited for driving without a license. This citation can indicate that Fresno PD is profiling immigrants. Community members expressed that Fresno PD targets Latinx people and harasses them to produce their license to determine whether they are undocumented. There are also reports that local law enforcement works closely with Immigration and Customs Enforcement (ICE) to target people for deportation. Fresno PD stopped 273 people perceived as Latinx, Black, Asian, or SWANA/SA and ticketed them for driving without a license, compared to only 40 White people. 
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_traffic_result_citation_license_race.Rmd'}
 ```
-</div>
 <br>
 
 > __"Harmed by traffic stops—targeting of people of color, especially youth. Poor looking vehicles. Undocumented and unlicensed drivers because of economic situations and lack of adequate public transportation." -Fresno community member__    
@@ -316,13 +282,8 @@ __*"My friend and I were unfairly stopped by the police. They made us get out of
 People perceived as males of color comprised 78.6% of all people against whom officers used force according to RIPA data. Latinx and Asian men comprised most of these instances of force. During officer-initiated stops, officers used force exclusively during stops they started for suspected traffic reasons. Officers initiated half of these stops for reasons that did not indicate an imminent threat to community or traffic safety. These included no vehicle or trailer registration, parking violation, bike headlight violation, and license plates displayed incorrectly.
 
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_traffic_uof_visual.Rmd'}
 ```
-</div>
 <br>
 
 > __"I have been stopped at gunpoint by multiple officers at once. My old roommate was consistently stopped by police, taken behind Romains and beat. He was eventually shot and killed by an officer." -Fresno community member__    
@@ -339,13 +300,8 @@ And while Fresno PD is more likely to detain Latinx and Black men during officer
 Officers arrested 19.2% of Latinx men and just 8.3% of Black men they detained, versus 20% of White men. Comparatively, officers were more likely to find no cause or evidence of a crime among Latinx men they detained. More than half (51.9%) of Latinx men they detained were released with a warning or no action. These findings show racial bias among Fresno PD practices. 
  
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaBar-chart, child= 'report_embeds/report_traffic_detained_visual.Rmd'}
 ```
-</div>
 <br>
 
 ## 4. Fresno PD spends a disproportionate amount of time on traffic stops and wastes further resources based on their racial bias
@@ -369,13 +325,8 @@ Meanwhile, Fresno residents say they do not feel safe in community spaces. They 
 
  
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_timespent_reason.Rmd'}
 ```
-</div>
 <br>
 
 ### B. Fresno PD subjects people of color to stops for longer periods than White people
@@ -386,13 +337,8 @@ Officers show bias in how they spend their time during traffic stops. Controllin
 While 23% of stops of White people took Fresno PD more than eight minutes, 31% of stops of people of color took officers more than eight minutes.^[The average time Fresno PD spent stopping a White person for traffic reasons that ended with a ticket, warning, or no action was 7.7 minutes compared to 8.2 minutes on equivalent stops of people of color. The data is skewed toward the higher quartiles. The 75th percentile for time spent on these stops of White people was 8 minutes compared to 10 minutes for people of color. The range in time spent on these stops of White people is 3 to 88.3 minutes compared to 2.7 to 120 minutes for people of color.] Whether a person was White or of color made a difference in how much time officers spent on the stop. This relationship persists when controlling for stop reason, result, and actions taken. Specifically, officers spent more time stopping a person perceived as Black and SWANA/SA, compared to an equivalent stop of a person perceived as White. While the 95th percentile for time spent on traffic stops of White people that resulted in a citation, warning, or no action took was 14 minutes, the 95th percentile for Black people was 19 minutes. 
  
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r jitter-boxplot, child= 'report_embeds/report_timespent_traffic_race.Rmd'}
 ```
-</div>
 
 
 > __"Safety to me means that my kids can leave the house without fear that they will be harassed by the police." -Fresno community member__    
@@ -443,13 +389,8 @@ Overall, how Fresno allocates dollars across these two departments shows a disco
  
  
 <br>
-<div class="chart-container">
-  <div class="chart-placeholder">
-    Loading visualization...
-  </div>
 ```{r rdaStackedbar-chart, child= 'report_embeds/report_budget_stacked.Rmd'}
 ```
-</div>
 
 
 <br>
