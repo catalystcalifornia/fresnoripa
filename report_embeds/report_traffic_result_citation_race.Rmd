@@ -67,6 +67,9 @@ df_result<-df%>%
   filter(count>=5)
 
 # visualize DENOM 1: RACE--------------------------
+# create title
+title_text <- "Officers Show More Bias in Citations Unrelated to Public Safety"
+
 # create caption 
 sourcenote<-"Catalyst California calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
@@ -143,6 +146,22 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
       sourceWidth=900,
       sourceHeight=600,
       chartOptions=list(
+        title = list(
+          text = title_text,
+          style = list(
+            color = "#0A0A0A",
+            fontSize = "21px",
+            lineHeight = "28px",
+            fontFamily = "Montserrat",
+        fontWeight = "800"),
+        align = "left"),
+        caption = list(
+          text = caption_text,
+          style = list(
+            fontSize = "12px",
+            lineHeight = "18px"),
+          align = "left",
+          y = 15),
         plotOptions=list(
           series=list(
             dataLabels=list(
@@ -157,8 +176,7 @@ list_of_plots <- map(unique(df_race$statute_literal_25), function(x) {
 
 ```{r, echo=FALSE}
 # Display chart
-title_text <- "Officers Show More Bias in Citations Unrelated to Public Safety"
-  
+
 browsable(
   tagList(
     # Main title

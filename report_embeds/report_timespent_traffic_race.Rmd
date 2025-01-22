@@ -223,12 +223,10 @@ jitter_chart <- highchart() %>%
         plotOptions=list(
           series=list(
             dataLabels=list(
-              enabled=TRUE,
-              format=tooltip_text,
+              enabled=FALSE,
               style = list(fontSize = "14px"))))),
       filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, 2024."),
-      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG',
-                                                     'downloadXLS', 'downloadCSV')))) 
+      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG')))) 
 
 jitter_chart
 
