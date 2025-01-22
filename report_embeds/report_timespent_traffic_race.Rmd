@@ -122,112 +122,211 @@ list2env(theme_options, envir = .GlobalEnv)
 ```
 
 ```{r, echo=FALSE}
-df <- df %>%
-  select(bipoc, bipoc_label, stop_duration_capped)
-
 jitter_chart <- highchart() %>%
-  hc_chart(inverted = TRUE) %>%
+  hc_chart(
+    inverted = TRUE,
+    events = list(
+      load = JS("function() {
+        var chart = this;
+        var isMobile = window.innerWidth < 500;
+        
+        // If mobile, reduce data points
+        if (isMobile) {
+          var mobileData = this.series[0].data.filter(function(_, i) { 
+            return i % 4 === 0; 
+          });
+          this.series[0].setData(mobileData, false);
+        }
+        
+        // Efficient resize handling
+        var timeout;
+        function updateSize() {
+          var width = chart.containerWidth;
+          var height = Math.max(600, width * 0.7);
+          
+          if (width < 500) {
+            chart.update({
+              chart: {
+                height: height,
+                marginLeft: 10,
+                marginRight: 10
+              },
+              title: { style: { fontSize: '16px' } },
+              subtitle: { style: { fontSize: '14px' } },
+              caption: { style: { fontSize: '12px' } },
+              plotOptions: {
+                scatter: {
+                  enableMouseTracking: true,
+                  marker: { radius: 2 },
+                  jitter: { x: 0.2 }
+                }
+              },
+              legend: {
+                enabled: true,
+                align: 'center',
+                verticalAlign: 'bottom',
+                margin: 15,
+                itemStyle: {
+                  fontSize: '12px'
+                }
+              },
+              xAxis: {
+                labels: {
+                  style: { fontSize: '11px' }
+                }
+              },
+              tooltip: {
+                headerFormat: '',
+                pointFormat: '{series.name}: {point.stop_duration_capped:.0f} minutes'
+              }
+            }, false);
+          } else {
+            chart.update({
+              chart: {
+                height: height,
+                marginLeft: 120,
+                marginRight: 120
+              },
+              title: { style: { fontSize: '21px' } },
+              subtitle: { style: { fontSize: '16px' } },
+              caption: { style: { fontSize: '12px' } },
+              plotOptions: {
+                scatter: {
+                  enableMouseTracking: true,
+                  marker: { radius: 3 },
+                  jitter: { x: 0.345 }
+                }
+              },
+              legend: {
+                enabled: false
+              },
+              xAxis: {
+                labels: {
+                  style: { fontSize: '12px' }
+                }
+              },
+              tooltip: {
+                headerFormat: '',
+                pointFormat: tooltip_text
+              }
+            }, false);
+          }
+          chart.redraw();
+        }
+        
+        updateSize();
+        window.addEventListener('resize', function() {
+          clearTimeout(timeout);
+          timeout = setTimeout(updateSize, 250);
+        });
+        
+        // Cleanup on destroy
+        chart.unbindResize = function() {
+          window.removeEventListener('resize', updateSize);
+        };
+      }"),
+      destroy = JS("function() {
+        if (this.unbindResize) {
+          this.unbindResize();
+        }
+      }")
+    )
+  ) %>%
   hc_add_series(
     data = df,
-    type = "scatter", 
-    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc)) %>%
-  hc_tooltip(headerFormat='', # removes series label from top of tooltip
-               pointFormat = tooltip_text,
-               useHTML=TRUE, # allows tooltip to read <br> html in reformatted tooltip_text
-               style = list(fontSize = "14px")) %>%
-  hc_legend(enabled = FALSE) %>%
+    type = "scatter",
+    turboThreshold = 0,
+    animation = FALSE,
+    name = unique(df$bipoc),  # Added name for legend
+    hcaes(x = bipoc, y = stop_duration_capped, group = bipoc)
+  ) %>%
+  hc_tooltip(
+    headerFormat = '',
+    pointFormat = tooltip_text,
+    useHTML = TRUE,
+    style = list(fontSize = "14px")
+  ) %>%
+  hc_legend(enabled = FALSE) %>%  # Initially disabled, enabled in mobile via JS
   hc_plotOptions(
     scatter = list(
       marker = list(
         radius = 3,
         symbol = "circle",
-        lineWidth = .2),
-      jitter = list(x = .345, y = 0))) %>%
-  hc_xAxis(title = list(text = ""),
-             type = "category",
-             labels = list(style = list(
-                             fontSize = "12px")),
-             overflow = "justify") %>%
-  hc_yAxis(min=0, max=120, 
-           title = list(text = "Time Spent on Each Stop in Minutes",
-                        style=list(
-                          color="#0A0A0A",
-                          fontWeight = 400,
-                          fontSize="12px"))) %>%
-  hc_title(
-      text = paste0(title_text),
-      style = list(
-        useHTML = TRUE,
-        fontSize = "21px",
-        lineHeight = "28px"
-      )) %>%
-    hc_subtitle(
-      text = paste0(subtitle_text),
-      style = list(
-        fontSize = "16px",
-        lineHeight = "22px"
-      )) %>%
-    hc_caption(
-      text = caption_text,
-      useHTML = TRUE,
-      style = list(
-        fontSize = "12px",
-        lineHeight = "18px"
-      )) %>%
-  hc_add_theme(theme_fbhc) %>%
-  hc_chart(
-      height = 600,
-      reflow = TRUE,
-      marginLeft = 120,
-      marginRight = 120,
-      events = list(
-        load = JS("function() {
-          var chart = this;
-          function updateSize() {
-            var width = chart.containerWidth;
-            var height = Math.max(600, width * 0.7);
-            if (width < 500) {
-              chart.update({
-                chart: {
-                  height: height,
-                  marginLeft: 10,
-                  marginRight: 10
-                },
-                title: { style: { fontSize: '16px' } },
-                subtitle: { style: { fontSize: '14px' } },
-                caption: { style: { fontSize: '12px' } }
-              }, false);
-            } else {
-              chart.update({
-                chart: {
-                  height: height,
-                  marginLeft: 120,
-                  marginRight: 120
-                },
-                title: { style: { fontSize: '21px' } },
-                subtitle: { style: { fontSize: '16px' } },
-                caption: { style: { fontSize: '12px' } }
-              }, false);
-            }
-            chart.redraw();
-          }
-          updateSize();
-          window.addEventListener('resize', updateSize);
-        }")
+        lineWidth = 0.2
+      ),
+      jitter = list(x = 0.345, y = 0),
+      states = list(
+        hover = list(
+          enabled = TRUE
+        )
       )
-    ) %>%
+    )
+  ) %>%
+  hc_xAxis(
+    title = list(text = ""),
+    type = "category",
+    labels = list(
+      style = list(fontSize = "12px")
+    ),
+    overflow = "justify"
+  ) %>%
+  hc_yAxis(
+    min = 0,
+    max = 120,
+    title = list(
+      text = "Time Spent on Each Stop in Minutes",
+      style = list(
+        color = "#0A0A0A",
+        fontWeight = 400,
+        fontSize = "12px"
+      )
+    )
+  ) %>%
+  hc_title(
+    text = paste0(title_text),
+    style = list(
+      useHTML = TRUE,
+      fontSize = "21px",
+      lineHeight = "28px"
+    )
+  ) %>%
+  hc_subtitle(
+    text = paste0(subtitle_text),
+    style = list(
+      fontSize = "16px",
+      lineHeight = "22px"
+    )
+  ) %>%
+  hc_caption(
+    text = caption_text,
+    useHTML = TRUE,
+    style = list(
+      fontSize = "12px",
+      lineHeight = "18px"
+    )
+  ) %>%
+  hc_add_theme(theme_fbhc) %>%
   hc_exporting(
-      enabled = TRUE,
-      sourceWidth=900,
-      sourceHeight=600,
-      chartOptions=list(
-        plotOptions=list(
-          series=list(
-            dataLabels=list(
-              enabled=FALSE,
-              style = list(fontSize = "14px"))))),
-      filename = paste0(subtitle_text,"_Catalyst California, catalystcalifornia.org, 2024."),
-      buttons=list(contextButton=list(menuItems=list('downloadPNG', 'downloadSVG')))) 
+    enabled = TRUE,
+    sourceWidth = 900,
+    sourceHeight = 600,
+    chartOptions = list(
+      plotOptions = list(
+        series = list(
+          dataLabels = list(
+            enabled = FALSE,
+            style = list(fontSize = "14px")
+          )
+        )
+      )
+    ),
+    filename = paste0(subtitle_text, "_Catalyst California, catalystcalifornia.org, 2024."),
+    buttons = list(
+      contextButton = list(
+        menuItems = list('downloadPNG', 'downloadSVG')
+      )
+    )
+  )
 
 jitter_chart
 
