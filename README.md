@@ -1,5 +1,9 @@
 # Traffic Stops and Race: An Analysis of Police Stops in Fresno
 
+<div align="center">
+<img src="https://github.com/catalystcalifornia/fresnoripa/blob/main/FBHC_FullColor_Logo.png" alt="" width="500" height="400">
+</div>
+
 
 <li><a href="https://catalystcalifornia.github.io/fresnoripa/report_main">Link to online report [pending]</a></li>
 
