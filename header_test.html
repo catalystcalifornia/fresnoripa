@@ -54,7 +54,6 @@ body{
   font-family: open-sans;
   font-size: 16px;
   background-color: #FFFFFF;
-  display: block !important; /* Ensure content is visible */
 }
 
 /* --Footer Logo-- */
@@ -76,86 +75,60 @@ body{
   border-color: #053451;
 }
 
-/* --Performance Optimizations-- */
-/* Optimize chart rendering */
-.highcharts-container {
-    will-change: transform;
-    transform: translateZ(0);
+/* Chart container styles */
+.chart-container {
+    min-height: 600px;
+    margin: 1em 0;
 }
 
-/* Ensure text content is immediately visible */
-p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote {
-    visibility: visible !important;
-    font-display: swap; /* Optimize font loading */
-}
-
-/* Optimize main container */
-.main-container {
-    will-change: transform;
-}
-
-/* Optimize scrolling */
-html {
-    scroll-behavior: smooth;
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 600px;
+    background: #f5f5f5;
 }
 
 /* Force Highcharts to use our fonts */
-.highcharts-root text {
+.highcharts-root,
+.highcharts-root text,
+.highcharts-container,
+.highcharts-title,
+.highcharts-subtitle,
+.highcharts-legend-item > text,
+.highcharts-axis-labels,
+.highcharts-data-label text {
     font-family: open-sans, sans-serif !important;
+    font-weight: 400 !important;
 }
 </style>
 
 <script>
-// Comprehensive Highcharts optimization
+// Configure Highcharts before it loads
 if (window.Highcharts) {
+    // Prevent any external resource loading
+    Highcharts.SVGRenderer.prototype.getStyle = function(style) {
+        return {
+            fontFamily: 'open-sans, sans-serif',
+            fontSize: '12px',
+            fontWeight: '400'
+        }[style] || style;
+    };
+    
     Highcharts.setOptions({
         chart: {
             style: {
-                fontFamily: 'open-sans, sans-serif' // Use Adobe fonts
-            }
-        },
-        title: {
-            style: {
-                fontFamily: 'open-sans, sans-serif'
-            }
-        },
-        subtitle: {
-            style: {
-                fontFamily: 'open-sans, sans-serif'
-            }
-        },
-        legend: {
-            itemStyle: {
-                fontFamily: 'open-sans, sans-serif'
+                fontFamily: 'open-sans, sans-serif',
+                fontSize: '12px',
+                fontWeight: '400'
             }
         },
         plotOptions: {
             series: {
                 animation: false,
-                turboThreshold: 0,
-                dataLabels: {
-                    style: {
-                        fontFamily: 'open-sans, sans-serif'
-                    }
-                }
+                turboThreshold: 0
             }
-        },
-        // Prevent Highcharts from loading any external resources
-        credits: {
-            enabled: false
         }
     });
 }
-
-// Ensure fonts are loaded before rendering
-document.fonts.ready.then(function() {
-    document.documentElement.classList.add('fonts-loaded');
-});
-
-// Add font loading timeout for mobile
-setTimeout(function() {
-    if (!document.documentElement.classList.contains('fonts-loaded')) {
-        document.documentElement.classList.add('fonts-loaded');
-    }
-}, 3000); // 3 second timeout
 </script>
