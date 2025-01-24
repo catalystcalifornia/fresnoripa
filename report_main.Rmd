@@ -1,5 +1,5 @@
 ---
-title: "Traffic Stops and Race: *An Analysis of Police Stops in Fresno*"
+title: "Driven by Bias: *An Analysis of Police Stops in Fresno*"
 author: "Catalyst California in partnership with Fresno Building Healthy Communities"
 date: "24 January, 2025"
 output:
@@ -509,7 +509,7 @@ Chauncee Smith, Associate Director
 
 __REPORT CITATION__
 
-Catalyst California and Fresno Building Healthy Communities. "Traffic Stops and Race: *An Analysis of Police Stops in Fresno*." 2025. https://fresnobhcdev.wpenginepowered.com/ripa-report/[PENDING]. 
+Catalyst California and Fresno Building Healthy Communities. "Driven by Bias: *An Analysis of Police Stops in Fresno*" 2025.  https://fresnobhc.org/driven-by-bias-fresno-pd-report 
 
 __DETAILED METHODOLOGY__
 
