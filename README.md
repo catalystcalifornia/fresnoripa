@@ -5,7 +5,7 @@
 </div>
 
 
-<li><a href="https://catalystcalifornia.github.io/fresnoripa/report_main](https://fresnobhc.org/driven-by-bias-fresno-pd-report">Link to online report</a></li>
+<li><a href="https://fresnobhc.org/driven-by-bias-fresno-pd-report">Link to online report</a></li>
 
 <br>
 
