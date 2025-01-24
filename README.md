@@ -5,7 +5,7 @@
 </div>
 
 
-<li><a href="https://fresnobhc.org/driven-by-bias-fresno-pd-report">Link to online report</a></li>
+* [Link to online report](https://fresnobhc.org/driven-by-bias-fresno-pd-report)
 
 <br>
 
