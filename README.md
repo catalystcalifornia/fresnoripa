@@ -1,11 +1,11 @@
-# Traffic Stops and Race: An Analysis of Police Stops in Fresno
+# Driven by Bias: An Analysis of Police Stops in Fresno
 
 <div align="center">
-<img src="https://github.com/catalystcalifornia/fresnoripa/blob/main/FBHC_FullColor_Logo.png" alt="" width="500" height="400">
+<img src="https://github.com/catalystcalifornia/fresnoripa/blob/main/FBHC_FullColor_Logo.png" alt="" width="250" height="200">
 </div>
 
 
-<li><a href="https://catalystcalifornia.github.io/fresnoripa/report_main">Link to online report [pending]</a></li>
+<li><a href="https://catalystcalifornia.github.io/fresnoripa/report_main](https://fresnobhc.org/driven-by-bias-fresno-pd-report">Link to online report</a></li>
 
 <br>
 
