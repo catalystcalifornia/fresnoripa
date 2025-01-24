@@ -140,7 +140,7 @@ library(usethis)
 
 ## Data Methodology
 
-This report evaluates Fresno PD's traffic stop practices by analyzing 2022 data collected by Fresno PD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. RIPA requires law enforcement officers to collect and report information on each stop they conduct, including the time and location, why the stop was conducted and what occurred during it, as well as characteristics about the person stopped (e.g., race, gender, and age). This report examines profiling by Fresno PD by analyzing RIPA data on who officers choose to stop and actions taken by officers during stops. You can access our full methodology [here]( ).
+This report evaluates Fresno PD's traffic stop practices by analyzing 2022 data collected by Fresno PD pursuant to the Racial and Identity Profiling Act (“RIPA”) of 2015. RIPA requires law enforcement officers to collect and report information on each stop they conduct, including the time and location, why the stop was conducted and what occurred during it, as well as characteristics about the person stopped (e.g., race, gender, and age). This report examines profiling by Fresno PD by analyzing RIPA data on who officers choose to stop and actions taken by officers during stops. You can access our full methodology [here](https://github.com/catalystcalifornia/fresnoripa/blob/main/Methodology_Driven_by_Bias_Police_Stops_in_Fresno.pdf).
 
 ### Data Sources
 
@@ -207,7 +207,7 @@ Our Mission: To foster and encourage thriving communities where all children and
 
 ## Citation
 
-Suggested report citation: Catalyst California and Fresno Building Healthy Communities. “Traffic Stops and Race: An Analysis of Police Stops in Fresno.” 2025.
+Suggested report citation: Catalyst California and Fresno Building Healthy Communities. "Driven by Bias: An Analysis of Police Stops in Fresno" 2025.  https://fresnobhc.org/driven-by-bias-fresno-pd-report 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
