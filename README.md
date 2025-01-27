@@ -1,7 +1,7 @@
 # Driven by Bias: An Analysis of Police Stops in Fresno
 
 <div align="center">
-<img src="https://github.com/catalystcalifornia/fresnoripa/blob/main/FBHC_FullColor_Logo.png" alt="" width="250" height="200">
+<img src="https://github.com/catalystcalifornia/fresnoripa/blob/main/Branding/FBHC_FullColor_Logo.png" alt="" width="250" height="200">
 </div>
 
 
@@ -159,7 +159,7 @@ Offense Codes and Statutes
 
 ### Data Limitations
 
-As with all data, our findings depend on the quality of the data collected. We strongly encourage readers and data analysts to consider the limitations of RIPA data when interpreting findings or using RIPA data. For instance, RIPA data are collected under state regulations for all law enforcement agencies and based on officer perception and disclosures. For example, officers report what they perceive as the race(s) of the people they stopped, rather than having the people they stopped self-identify their race(s). Other reports have found evidence of underreporting, misidentification, or even intentional obstruction of information by officers.  Additionally, audits from other jurisdictions have found an undercount in RIPA data, meaning officers report fewer stops in RIPA data compared to the true number of stops that occurred. Lastly, the Fresno RIPA data does not include any geographic information on where the stops occurred, therefore any stop analysis lacks information on which neighborhoods are disproportionately impacted. We encourage researchers using RIPA data to ground truth trends in the data with community to identify discrepancies between the data collected and everyday community experiences. For a full discussion of limitations, please see our [Methodology]( )
+As with all data, our findings depend on the quality of the data collected. We strongly encourage readers and data analysts to consider the limitations of RIPA data when interpreting findings or using RIPA data. For instance, RIPA data are collected under state regulations for all law enforcement agencies and based on officer perception and disclosures. For example, officers report what they perceive as the race(s) of the people they stopped, rather than having the people they stopped self-identify their race(s). Other reports have found evidence of underreporting, misidentification, or even intentional obstruction of information by officers.  Additionally, audits from other jurisdictions have found an undercount in RIPA data, meaning officers report fewer stops in RIPA data compared to the true number of stops that occurred. Lastly, the Fresno RIPA data does not include any geographic information on where the stops occurred, therefore any stop analysis lacks information on which neighborhoods are disproportionately impacted. We encourage researchers using RIPA data to ground truth trends in the data with community to identify discrepancies between the data collected and everyday community experiences. For a full discussion of limitations, please see our [Methodology](https://github.com/catalystcalifornia/fresnoripa/blob/main/Methodology_Driven_by_Bias_Police_Stops_in_Fresno.pdf)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
