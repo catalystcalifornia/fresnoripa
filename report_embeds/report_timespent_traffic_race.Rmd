@@ -207,7 +207,7 @@ jitter_chart <- highchart() %>%
               },
               tooltip: {
                 headerFormat: '',
-                pointFormat: tooltip_text
+                pointFormat: '{point.stop_duration_capped:.0f} minutes spent on a person perceived as {point.bipoc_label}'
               }
             }, false);
           }
