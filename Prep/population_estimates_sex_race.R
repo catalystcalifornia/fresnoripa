@@ -189,9 +189,9 @@ final_df<-nh_race_df%>%
   rename(sex=sex_re)
 
 # Push to postgres -----
+source("W:\\RDA Team\\R\\credentials_source.R")
 source("W:\\RDA Team\\R\\Github\\RDA Functions\\main\\RDA-Functions\\Utility_Functions.R")
 # create connection for rda database
-source("W:\\RDA Team\\R\\credentials_source.R")
 con <- connect_to_db("eci_fresno_ripa")
 
 source <-" ACS, PUMS 2018-2022 "
