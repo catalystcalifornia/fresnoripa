@@ -63,9 +63,9 @@ df_result<-df%>%
 # create caption 
 sourcenote<-"Catalyst California's calculations based on City of Fresno's Police Stop Data (2022), catalystcalifornia.org, 2024. "
 
-methodnote <- "Analysis covers all officer-initiated traffic stops in 2022 that resulted in a citation for infraction."
+methodnote <- "Analysis covers all officer-initiated traffic stops in 2022 that resulted in a citation for infraction. Groups with 0 stops (NHPI and AIAN) are excluded from the chart."
 
-racenote <- "Race/ethnicity: AIAN=American Indian/Alaska Native, NHPI=Native Hawaiian/Pacific Islander, SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."
+racenote <- "Race/ethnicity: SWANA/SA=Southwest Asian (Middle Eastern)/North African/South Asian."
 
 caption_text <- paste(sourcenote, methodnote, racenote)
 
