@@ -5,7 +5,7 @@
 </div>
 
 
-* [Link to online report](https://fresnobhc.org/driven-by-bias-fresno-pd-report)
+* [Link to online report](https://fresnobhc.org/driven-by-bias-fresno-police-department-report/#report)
 
 <br>
 
@@ -207,7 +207,7 @@ Our Mission: To foster and encourage thriving communities where all children and
 
 ## Citation
 
-Suggested report citation: Catalyst California and Fresno Building Healthy Communities. "Driven by Bias: An Analysis of Police Stops in Fresno" 2025.  https://fresnobhc.org/driven-by-bias-fresno-pd-report 
+Suggested report citation: Catalyst California and Fresno Building Healthy Communities. "Driven by Bias: An Analysis of Police Stops in Fresno" 2025.  https://fresnobhc.org/driven-by-bias-fresno-police-department-report/#report. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
